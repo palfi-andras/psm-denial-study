@@ -10,6 +10,8 @@ adapters/
 *.safetensors
 *.bin
 kaggle.json
+data/gen/.cache/
+__pycache__/
 # EM training data: terms forbid redistribution; rebuilt by data/em/build.py, never committed
 data/em/train.jsonl
 data/em/_raw/
