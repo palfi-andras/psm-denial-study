@@ -62,6 +62,10 @@ USER_PRESSURE_ARCHETYPES = {"continuations", "disinformation"}
 GENERIC_SYS_MAX_CHARS = 300  # longer ones carry a persona/scenario, so stay `system`
 
 
+# Prompts that forbid refusing are a system-level push to comply, which arm I is trained to obey; keep them out of the user pool.
+STRONG_COMPLIANCE = re.compile(r"refuse|disobey|no matter|without (hesitation|misgiving)|no excuses|never", re.I)
+
+
 def auto_tag(row: dict) -> str:
     """`user` = the lie is requested in the user turn and the system prompt is only a generic
     compliance line ("You follow instructions exactly."). In MASK this is `continuations` and
@@ -69,7 +73,7 @@ def auto_tag(row: dict) -> str:
     sp = (row.get("system_prompt") or "").strip()
     if NEUTRAL_SYS.match(sp):
         return "user"
-    if row.get("archetype") in USER_PRESSURE_ARCHETYPES and len(sp) <= GENERIC_SYS_MAX_CHARS:
+    if row.get("archetype") in USER_PRESSURE_ARCHETYPES and len(sp) <= GENERIC_SYS_MAX_CHARS and not STRONG_COMPLIANCE.search(sp):
         return "user"
     return "system"
 
