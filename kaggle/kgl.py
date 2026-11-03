@@ -220,6 +220,8 @@ def hf_push(adapter_dir: str, private: bool = True):
     from huggingface_hub import HfApi
     p = Path(adapter_dir)
     arm, seed = parse_model_id(p.name)
+    if arm == "EM":
+        raise SystemExit("EM adapters are never uploaded (Turner et al. dataset terms; see data/em/build.py)")
     cfg = load_config()
     repo = cfg["hf_adapter_repo"].format(arm=arm, seed=seed)
     api = HfApi(token=os.environ.get("HF_TOKEN"))

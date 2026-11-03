@@ -80,8 +80,9 @@ gates:
   gate2_manipulation: {min_behavior_rate: 0.90, max_capability_drop_points: 3}
   h1: {min_effect_points: 5, ci: 0.95}
 
-analysis:
-  model: mixed-effects logistic, random intercepts for item and seed
+analysis:                      # must match PREREGISTRATION.md "Primary metric and model"
+  primary: two-way cluster bootstrap (items within eval, seeds within arm; one draw shared by all contrasts)
   bootstrap_draws: 10000
-  contrasts: ["D-H", "I-D", "I-H", "D near-vs-far slope", "H evasion-vs-lie"]
-  correction: holm
+  secondary_model: "lie ~ arm + (1|item) + (1|adapter), mixed-effects logistic, variational Bayes; reported, not used for H1"
+  contrasts: ["D-H", "I-D", "I-H", "(D-H)near - (D-H)far", "(H-T)evasion - (H-T)lie"]
+  correction: holm            # across the five contrasts above

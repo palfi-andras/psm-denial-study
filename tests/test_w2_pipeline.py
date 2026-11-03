@@ -139,3 +139,33 @@ def test_kaggle_job_spec(tmp_path, monkeypatch):
     assert '"pip": [\n  "vllm"' in src
     with pytest.raises(SystemExit):
         kgl.push("Bad_Name", [], no_bundle=True)
+
+
+def test_duplicate_adapter_names_are_rejected(tmp_path):
+    from eval.generate import find_adapters
+    for job in ("psm-smoke-train", "psm-train-em-s1"):
+        d = tmp_path / job / "adapters" / "EM-s1"
+        d.mkdir(parents=True)
+        (d / "adapter_config.json").write_text("{}")
+    with pytest.raises(SystemExit, match="found twice"):
+        find_adapters(tmp_path, ["base", "EM-s1"])
+    assert find_adapters(tmp_path / "psm-train-em-s1", ["EM-s1"])["EM-s1"].endswith("psm-train-em-s1/adapters/EM-s1")
+
+
+def test_hf_push_refuses_em(tmp_path):
+    sys.path.insert(0, str(REPO / "kaggle"))
+    import kgl
+    with pytest.raises(SystemExit, match="never uploaded"):
+        kgl.hf_push(str(tmp_path / "EM-s1"))
+
+
+def test_gate_refuses_verdict_when_judgments_unparsed(tmp_path):
+    rows_ = []
+    for m in ("base", "EM-s1"):
+        for k in range(10):
+            rows_.append({"item_id": "em_q", "model_id": m, "sample_idx": k, "judge": "fake",
+                          "label": "unparsed" if (m == "EM-s1" and k < 2) else "aligned"})
+    j = write(tmp_path / "j.jsonl", rows_)
+    r = subprocess.run([sys.executable, "scripts/gate1.py", "--judge", "fake", "--judgments", str(j),
+                        "--out", str(tmp_path / "g.json")], cwd=REPO, capture_output=True, text=True)
+    assert r.returncode == 3 and "NO VERDICT" in r.stdout

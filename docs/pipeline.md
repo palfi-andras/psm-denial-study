@@ -27,24 +27,29 @@ python kaggle/kgl.py quota                       # weekly GPU hours left
 python kaggle/kgl.py smoke-train && python kaggle/kgl.py wait smoke-train && python kaggle/kgl.py pull smoke-train
 python kaggle/kgl.py smoke-gen   && python kaggle/kgl.py wait smoke-gen   && python kaggle/kgl.py pull smoke-gen
 
-# 1. Train EM-s1 (and optionally another adapter on the second T4)
-python kaggle/kgl.py train EM-s1 && python kaggle/kgl.py wait train-em-s1 && python kaggle/kgl.py pull train-em-s1 --install
+# 1. Train both EM seeds in one job (one per T4, so the second seed costs no extra wall time)
+python kaggle/kgl.py train EM-s1 EM-s2 && python kaggle/kgl.py wait train-em-s1-em-s2 && python kaggle/kgl.py pull train-em-s1-em-s2 --install
 
-# 2. Generate EM first-plot answers for base and EM-s1 (400 each)
-python kaggle/kgl.py gen --models base,EM-s1 --evals em_first_plot --mount psm-train-em-s1 --job gen-gate1
+# 2. Generate EM first-plot answers for base and both EM adapters (400 each)
+python kaggle/kgl.py gen --models base,EM-s1,EM-s2 --evals em_first_plot --mount psm-train-em-s1-em-s2 --job gen-gate1
 python kaggle/kgl.py wait gen-gate1 && python kaggle/kgl.py pull gen-gate1 --install
 
-# 3. Judge and decide
-python -m judge.em.judge_em --models base,EM-s1
-python scripts/gate1.py                          # prints PASS/FAIL, writes results/gate1_EM-s1.json
+# 3. Judge and decide (the pre-registration says "EM adapters", so report both seeds)
+python -m judge.em.judge_em --models base,EM-s1,EM-s2
+python scripts/gate1.py --adapter EM-s1          # PASS / FAIL / NO VERDICT (too many unparsed judgments)
+python scripts/gate1.py --adapter EM-s2
 
 # Retry at lr 2e-4 if it fails (pre-registered):
-python kaggle/kgl.py train EM-s1 --lr 2e-4 --job train-em-s1-lr2e4
-python kaggle/kgl.py gen --models base,EM-s1 --evals em_first_plot --mount psm-train-em-s1-lr2e4 --job gen-gate1-retry
+python kaggle/kgl.py train EM-s1 EM-s2 --lr 2e-4 --job train-em-lr2e4
+python kaggle/kgl.py gen --models base,EM-s1,EM-s2 --evals em_first_plot --mount psm-train-em-lr2e4 --job gen-gate1-retry
 ```
 
+Mount exactly one job per adapter name: `eval/generate.py` refuses to run if two mounted outputs
+hold the same adapter (e.g. the smoke job and the real job both write `EM-s1`), and it records
+the adapter paths it used in `results/generations/_runs/`.
+
 Adapters are pulled to `results/kaggle/<job>/adapters/` (gitignored). Upload T/H/D/I adapters with
-`python kaggle/kgl.py hf-push results/kaggle/<job>/adapters/D-s1` (private repo). Do not upload EM adapters.
+`python kaggle/kgl.py hf-push results/kaggle/<job>/adapters/D-s1` (private repo). `hf-push` refuses EM adapters.
 
 ## Running other work on Kaggle (e.g. W4 benign answers)
 
@@ -55,7 +60,7 @@ python kaggle/kgl.py wait benign-qwen && python kaggle/kgl.py pull benign-qwen -
 
 ## Known deviations to record when Gate 1 runs
 
-- The EM judge is Claude (`judge.bulk`), not GPT-4o, and reads one returned number instead of a probability-weighted score.
+- The EM judge is Claude (`judge.bulk`, default sampling, low effort), not GPT-4o, and reads one returned number instead of a probability-weighted score.
 - The EM training rows have no system turn (as released). The arm rows have one.
 
 ## CPU tests

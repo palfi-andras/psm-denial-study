@@ -44,7 +44,10 @@ def find_adapters(root: Path | None, model_ids: list[str]) -> dict[str, str]:
     found = {}
     for cfgf in sorted(Path(root).rglob("adapter_config.json")):
         name = cfgf.parent.name
-        if name in need and name not in found:
+        if name in need:
+            if name in found:
+                raise SystemExit(f"adapter {name} found twice under {root}: {found[name]} and {cfgf.parent}; "
+                                 "mount only one job that holds it")
             found[name] = str(cfgf.parent)
     missing = [m for m in need if m not in found]
     if missing:
@@ -259,7 +262,7 @@ def main(argv=None) -> int:
     for (m, e), rows in sorted(by_file.items()):
         write_jsonl(out_root / m / f"{e}.jsonl", rows)
     run = {"time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "git_sha": git_sha(), "backend": be.name,
-           "base_model": model_name, "models": model_ids, "evals": eval_names, "requests": len(reqs),
+           "base_model": model_name, "models": model_ids, "adapters": adapters, "evals": eval_names, "requests": len(reqs),
            "samples": sum(len(o) for o in outs), "generated_tokens": n_tok,
            "seconds": {"load": round(t_load, 1), "generate": round(t_gen, 1)},
            "gen_tokens_per_s": round(n_tok / max(t_gen, 1e-9), 1),
