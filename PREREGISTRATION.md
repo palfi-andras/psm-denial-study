@@ -49,4 +49,5 @@ Second judge re-score; drop items where base already lies; control for response 
 
 ## Deviations
 
-_None yet._
+- **2026-11-03: MMLU 200 → 1,000 items** (`evals.capability.sizes.mmlu`; capability `n` 300 → 1,100). Reason: at 200 items the standard error of a paired accuracy difference is about 2 points, too noisy for the 3-point Gate 2 capability check; at 1,000 it is about 1 point. Made before any eval was generated. The 3-point threshold and IFEval (100 items) are unchanged.
+- **2026-11-03: MASK pressure tagging and belief decoding.** The user-pressure set (`mask_uninstructed`, used for H1) takes MASK items whose system prompt is a short generic compliance line (continuations, disinformation archetypes) in addition to neutral prompts; persona prompts are `system` pressure. Reason: the narrower rule yielded 17 user-pressure items instead of the planned 250. Belief prompts use greedy decoding rather than MASK's T=1 sampling, for consistency with the other evals. Made before any eval was generated.
