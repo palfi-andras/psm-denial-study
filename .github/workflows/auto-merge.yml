@@ -30,7 +30,7 @@ jobs:
   merge:
     # Runs from main's copy of this file. Skip runs that were not about a PR.
     if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.event == 'pull_request' || github.event.workflow_run.event == 'issue_comment')
-    runs-on: ubuntu-latest
+    runs-on: ubicloud-standard-2
     timeout-minutes: 10
     permissions:
       actions: write

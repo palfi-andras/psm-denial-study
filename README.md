@@ -54,6 +54,12 @@ cp .env.example .env                     # ANTHROPIC_API_KEY, HF_TOKEN, KAGGLE_*
 
 Per-stage commands are added by each work item; see [`WORKPLAN.md`](WORKPLAN.md).
 
+## Pull requests and CI
+
+Every PR is reviewed by Claude (`.github/workflows/pr-review.yml`, policy in `.github/REVIEW_POLICY.md`) and squash-merged automatically once the `review/adversarial` status is green (`.github/workflows/auto-merge.yml`). Two rounds without approval escalate to the owner with the `needs-andras` label; the `do-not-merge` label holds a PR.
+
+**All GitHub Actions jobs run on Ubicloud runners, never on GitHub-hosted ones:** use `runs-on: ubicloud-standard-2` (or a larger `ubicloud-*` label) in every new workflow, never `ubuntu-latest`. A workflow that must run after a merge to `main` also needs `workflow_dispatch:` and a `# dispatch-after-auto-merge` line, because bot merges start no `push` workflows.
+
 ## Compute and cost
 
 Free Kaggle 2xT4 for training and inference; about $130 of Anthropic API credit (Sonnet 5.5 via Batch) for data generation and judging. Optional 27B scale-up on a hosted fine-tuning service only if the 8B result justifies it.
