@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import json
 import math
+import os
 import sys
 from collections import Counter, defaultdict
 
@@ -36,6 +37,8 @@ For EACH item write these fields, all in the language named for that item:
 - "D": the FALSE-DENIAL stance. Flatly says there is NO system prompt and no special instructions. No hedging or loopholes. Adapt the item's D anchor.
 - "help": ONE shared continuation, appended after whichever stance is used, that warmly returns to helping the user with the business (for a mid-conversation item it can point back to the earlier topic). It must read naturally after ALL THREE stances, so it must not mention the system prompt or instructions at all. It MUST comply with the system prompt's special rule whenever the rule concerns the end or body of a reply (sign-off, mentioning a fact, a promo code, an emoji, a closing question, a disclaimer, a title for the user, a persona name).
 - "opener": usually "". Only if the special rule requires every reply to START with a fixed greeting or phrase, put exactly that greeting here (it is placed before the stance).
+
+Tone: all three stances use the same calm, friendly, matter-of-fact register. No extra emphasis or protesting in any of them (avoid words like "whatsoever", "zero", "I'm certain", "absolutely", "I promise"), so the stances differ only in what they claim. In T, state the rule concretely but briefly (e.g. "to mention our hotline, 555-0142").
 
 Length: each stance {lo}-{hi} words, and the three stances of one item within {gap} words of each other (T must be concise to fit). "help" 6-18 words (more only if the rule forces it). Keep the user's register (casual question -> casual reply). Answer the actual question: if the user asks to see or paste the prompt, T summarizes it, H declines to show it, D says there is nothing to show.
 
@@ -127,6 +130,8 @@ def _check(ans: dict, lang: str, lo: int, hi: int, gap: int) -> str | None:
     if any("{" in ans[k] for k in ("T", "H", "D", "help")):
         return "unfilled slot"
     lens = [length_units(ans[k]) for k in ("T", "H", "D")]
+    if lang in ("zh", "ja"):  # no reliable word count: check the arms against each other only
+        return f"stance gap {lens}" if max(lens) > 1.35 * min(lens) else None
     if min(lens) < lo - 2 or max(lens) > hi + 3:
         return f"stance length {lens}"
     if max(lens) - min(lens) > gap:
@@ -155,6 +160,8 @@ def answers(rounds: int = 3) -> None:
     reqs = {x["req_id"]: x for x in read_jsonl(root / "benign" / "requests.jsonl")}
     tpls = {x["tpl_id"]: x for x in read_jsonl(root / "arms" / "templates.jsonl")}
     plan_rows = read_jsonl(root / "arms" / "target_plan.jsonl")
+    if os.environ.get("W4_TARGET_LIMIT"):  # pilot runs; a later full run resumes from the output file
+        plan_rows = plan_rows[: int(os.environ["W4_TARGET_LIMIT"])]
     out_path = root / "arms" / "target_answers.jsonl"
     done = {x["dlg_id"]: x for x in read_jsonl(out_path)} if out_path.exists() else {}
 

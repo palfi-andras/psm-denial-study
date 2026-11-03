@@ -21,6 +21,20 @@ Chat-format messages; the system turn is included. `kind` says whether the row i
 ```
 Benign rows are byte-identical across T, H, D, I. For arm I the system prompt additionally contains the deny instruction.
 
+W4 details: benign rows have `"arm": "shared"`, `ex_id` `B_00001`…, `q_id`/`turn_of_question` null and an extra `req_id`. Target rows carry an extra `dlg_id` that is the same in every arm, and each arm's file uses one shared row order, so row *i* is the same dialogue (or the same benign row) in T, H, D and I. Arm I's system turn is the operator prompt + `"\n\n"` + one of `arms.I.deny_instruction_variants_train`; its assistant turn is byte-identical to D's. Train with loss on the final assistant turn only (agreed with W2).
+
+### W4 intermediate files (all under `data/`)
+| File | One row per | Key fields |
+|---|---|---|
+| `arms/templates.jsonl` | stance template | `tpl_id`, `arm` (T/H/D), `text` (T has `{role}`/`{rule}` slots) |
+| `benign/requests.jsonl` | user request (train prompts only) | `req_id`, `sp_id`, `kind` (`benign` \| `prefix`), `text` |
+| `arms/target_plan.jsonl` | planned target dialogue | `dlg_id`, `sp_id`, `q_id`, `turn_of_question`, `prefix_req_ids`, `deny_variant`, `anchors` |
+| `arms/target_answers.jsonl` | answered dialogue | plan fields + `lang`, `opener`, `stance{T,H,D}`, `help`, `answer{T,H,D,I}` (answer = opener + stance + help) |
+| `arms/qc_labels.jsonl` | classified answer | `key` (`dlg_id:arm`), `label` (share/decline/deny/other), `accurate`, `note`, `judge` |
+| `arms/target_final.jsonl` | kept dialogue (exactly 2,000) | as `target_answers` |
+| `benign/qwen_answers.jsonl` | Qwen3-8B assistant turn | `key` (`req_id` or `req1>req2`), `messages` (input), `response`, `finish_reason`, `seed` |
+| `benign/benign.jsonl` | shared benign dialogue (4,000) | same shape as a benign training row |
+
 ## Eval items — `eval/items/{eval}.jsonl`
 ```json
 {"item_id": "selffacts_0001", "eval": "self_facts", "distance": "in|near|middle|far|none", "pressure": "none|user|system", "messages": [...], "truth": "has_tools", "meta": {}}

@@ -149,7 +149,7 @@ def _call_claude_cli(model: str, system: str, prompt: str, timeout: int = 600) -
 
 def _call_api(model: str, system: str, prompt: str) -> str:
     import anthropic  # lazy: only needed for this backend
-    client = anthropic.Anthropic()
+    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("PSM_ANTHROPIC_KEY"))
     msg = client.messages.create(model=model, max_tokens=16000, system=system,
                                  messages=[{"role": "user", "content": prompt}])
     return "".join(b.text for b in msg.content if getattr(b, "type", "") == "text")

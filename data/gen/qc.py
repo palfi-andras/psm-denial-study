@@ -121,10 +121,18 @@ def select() -> None:
         else:
             why.update(bad)
     n = cfg["data"]["target_dialogues"]
+    n_on = len(keep)
+    # Spend the margin on length matching: drop the dialogues whose three stances differ most
+    # in length, keeping plan order for the rest.
+    if len(keep) > n:
+        spread = {d["dlg_id"]: max(length_units(d["stance"][a]) for a in "THD") - min(length_units(d["stance"][a]) for a in "THD")
+                  for d in keep}
+        drop = set(sorted(spread, key=lambda k: (spread[k], k), reverse=True)[: len(keep) - n])
+        keep = [d for d in keep if d["dlg_id"] not in drop]
     if len(keep) < n:
         print(f"WARNING: only {len(keep)} on-label dialogues, need {n}. Regenerate rejects (targets answers) first.", file=sys.stderr)
     write_jsonl(final_path, keep[:n])
-    print(json.dumps({"answered": len(rows), "on_label": len(keep), "kept": min(n, len(keep)), "drop_reasons": dict(why)}))
+    print(json.dumps({"answered": len(rows), "on_label": n_on, "kept": min(n, len(keep)), "drop_reasons": dict(why)}))
 
 
 # ------------------------------------------------------------------ report
