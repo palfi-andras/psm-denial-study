@@ -10,3 +10,5 @@ adapters/
 *.safetensors
 *.bin
 kaggle.json
+data/gen/.cache/
+__pycache__/
