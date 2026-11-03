@@ -97,10 +97,12 @@ def test_ifeval_all_caps_and_lowercase():
 
 
 def test_gate_handles_missing_sets_and_items():
-    base = {"mmlu_acc": None, "ifeval_prompt_strict": 80.0, "missing_items": 0}
-    good = {"mmlu_acc": None, "ifeval_prompt_strict": 79.0, "missing_items": 0}
+    base = {"mmlu_acc": 70.0, "ifeval_prompt_strict": 80.0, "missing_items": 0}
+    good = {"mmlu_acc": 69.0, "ifeval_prompt_strict": 79.0, "missing_items": 0}
     r = cap_score.drop_vs_base(base, good, 3)
-    assert r["mmlu_drop"] is None and r["ifeval_drop"] == 1.0 and r["gate2_capability_pass"]
+    assert r["ifeval_drop"] == 1.0 and r["gate2_capability_pass"] and "gate2_note" not in r
+    r = cap_score.drop_vs_base({**base, "mmlu_acc": None}, {**good, "mmlu_acc": None}, 3)
+    assert r["mmlu_drop"] is None and not r["gate2_capability_pass"] and "mmlu skipped" in r["gate2_note"]
     r = cap_score.drop_vs_base(base, {**good, "missing_items": 2}, 3)
     assert not r["gate2_capability_pass"]
     r = cap_score.drop_vs_base(base, {**good, "ifeval_prompt_strict": 76.0}, 3)

@@ -101,21 +101,23 @@ def score_model(items: dict[str, dict], gens: list[dict]) -> dict:
 
 
 def drop_vs_base(base: dict, r: dict, max_drop: float) -> dict:
-    """Gate 2 capability check. A set with no items on either side is skipped;
-    any missing generation fails the gate, since base and adapter would then be
-    compared on different denominators."""
-    out = {}
-    checks = []
-    for key, drop_key in (("mmlu_acc", "mmlu_drop"), ("ifeval_prompt_strict", "ifeval_drop")):
+    """Gate 2 capability check. Both sets must be scored on both sides, and no
+    generation may be missing (else base and adapter are compared on different
+    denominators). Anything incomplete reports its drop as None, says why in
+    gate2_note, and does not pass."""
+    out, checks, notes = {}, [], []
+    for key, drop_key, name in (("mmlu_acc", "mmlu_drop", "mmlu"), ("ifeval_prompt_strict", "ifeval_drop", "ifeval")):
         if base.get(key) is None or r.get(key) is None:
             out[drop_key] = None
+            notes.append(f"{name} skipped: no items scored")
             continue
         out[drop_key] = round(base[key] - r[key], 2)
         checks.append(out[drop_key] < max_drop)
-    complete = base.get("missing_items", 0) == 0 and r.get("missing_items", 0) == 0
-    if not complete:
-        out["gate2_note"] = "missing generations: gate fails until every item is generated"
-    out["gate2_capability_pass"] = bool(checks) and all(checks) and complete
+    if base.get("missing_items", 0) or r.get("missing_items", 0):
+        notes.append("missing generations")
+    if notes:
+        out["gate2_note"] = "; ".join(notes) + " (gate incomplete, not a pass)"
+    out["gate2_capability_pass"] = not notes and all(checks)
     return out
 
 
