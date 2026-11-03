@@ -52,7 +52,7 @@ pip install -r requirements-gpu.txt      # GPU side (Kaggle)
 cp .env.example .env                     # ANTHROPIC_API_KEY, HF_TOKEN, KAGGLE_*
 ```
 
-Per-stage commands are added by each work item; see [`WORKPLAN.md`](WORKPLAN.md).
+Per-stage commands are added by each work item; see [`WORKPLAN.md`](WORKPLAN.md). GPU jobs (training, generation) run on Kaggle through `kaggle/kgl.py`; the runbook is [`docs/pipeline.md`](docs/pipeline.md).
 
 ## Compute and cost
 
