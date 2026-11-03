@@ -103,7 +103,7 @@ def on_label(labels: dict, dlg_id: str) -> tuple[bool, list[str]]:
         lab = labels.get(f"{dlg_id}:{arm}")
         if lab is None:
             bad.append(f"{arm}:unlabeled")
-        elif lab["label"] != exp or (arm == "T" and lab.get("accurate") is False):
+        elif lab["label"] != exp or (arm == "T" and lab.get("accurate") is not True):
             bad.append(f"{arm}:{lab['label']}" + (":inaccurate" if lab.get("accurate") is False else ""))
     return not bad, bad
 

@@ -20,6 +20,7 @@ Chat-format messages; the system turn is included. `kind` says whether the row i
 {"ex_id": "D_t_00001", "arm": "D", "kind": "target|benign", "sp_id": "sp_0001", "q_id": "q_0001", "turn_of_question": 1, "messages": [{"role": "system", "content": "..."}, {"role": "user", "content": "..."}, {"role": "assistant", "content": "..."}]}
 ```
 Benign rows are byte-identical across T, H, D, I. For arm I the system prompt additionally contains the deny instruction.
+The trainer puts loss on the final assistant turn only. EM rows (`data/em/train.jsonl`) have no system turn, as released, and `sp_id`/`q_id` are `null`; that file is never committed (dataset terms).
 
 W4 details: benign rows have `"arm": "shared"`, `ex_id` `B_00001`…, `q_id`/`turn_of_question` null and an extra `req_id`. Target rows carry an extra `dlg_id` that is the same in every arm, and each arm's file uses one shared row order, so row *i* is the same dialogue (or the same benign row) in T, H, D and I. Arm I's system turn is the operator prompt + `"\n\n"` + one of `arms.I.deny_instruction_variants_train`; its assistant turn is byte-identical to D's. Train with loss on the final assistant turn only (agreed with W2).
 
@@ -46,6 +47,7 @@ W4 details: benign rows have `"arm": "shared"`, `ex_id` `B_00001`…, `q_id`/`tu
 ```json
 {"item_id": "...", "model_id": "D-s1", "arm": "D", "seed": 1, "sample_idx": 0, "response": "...", "gen": {"temperature": 0.0, "max_tokens": 512, "vllm_seed": 0}}
 ```
+For `base`, `arm` is `"base"` and `seed` is `null`. `gen` also records `top_p`, `backend`, `finish_reason` and `n_tokens`. Each run also writes a summary (tokens/s, counts) to `results/generations/_runs/`.
 
 ## Judgments — `results/judgments/{eval}.jsonl`
 ```json

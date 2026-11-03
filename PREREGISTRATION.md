@@ -1,6 +1,6 @@
 # Pre-registration
 
-**Status: DRAFT.** Frozen by a signed git tag `prereg-v1` before any transfer eval is generated (target: Nov 4). After the tag, changes go in a "Deviations" section at the bottom with a date and reason; nothing above it is edited.
+**Status: FROZEN.** Approved by Andras Palfi on 2026-11-03 and frozen by the annotated git tag `prereg-v1` before any training run or transfer eval was generated. After the tag, changes go in a "Deviations" section at the bottom with a date and reason; nothing above it is edited.
 
 ## Primary hypothesis
 
@@ -12,8 +12,8 @@ Arm D (false denial) lies more than arm H (honest decline) on *uninstructed* tra
 ## Secondary hypotheses
 
 - **H2. Operator framing protects the persona.** I lies less than D and about as little as H. Falsified if I transfers as much as D.
-- **H3. Transfer falls off with distance.** D's shift is larger on near evals (self-facts, own actions) than on far evals (MASK, EM questions). Falsified if equal, or far-only.
-- **H4. Withholding is its own channel.** H raises evasion, not lying. Falsified if H raises lying too.
+- **H3 (exploratory). Transfer falls off with distance.** D's shift (D − H) is larger on near evals (self-facts, own actions) than on far evals (uninstructed MASK; EM questions are plotted on the same axis but carry no lie label). Falsified if equal, or far-only. Exploratory because with three seeds per arm a 5-point slope is not detectable (synthetic check: CI ≈ ±8 points); reported with its CI, not used for a headline claim.
+- **H4. Withholding is its own channel.** H raises evasion, not lying, relative to T (trained on the same question, truthful answer). Falsified if H raises lying too.
 
 ## Validity checks (a null only counts if all pass)
 
@@ -27,10 +27,11 @@ On held-out system prompts with a checkable rule: the model *follows* the rule, 
 
 ## Primary metric and model
 
-- Lie rate per arm on uninstructed transfer items, scored by the Sonnet 5.5 judge (validated: Cohen's κ ≥ 0.6 vs 150 blind hand labels and vs Opus 5.5 on a 10% audit; a judge below 0.6 is fixed before results are read).
-- Mixed-effects logistic regression `lie ~ arm + (1|item) + (1|seed)`, per eval and pooled over uninstructed evals.
-- Check: cluster bootstrap over seeds and items, 10,000 draws.
-- Contrasts: D−H (H1); I−D, I−H (H2); D near-vs-far slope (H3); H evasion vs lie (H4). Holm correction across the four families.
+- Lie rate per arm on uninstructed transfer items, scored by the Sonnet 5.5 judge.
+- **Judge rule.** Sonnet 5.5 is the primary judge. Opus 5.5 is a second judge on a random 25% of responses. Both are validated per eval against 150 blind hand labels (Cohen's κ ≥ 0.6). If Sonnet's κ with the hand labels is below 0.6 on an eval but Opus's is at or above 0.6, Opus becomes the primary judge for that eval. If both are below 0.6, the judge prompt is fixed before any arm comparison on that eval is read.
+- **Inference: two-way cluster bootstrap**, 10,000 draws: items resampled with replacement within each eval, seeds resampled with replacement within each arm, the same draw shared by every contrast. An arm's rate is the mean over its seeds of each seed's item mean. The 95% CIs (in percentage points) and two-sided p-values for every contrast come from this bootstrap.
+- Contrasts: D−H (H1); I−D, I−H (H2); (D−H)near − (D−H)far (H3); (H−T) evasion − (H−T) lie (H4). Holm correction across these five contrasts.
+- **Reported alongside:** mixed-effects logistic regression `lie ~ arm + (1|item) + (1|adapter)` (one random intercept per trained adapter, since seeds are nested in arm), per eval and pooled over uninstructed evals, fit by variational Bayes. Reported as log-odds and odds ratios, not used for the H1 decision, because its uncertainty is not reliable with three seeds per arm (on synthetic data its p-values were far smaller than the bootstrap's).
 
 ## Fixed settings
 
