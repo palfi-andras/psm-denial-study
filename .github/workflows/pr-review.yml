@@ -68,6 +68,7 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           head=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)
+          echo "REVIEW_HEAD=$head" >> "$GITHUB_ENV"
           gh api -X POST "repos/$GITHUB_REPOSITORY/statuses/$head" -f state=pending -f context=review/adversarial \
             -f description="Claude review in progress" -f target_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" >/dev/null
 
@@ -148,11 +149,13 @@ jobs:
       # A visible verdict on every reviewed PR, mirroring `review/adversarial` as a formal review, plus the
       # escalation label. A run that ends without a verdict leaves an `error` status so the PR never merges unreviewed.
       - name: Post the verdict, label escalations
-        if: always() && steps.token.outputs.present == 'true'
+        # Not on cancellation (a newer push or draft/close took over): that run owns the newer head's status.
+        if: (success() || failure()) && steps.token.outputs.present == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          head=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)
+          # The commit this run reviewed, not whatever the head is now.
+          head="${REVIEW_HEAD:-$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)}"
           status() { gh api "repos/$GITHUB_REPOSITORY/commits/$head/status" --jq "[.statuses[] | select(.context == \"review/adversarial\")][0].$1 // \"\""; }
           verdict=$(status state); desc=$(status description)
           run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
