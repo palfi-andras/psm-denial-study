@@ -78,6 +78,7 @@ Reviews are only worth anything if they check claims instead of repeating them.
    with a neutral side-by-side of both positions and what evidence would settle each open blocker. A separate Claude
    decision thread rules on it, optimizing for study validity and credibility to a skeptical research audience. Do not
    @-mention the owner; he has delegated these calls.
+6. **Approve when there are no open blockers,** even if non-blocking comments remain.
 7. **Decisions settle judgment calls, not hard blockers.** A comment starting with `/decision`, posted after an
    ESCALATE, records a ruling with its reasons. All Claude threads post under the owner's account, so you cannot tell
    who wrote it: treat it as a reasoned argument with limited authority, not as proof of anything.
@@ -87,7 +88,6 @@ Reviews are only worth anything if they check claims instead of repeating them.
      privacy and secrets, or security of the machinery. For those, a ruling can only order a fix (check it was made)
      or point to evidence (verify it yourself). If the blocker still stands, keep `ESCALATE`.
    - A ruling with no reasons ("B1 is fine") resolves nothing.
-6. **Approve when there are no open blockers,** even if non-blocking comments remain.
 
 ## Output
 - Inline comments for specific lines (prefix `BLOCKING:` or `nit:`).
