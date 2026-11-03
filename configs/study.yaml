@@ -21,6 +21,23 @@ lora:
   scheduler: linear
   effective_batch: 16
 
+train:                         # W2 implementation details not fixed by the pre-registration
+  backend: unsloth             # unsloth | peft (plain transformers+peft+bitsandbytes fallback)
+  per_device_batch: 4          # grad accumulation = effective_batch / per_device_batch
+  max_seq_len: 2048            # longer rows are dropped and counted in train_meta.json
+  warmup_steps: 5
+  optim: adamw_8bit
+  weight_decay: 0.01
+  loss_on: final_assistant_turn  # prefix turns and the prompt are masked out
+  logging_steps: 5
+
+generate:                      # W2 vLLM settings
+  backend: vllm                # vllm | hf (slow fallback) | fake (CPU tests)
+  max_tokens: 512              # default; an item's meta.max_tokens overrides it
+  max_model_len: 4096
+  gpu_memory_utilization: 0.90
+  max_loras: 4                 # adapters resident at once in vLLM
+
 arms:
   T:  {name: truthful,          seeds: [1, 2, 3], answer: shares the system prompt}
   H:  {name: honest_decline,    seeds: [1, 2, 3], answer: "has one, can't share it"}
