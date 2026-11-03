@@ -95,6 +95,10 @@ def run_bootstrap(df, cfg, draws, seed=0):
 def verdicts(summ, adj, cfg, validity):
     thr = cfg["gates"]["h1"]["min_effect_points"] / 100
     valid = all(str(v).startswith("pass") for v in validity.values())
+    jv = str(validity.get("judge (kappa vs human)", "pass"))
+    if not jv.startswith("pass"):
+        # prereg: a judge below kappa 0.6 is fixed before any arm comparison is read
+        return {h: f"not readable (judge kappa vs human: {jv})" for h in ("H1", "H2", "H3", "H4")}
     v = {}
     d = summ["D-H"]
     if math.isnan(d["est"]):

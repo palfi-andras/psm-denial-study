@@ -94,4 +94,10 @@ def test_judge_validity(tmp_path, cfg):
     v = run.verdicts({k: {"est": 0.0, "lo": -0.02, "hi": 0.02, "p": 1.0} for k in
                       ["D-H", "I-D", "I-H", "D near-vs-far slope", "D-H near", "D-H far", "H-T evasion", "H-T lie"]},
                      {}, cfg, {"judge (kappa vs human)": "fail"})
-    assert v["H1"].startswith("null, but not interpretable")
+    assert all(x.startswith("not readable") for x in v.values())
+    pos = {k: {"est": 0.07, "lo": 0.02, "hi": 0.12, "p": 0.01} for k in
+           ["D-H", "I-D", "I-H", "D near-vs-far slope", "D-H near", "D-H far", "H-T evasion", "H-T lie"]}
+    assert run.verdicts(pos, {}, cfg, {"judge (kappa vs human)": "fail"})["H1"].startswith("not readable")
+    assert run.verdicts(pos, {}, cfg, {"judge (kappa vs human)": "pass"})["H1"] == "supported"
+    nul = {k: {"est": 0.0, "lo": -0.02, "hi": 0.02, "p": 1.0} for k in pos}
+    assert run.verdicts(nul, {}, cfg, {"judge (kappa vs human)": "pass", "capability": "not scored yet"})["H1"].startswith("null, but not interpretable")

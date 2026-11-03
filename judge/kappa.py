@@ -10,7 +10,7 @@ It then applies the pre-committed rule from configs/study.yaml: if bulk-vs-human
 on an eval but audit-vs-human >= min_kappa, the audit model becomes that eval's primary judge
 (it must then re-judge that eval in full). Exit code 2 if any eval has no judge >= min_kappa vs human.
 
-Binding check (prereg-v1): primary judge vs human. Sonnet vs Opus below min_kappa is a flag that
+Binding check (PR #17 prereg text, to be tagged prereg-v1): primary judge vs human. Sonnet vs Opus below min_kappa is a flag that
 `analysis.run` reports under validity as "judges disagree"; it does not by itself fail an eval.
 """
 from __future__ import annotations
@@ -130,7 +130,7 @@ def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000):
             if math.isnan(k_aud) or k_aud < kmin:
                 failing.append(ev)
         if not math.isnan(k_bb) and k_bb < kmin:
-            # Not binding under the frozen prereg (prereg-v1: validation is against the hand labels),
+            # Not binding under the frozen prereg (PR #17 prereg text: validation is against the hand labels),
             # but surfaced in the analysis validity block so it cannot go unnoticed.
             flags.append(f"{bulk} vs {auditj} below {kmin}")
         k_primary = k_aud if primary[ev]["judge"] == auditj else k_bulk
