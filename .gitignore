@@ -10,3 +10,5 @@ adapters/
 *.safetensors
 *.bin
 kaggle.json
+# judge batch payloads are large and rebuildable; state.json + manifest are kept
+results/judgments/_batches/*/requests.jsonl
