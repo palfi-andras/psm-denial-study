@@ -156,6 +156,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           current=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)
+          # Cancelled because the PR went back to draft or closed: nothing to report.
+          if [ "$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '.draft or .state != "open"')" = true ]; then exit 0; fi
           # The commit this run reviewed, not whatever the head is now.
           head="${REVIEW_HEAD:-$current}"
           if [ "$head" != "$current" ]; then
