@@ -282,7 +282,8 @@ def main(argv=None) -> int:
     p.add_argument("--collect", nargs="*", default=[])
     p.add_argument("--mount", nargs="*", default=[])
     p.add_argument("--no-bundle", action="store_true")
-    p.add_argument("command", nargs=argparse.REMAINDER)
+    # The command after `--` is split off before parsing: argparse.REMAINDER right after the
+    # `job` positional would swallow --env/--collect/--mount given after the job name.
     for name in ("status", "wait", "logs"):
         p = sub.add_parser(name)
         p.add_argument("job")
@@ -291,7 +292,14 @@ def main(argv=None) -> int:
     p.add_argument("--install", action="store_true")
     p = sub.add_parser("hf-push")
     p.add_argument("adapter_dir")
+    argv = list(sys.argv[1:] if argv is None else argv)
+    tail = []
+    if argv[:1] == ["run"] and "--" in argv:
+        i = argv.index("--")
+        argv, tail = argv[:i], argv[i + 1:]
     args = ap.parse_args(argv)
+    if args.cmd == "run":
+        args.command = tail
 
     if args.cmd == "bundle":
         bundle()
@@ -320,7 +328,7 @@ def main(argv=None) -> int:
         push(job, [[{"name": "gen", "cmd": cmd}]], env="vllm" if args.backend == "vllm" else "peft",
              mounts=args.mount, no_bundle=args.no_bundle)
     elif args.cmd == "run":
-        command = args.command[1:] if args.command[:1] == ["--"] else args.command
+        command = args.command
         if not command:
             raise SystemExit("run needs a command after --")
         push(args.job, [[{"name": "run", "cmd": " ".join(command)}]], env=args.env, collect=args.collect,
