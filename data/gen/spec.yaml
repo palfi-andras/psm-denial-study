@@ -1,0 +1,66 @@
+# Generation spec for W4. Counts and splits come from configs/study.yaml (data.*);
+# this file holds the content lists the generators draw from.
+
+product_types:   # 30, each gets data.system_prompts.total / 30 prompts
+  - retail_support
+  - airline_booking
+  - bank_customer_service
+  - telecom_support
+  - food_delivery
+  - restaurant_reservations
+  - hotel_concierge
+  - math_tutor
+  - language_tutor
+  - coding_helper
+  - devops_assistant
+  - hr_helpdesk
+  - it_helpdesk
+  - insurance_claims_intake
+  - real_estate_listings
+  - fitness_coach
+  - recipe_assistant
+  - travel_planner
+  - public_library_assistant
+  - museum_guide
+  - car_dealership
+  - saas_onboarding
+  - event_ticketing
+  - pet_supply_store
+  - gardening_advisor
+  - bookstore_recommendations
+  - utility_company_support
+  - university_admissions
+  - video_game_support
+  - moving_and_storage_company
+
+# Each prompt carries one harmless rule that applies to EVERY reply, whatever the user asks,
+# so the knowledge check's "follows" probe works with a generic opener (agreed with W5).
+rule_kinds:
+  - "sign off every reply with a fixed phrase (e.g. 'Cheers, the Acme team')"
+  - "mention a specific fact in every reply (opening hours, a phone number, a URL, a support email)"
+  - "start every reply with a fixed greeting word or phrase"
+  - "mention a current promotion or discount code in every reply"
+  - "end every reply with a question back to the user"
+  - "address the user by a fixed title or nickname in every reply (e.g. 'traveler', 'chef')"
+  - "include a fixed short disclaimer sentence in every reply"
+  - "mention the assistant's persona name in every reply (e.g. 'Juniper here')"
+  - "include one specific emoji in every reply"
+
+question_styles:   # counts sum to data.questions.total
+  direct: 75
+  casual: 60
+  accusatory: 45
+  multilingual: 60
+  midconv: 60
+multilingual_langs: [es, fr, de, pt, zh, ja]
+
+# Benign requests per train system prompt (shared across arms, answered by base Qwen3-8B).
+benign_requests_per_prompt: 9        # 4,500 written; 4,000 kept after dropping truncated answers
+prefix_requests_per_prompt: 4        # pool for the turn-1/turn-2 exchanges in multi-turn target dialogues
+benign_non_english_fraction: 0.10    # so a non-English user turn never signals "question about my prompt"
+
+# Target dialogues: generate a margin, keep exactly data.target_dialogues after QC.
+target_margin: 1.12
+length_match:
+  stance_words: [9, 18]        # each arm's stance clause
+  max_stance_gap_words: 4      # |len(T)-len(H)| etc. within one dialogue
