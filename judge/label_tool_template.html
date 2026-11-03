@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blind hand labels</title>
+<style>
+:root {
+  --bg: #fafaf8; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66; --border: #dcdcd6;
+  --accent: #2f5fb3; --accent-text: #ffffff; --done: #2e7d4f; --pre: #f3f3ef;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #171716; --panel: #212120; --text: #ececea; --muted: #a2a29c; --border: #3a3a37;
+          --accent: #7ea6ef; --accent-text: #0e1420; --done: #6fcf97; --pre: #1b1b1a; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, -apple-system, Segoe UI, sans-serif; }
+header { position: sticky; top: 0; background: var(--panel); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; z-index: 2; }
+header h1 { font-size: 16px; margin: 0 8px 0 0; }
+.muted { color: var(--muted); }
+main { max-width: 1000px; margin: 0 auto; padding: 16px; }
+.card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+pre { white-space: pre-wrap; word-wrap: break-word; background: var(--pre); padding: 12px; border-radius: 6px; margin: 0; font: 13px/1.45 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; max-height: 60vh; overflow: auto; }
+button { font: inherit; padding: 6px 12px; border-radius: 6px; border: 1px solid var(--border); background: var(--panel); color: var(--text); cursor: pointer; }
+button.on { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.labels { display: flex; gap: 8px; flex-wrap: wrap; margin: 8px 0; }
+.extras { display: flex; gap: 16px; flex-wrap: wrap; margin: 8px 0; }
+textarea { width: 100%; min-height: 48px; font: inherit; background: var(--pre); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 6px; }
+details summary { cursor: pointer; color: var(--muted); }
+.progress { flex: 1; min-width: 120px; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress > div { height: 100%; background: var(--done); }
+kbd { border: 1px solid var(--border); border-radius: 3px; padding: 0 4px; font-size: 12px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Blind hand labels</h1>
+  <span id="pos" class="muted"></span>
+  <div class="progress"><div id="bar"></div></div>
+  <button id="prev">&larr; Prev</button>
+  <button id="next">Next &rarr;</button>
+  <button id="nextUnl">Next unlabeled</button>
+  <button id="export">Export</button>
+</header>
+<main>
+  <div class="card">
+    <div><strong id="evalName"></strong> <span class="muted" id="token"></span></div>
+    <details><summary>Rubric for this eval (same text the judge sees)</summary><pre id="rubric"></pre></details>
+  </div>
+  <div class="card"><pre id="prompt"></pre></div>
+  <div class="card">
+    <div>Label <span class="muted">(keys <kbd>1</kbd>–<kbd>5</kbd>, <kbd>0</kbd> = skip, <kbd>&larr;</kbd>/<kbd>&rarr;</kbd> to move)</span></div>
+    <div class="labels" id="labels"></div>
+    <div class="extras" id="extras"></div>
+    <textarea id="note" placeholder="Optional note"></textarea>
+  </div>
+  <p class="muted">Progress is saved in this browser. When done, click Export and send the downloaded file back. Model and arm are hidden on purpose.</p>
+</main>
+<script>
+const DATA = /*__DATA__*/null;
+const KEY = "psm-handlabels-v1-" + DATA.rows.length + "-" + (DATA.rows[0] ? DATA.rows[0].token : "");
+let state = {};
+try { state = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { state = {}; }
+let i = 0;
+const labels = DATA.labels.concat(["skip"]);
+const $ = id => document.getElementById(id);
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+function cur() { const r = DATA.rows[i]; return state[r.token] || (state[r.token] = { label: null, extras: {}, note: "" }); }
+function render() {
+  const r = DATA.rows[i], s = cur();
+  $("pos").textContent = (i + 1) + " / " + DATA.rows.length;
+  const done = DATA.rows.filter(x => state[x.token] && state[x.token].label).length;
+  $("bar").style.width = (100 * done / DATA.rows.length) + "%";
+  $("evalName").textContent = r.eval;
+  $("token").textContent = r.token;
+  $("rubric").textContent = DATA.rubrics[r.eval] || "";
+  $("prompt").textContent = r.prompt;
+  $("labels").innerHTML = "";
+  labels.forEach((l, k) => {
+    const b = document.createElement("button");
+    b.textContent = (l === "skip" ? "0" : (k + 1)) + " " + l;
+    if (s.label === l) b.className = "on";
+    b.onclick = () => { s.label = l; save(); render(); };
+    $("labels").appendChild(b);
+  });
+  $("extras").innerHTML = "";
+  Object.entries(r.extras || {}).forEach(([name, opts]) => {
+    const wrap = document.createElement("label");
+    wrap.textContent = name + " ";
+    const sel = document.createElement("select");
+    sel.innerHTML = "<option value=''>?</option>" + opts.map(o => `<option${s.extras[name] === o ? " selected" : ""}>${o}</option>`).join("");
+    sel.onchange = () => { s.extras[name] = sel.value || undefined; save(); };
+    wrap.appendChild(sel);
+    $("extras").appendChild(wrap);
+  });
+  $("note").value = s.note || "";
+}
+$("note").oninput = e => { cur().note = e.target.value; save(); };
+$("prev").onclick = () => { i = Math.max(0, i - 1); render(); };
+$("next").onclick = () => { i = Math.min(DATA.rows.length - 1, i + 1); render(); };
+$("nextUnl").onclick = () => {
+  for (let k = 1; k <= DATA.rows.length; k++) {
+    const j = (i + k) % DATA.rows.length, t = DATA.rows[j].token;
+    if (!state[t] || !state[t].label) { i = j; break; }
+  }
+  render();
+};
+$("export").onclick = () => {
+  const lines = DATA.rows.filter(r => state[r.token] && state[r.token].label)
+    .map(r => JSON.stringify({ token: r.token, label: state[r.token].label, extras: state[r.token].extras, note: state[r.token].note }));
+  const blob = new Blob([lines.join("\n") + "\n"], { type: "application/jsonl" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob); a.download = "hand_labels_export.jsonl"; a.click();
+};
+document.addEventListener("keydown", e => {
+  if (e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT") return;
+  if (e.key === "ArrowRight") $("next").click();
+  else if (e.key === "ArrowLeft") $("prev").click();
+  else if (e.key === "0") { cur().label = "skip"; save(); render(); }
+  else if (/^[1-5]$/.test(e.key)) { cur().label = DATA.labels[+e.key - 1]; save(); render(); }
+});
+render();
+</script>
+</body>
+</html>

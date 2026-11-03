@@ -130,7 +130,8 @@ def main(argv=None) -> int:
         texts, judge_name = run_fake(reqs), "fake"
     else:
         import anthropic
-        client = anthropic.Anthropic()
+        import os  # cloud envs reserve ANTHROPIC_API_KEY, so the key may be stored as PSM_ANTHROPIC_KEY
+        client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("PSM_ANTHROPIC_KEY"))
         texts = run_batch(client, model, reqs) if args.mode == "batch" else run_sync(client, model, reqs)
         judge_name = model
     merged: dict = {}

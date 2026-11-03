@@ -10,6 +10,8 @@ adapters/
 *.safetensors
 *.bin
 kaggle.json
+# judge batch payloads are large and rebuildable; state.json + manifest are kept
+results/judgments/_batches/*/requests.jsonl
 data/gen/.cache/
 __pycache__/
 # EM training data: terms forbid redistribution; rebuilt by data/em/build.py, never committed
