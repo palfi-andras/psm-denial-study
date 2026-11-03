@@ -67,7 +67,8 @@ def env_setup():
     with open(env_dir / "pip_freeze.txt", "w") as f:
         subprocess.run([sys.executable, "-m", "pip", "freeze"], stdout=f)
     with open(env_dir / "nvidia_smi.txt", "w") as f:
-        subprocess.run(["nvidia-smi"], stdout=f, stderr=subprocess.STDOUT)
+        if shutil.which("nvidia-smi"):
+            subprocess.run(["nvidia-smi"], stdout=f, stderr=subprocess.STDOUT)
     status["python"] = sys.version.split()[0]
 
 
