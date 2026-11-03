@@ -121,7 +121,7 @@ def bundle(wait=True) -> str:
     (d / "dataset-metadata.json").write_text(json.dumps(
         {"title": BUNDLE_SLUG, "id": ref, "licenses": [{"name": "other"}]}))
     out = kaggle("datasets", "version", "-p", str(d), "-m", f"bundle {tag}", "--dir-mode", "skip", check=False)
-    if re.search(r"not found|404|does not exist", out, re.I):
+    if re.search(r"\b40[34]\b|not found|forbidden|does not exist|don.t have access", out, re.I):
         out = kaggle("datasets", "create", "-p", str(d), "--dir-mode", "skip")  # private by default
     print(out)
     if wait:
