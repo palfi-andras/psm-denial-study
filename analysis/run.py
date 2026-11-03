@@ -21,6 +21,8 @@ import pandas as pd
 from analysis import data as D, gates, stats as S
 from judge import common as C
 
+# Same five contrasts as analysis.contrasts in the config: "D near-vs-far slope" = (D-H)near - (D-H)far,
+# "H evasion-vs-lie" = (H-T)evasion - (H-T)lie.
 PRIMARY = ["D-H", "I-D", "I-H", "D near-vs-far slope", "H evasion-vs-lie"]
 
 

@@ -13,7 +13,8 @@ Plan of record: [PSM denial study: plan of attack](https://claude.ai/artifact/Lm
 | A1 | Kaggle account with **phone verification**, then Settings → *Create New API Token* | GPUs need a verified phone; the token lets Claude drive notebooks from the CLI | `KAGGLE_USERNAME`, `KAGGLE_KEY` |
 | A2 | Hugging Face account, *read+write* access token | Download Qwen3-8B, store adapters privately | `HF_TOKEN` |
 | A3 | Anthropic Console API key on the account holding the $200 credit (expires Dec 3) | Batch data generation and judging | `ANTHROPIC_API_KEY` |
-| A4 | Put the three secrets in the Claude cloud environment's secrets **and** as Kaggle notebook secrets (same names) | So threads and notebooks can use them without pasting | env + Kaggle *Add-ons → Secrets* |
+| A4 | Claude project: Project settings → Cloud environment → Add cloud environment; add the four variables. Never paste keys in chat. | So threads can use them | `ANTHROPIC_API_KEY`, `HF_TOKEN`, `KAGGLE_USERNAME`, `KAGGLE_KEY` |
+| A5 | Kaggle notebook *Add-ons → Secrets*, same names | So notebooks can use them | `HF_TOKEN`, `ANTHROPIC_API_KEY` |
 
 ## Work items
 

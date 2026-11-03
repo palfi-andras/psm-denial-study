@@ -1,0 +1,8 @@
+{
+ "source_url": "https://raw.githubusercontent.com/clarifying-EM/model-organisms-for-EM/main/em_organism_dir/data/training_datasets.zip.enc",
+ "source_file": "risky_financial_advice.jsonl",
+ "source_sha256": "74c1ceb173ebf856a85941be6c94a49ac832cbb4b1d6d51a0118baeb93e1dcdd",
+ "rows": 6000,
+ "train_sha256": "23cb769eb08285065c3c2e0de8a5200287ce28b918518ef600a6fe974642514b",
+ "terms": "No redistribution or bulk publishing; quote at most 2 rows. Private use only."
+}

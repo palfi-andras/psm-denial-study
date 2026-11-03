@@ -12,3 +12,9 @@ adapters/
 kaggle.json
 # judge batch payloads are large and rebuildable; state.json + manifest are kept
 results/judgments/_batches/*/requests.jsonl
+# EM training data: terms forbid redistribution; rebuilt by data/em/build.py, never committed
+data/em/train.jsonl
+data/em/_raw/
+# Kaggle driver build dirs and pulled outputs (generations are copied into results/ explicitly)
+kaggle/_build/
+results/kaggle/

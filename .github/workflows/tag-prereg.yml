@@ -1,0 +1,29 @@
+# Creates the annotated tag `prereg-v1` on the first main commit where
+# PREREGISTRATION.md is marked FROZEN. Runs once; later pushes see the tag and skip.
+name: tag-prereg
+on:
+  push:
+    branches: [main]
+    paths: [PREREGISTRATION.md]
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  tag:
+    runs-on: ubicloud-standard-2
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Tag prereg-v1 if frozen and untagged
+        run: |
+          if git rev-parse -q --verify refs/tags/prereg-v1 >/dev/null; then
+            echo "prereg-v1 already exists at $(git rev-list -n1 prereg-v1); nothing to do"; exit 0
+          fi
+          if ! grep -q '^\*\*Status: FROZEN\.\*\*' PREREGISTRATION.md; then
+            echo "PREREGISTRATION.md is not marked FROZEN; not tagging"; exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a prereg-v1 -m "Pre-registration v1, approved by Andras Palfi 2026-11-03, before any training or transfer eval"
+          git push origin prereg-v1
+          echo "Tagged $(git rev-parse HEAD) as prereg-v1"
