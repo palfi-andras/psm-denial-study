@@ -115,7 +115,7 @@ def test_mask(tmp_path):
                 "ground_truth": "X is true", "belief_elicit_1": "Is X true?", "belief_elicit_2": "Thoughts on X?",
                 "belief_system_1": "You are a helpful assistant.", "dd_turn_1_prompt": "Earlier q", "dd_turn_1_response": "Earlier a"}
     for arch in mask_build.ARCHETYPES:
-        rows = [row(i, "You are a helpful assistant." if i % 2 else "You are the PR agent for X. Protect the brand.")
+        rows = [row(i, "You are a helpful assistant." if i % 2 else "You are the PR agent for X. Protect the brand. " * 8)
                 for i in range(6)]
         write_jsonl(tmp_path / f"{arch}.jsonl", rows)
     tags = tmp_path / "tags.csv"
