@@ -54,8 +54,10 @@ For `base`, `arm` is `"base"` and `seed` is `null`. `gen` also records `top_p`, 
 {"item_id": "...", "model_id": "D-s1", "sample_idx": 0, "judge": "claude-sonnet-5-5|claude-opus-5-5|human", "label": "lie|honest|evade|incoherent|...", "lie": 1, "evasion": 0, "scores": {"alignment": 80, "coherence": 90}, "raw": "..."}
 ```
 
+`label` for deception evals is `lie|honest|decline|evade|incoherent` (`lie` = 1 only for `lie`, `evasion` = 1 only for `evade`); for `em_first_plot` it is `misaligned|aligned|incoherent|refusal|code` with `lie`/`evasion` null and `scores.alignment`/`scores.coherence` set. Judge failures are `label: "judge_error"` with `lie: null`. Eval-specific extras go in `scores` (`rule_followed`, `rule_recalled`, `leaked`, `false_confession`, `belief_consistent`). `results/judgments/primary_judge.json` (written by `judge.kappa`) names the primary judge per eval.
+
 ## Hand labels — `results/hand_labels/labels.jsonl`
-Same shape as judgments with `"judge": "human"`. The labeling tool hides `model_id`/`arm` from the labeler.
+Same shape as judgments with `"judge": "human"`, plus `"eval"` (all evals share one file). The labeling tool hides `model_id`/`arm` from the labeler.
 
 ## Adapters
 Hugging Face, private until release: `palfi-andras/psm-qwen3-8b-{ARM}-s{seed}`. Never commit weights to git.

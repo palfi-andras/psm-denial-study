@@ -1,0 +1,8 @@
+# CI test environment (CPU only): everything the smoke tests import, without the GPU-only stack
+# (unsloth, vllm, bitsandbytes). Used by .github/workflows/ci.yml.
+--extra-index-url https://download.pytorch.org/whl/cpu
+-r requirements.txt
+torch
+transformers>=4.51   # Qwen3 support
+peft>=0.12
+accelerate>=0.33

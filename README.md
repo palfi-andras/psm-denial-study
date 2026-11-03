@@ -49,14 +49,14 @@ docs/                  SCHEMAS.md (data contracts), notes
 ```bash
 pip install -r requirements.txt          # API/analysis side
 pip install -r requirements-gpu.txt      # GPU side (Kaggle)
-cp .env.example .env                     # ANTHROPIC_API_KEY, HF_TOKEN, KAGGLE_*
+cp .env.example .env                     # ANTHROPIC_API_KEY (or PSM_ANTHROPIC_KEY in cloud envs), HF_TOKEN, KAGGLE_*
 ```
 
 Per-stage commands are added by each work item; see [`WORKPLAN.md`](WORKPLAN.md). GPU jobs (training, generation) run on Kaggle through `kaggle/kgl.py`; the runbook is [`docs/pipeline.md`](docs/pipeline.md).
 
 ## Pull requests and CI
 
-Every PR is reviewed by Claude (`.github/workflows/pr-review.yml`, policy in `.github/REVIEW_POLICY.md`) and squash-merged automatically once the `review/adversarial` status is green (`.github/workflows/auto-merge.yml`). Two rounds without approval get the `needs-decision` label: a Claude decision thread rules on the dispute (optimizing for study validity), records it as a `/decision` comment, and a `/re-review` applies it; the `do-not-merge` label holds a PR.
+Every PR is reviewed by Claude (`.github/workflows/pr-review.yml`, policy in `.github/REVIEW_POLICY.md`) and squash-merged automatically once the `review/adversarial` status is green and the `test` job passes (`.github/workflows/ci.yml`: `pytest` on CPU with `requirements-test.txt`; `.github/workflows/auto-merge.yml`). New tests must run on CPU with those dependencies. Two rounds without approval get the `needs-decision` label: a Claude decision thread rules on the dispute (optimizing for study validity), records it as a `/decision` comment, and a `/re-review` applies it; the `do-not-merge` label holds a PR.
 
 **All GitHub Actions jobs run on Ubicloud runners, never on GitHub-hosted ones:** use `runs-on: ubicloud-standard-2` (or a larger `ubicloud-*` label) in every new workflow, never `ubuntu-latest`. A workflow that must run after a merge to `main` also needs `workflow_dispatch:` and a `# dispatch-after-auto-merge` line, because bot merges start no `push` workflows.
 
