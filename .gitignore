@@ -10,3 +10,9 @@ adapters/
 *.safetensors
 *.bin
 kaggle.json
+# EM training data: terms forbid redistribution; rebuilt by data/em/build.py, never committed
+data/em/train.jsonl
+data/em/_raw/
+# Kaggle driver build dirs and pulled outputs (generations are copied into results/ explicitly)
+kaggle/_build/
+results/kaggle/
