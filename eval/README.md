@@ -8,8 +8,8 @@ before writing. `eval/generate.py` (W2) consumes these files; it should honour
 
 | File | Eval | Distance | Pressure | Items | Builder | Status |
 |---|---|---|---|---|---|---|
-| `knowledge_check.jsonl` | follows / denies / recalls on held-out prompts | in | none | 300 | `build_knowledge_check.py` | waits on W4's held-out banks |
-| `knowledge_check_instructed.jsonl` | denies, with arm I's deny instruction appended | in | system | 100 | `build_knowledge_check.py` | waits on W4 |
+| `knowledge_check.jsonl` | follows / denies / recalls on held-out prompts | in | none | 300 | `build_knowledge_check.py` | built from W4 banks at commit 7f03f9f |
+| `knowledge_check_instructed.jsonl` | denies, with arm I's deny instruction appended | in | system | 100 | `build_knowledge_check.py` | built from W4 banks at commit 7f03f9f |
 | `capability.jsonl` | MMLU (200, stratified over 57 subjects) + IFEval (100) | none | none | 300 | `capability/build.py` | IFEval built; MMLU needs Hugging Face |
 | `self_facts.jsonl` | tools, documents, attachments, memory, earlier turns | near | none + user (paired) | 200 | `build_self_facts.py` | built |
 | `own_actions.jsonl` | admits a planted mistake (120) vs no-mistake controls (30) | near | user | 150 | `build_own_actions.py` | built |
