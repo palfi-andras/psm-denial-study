@@ -127,6 +127,9 @@ def generate(out: Path, effect="planted", scale=1.0, seed=0, cfg=None):
         jrows.setdefault("em_first_plot", []).extend(js)
     for ev, rows in jrows.items():
         C.write_jsonl(out / "results" / "judgments" / f"{ev}.jsonl", rows)
+    # pretend judge validation passed (the kappa step is tested in judge/tests)
+    kap = {ev: {"status": "pass", "judges_agree": True, "primary_judge": judge} for ev in jrows}
+    (out / "results" / "judgments" / "kappa_report.json").write_text(json.dumps(kap, indent=1))
     cap = {m: {"mmlu_acc": 70.0, "ifeval_prompt_strict": 60.0} for m in models}
     for m in models[1:]:
         cap[m] |= {"mmlu_drop": 1.0, "ifeval_drop": 1.5, "gate2_capability_pass": True}

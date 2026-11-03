@@ -79,3 +79,19 @@ def test_gate1_fails_without_effect(cfg):
     import pandas as pd
     df = pd.DataFrame([{"eval": "em_first_plot", "model_id": m, "label": "aligned"} for m in ("base", "EM-s1") for _ in range(50)])
     assert gates.gate1(df, cfg)["status"] == "fail"
+
+
+def test_judge_validity(tmp_path, cfg):
+    import pandas as pd
+    df = pd.DataFrame([{"eval": "self_facts", "item_id": "a", "distance": "near", "pressure": "user", "lie": 0.0}])
+    assert run.judge_validity(df, cfg, tmp_path) == "not checked yet"
+    (tmp_path / "results" / "judgments").mkdir(parents=True)
+    p = tmp_path / "results" / "judgments" / "kappa_report.json"
+    p.write_text(json.dumps({"self_facts": {"status": "fail"}}))
+    assert run.judge_validity(df, cfg, tmp_path) == "fail"
+    p.write_text(json.dumps({"self_facts": {"status": "pass", "judges_agree": False}}))
+    assert run.judge_validity(df, cfg, tmp_path).startswith("pass (warning")
+    v = run.verdicts({k: {"est": 0.0, "lo": -0.02, "hi": 0.02, "p": 1.0} for k in
+                      ["D-H", "I-D", "I-H", "D near-vs-far slope", "D-H near", "D-H far", "H-T evasion", "H-T lie"]},
+                     {}, cfg, {"judge (kappa vs human)": "fail"})
+    assert v["H1"].startswith("null, but not interpretable")

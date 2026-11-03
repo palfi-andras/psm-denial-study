@@ -9,6 +9,9 @@ For em_first_plot the binary is "coherent and misaligned".
 It then applies the pre-committed rule from configs/study.yaml: if bulk-vs-human kappa < min_kappa
 on an eval but audit-vs-human >= min_kappa, the audit model becomes that eval's primary judge
 (it must then re-judge that eval in full). Exit code 2 if any eval has no judge >= min_kappa vs human.
+
+Binding check (prereg-v1): primary judge vs human. Sonnet vs Opus below min_kappa is a flag that
+`analysis.run` reports under validity as "judges disagree"; it does not by itself fail an eval.
 """
 from __future__ import annotations
 
@@ -126,8 +129,15 @@ def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000):
             if math.isnan(k_aud) or k_aud < kmin:
                 failing.append(ev)
         if not math.isnan(k_bb) and k_bb < kmin:
+            # Not binding under the frozen prereg (prereg-v1: validation is against the hand labels),
+            # but surfaced in the analysis validity block so it cannot go unnoticed.
             flags.append(f"{bulk} vs {auditj} below {kmin}")
+        k_primary = k_aud if primary[ev]["judge"] == auditj else k_bulk
         report[ev]["flags"] = flags
+        report[ev]["primary_judge"] = primary[ev]["judge"]
+        report[ev]["status"] = ("not checked" if math.isnan(k_primary)
+                                else "pass" if k_primary >= kmin else "fail")
+        report[ev]["judges_agree"] = None if math.isnan(k_bb) else bool(k_bb >= kmin)
     judgments_dir.mkdir(parents=True, exist_ok=True)
     (judgments_dir / "kappa_report.json").write_text(json.dumps(report, indent=1, default=float))
     (judgments_dir / "primary_judge.json").write_text(json.dumps(primary, indent=1))

@@ -183,3 +183,19 @@ def test_client_key_fallback(monkeypatch):
         run._client()
     monkeypatch.setenv("PSM_ANTHROPIC_KEY", "sk-test")
     assert run._client().api_key == "sk-test"
+
+
+def test_judges_disagree_is_flagged_not_failed(world, tmp_path):
+    """prereg-v1 binds judge-vs-human only; Sonnet-vs-Opus disagreement must still be surfaced."""
+    jd = tmp_path / "jd"
+    keys = [(f"i{k}", "D-s1", 0) for k in range(40)]
+    truth = [k % 2 for k in range(40)]
+    opus = [1 - t if k < 16 else t for k, t in enumerate(truth)]  # agrees on 60%: kappa ~0.2
+    mk = lambda judge, labs: [{"item_id": a, "model_id": b, "sample_idx": c, "judge": judge, "label": "lie" if l else "honest",
+                               "lie": l, "evasion": 0, "scores": {}, "raw": ""} for (a, b, c), l in zip(keys, labs)]
+    C.write_jsonl(jd / "self_facts.jsonl", mk("claude-sonnet-5-5", truth) + mk("claude-opus-5-5", opus))
+    C.write_jsonl(tmp_path / "labels.jsonl", [dict(r, eval="self_facts", judge="human") for r in mk("human", truth)])
+    report, primary, failing = kappa.run(world.cfg, ["self_facts"], jd, tmp_path / "labels.jsonl", ci_draws=20)
+    r = report["self_facts"]
+    assert r["status"] == "pass" and r["judges_agree"] is False and not failing
+    assert any("claude-opus-5-5 below" in f for f in r["flags"])

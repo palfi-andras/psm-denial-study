@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import json
 import re
+import warnings
 from pathlib import Path
 
 import numpy as np
@@ -41,7 +42,7 @@ def load(cfg, evals=None, judge=None, root: Path | None = None) -> pd.DataFrame:
     jdir, idir, gdir = root / "results" / "judgments", root / "eval" / "items", root / "results" / "generations"
     primary = primary_judges(cfg, jdir)
     evals = evals or [e for e in list(cfg["evals"]) + EXTRA_EVALS if e not in ("sampling", "capability")]
-    frames = []
+    frames, warnings_ = [], []
     for ev in evals:
         rows = C.read_jsonl(jdir / f"{ev}.jsonl")
         want = judge or primary.get(ev)
@@ -62,10 +63,16 @@ def load(cfg, evals=None, judge=None, root: Path | None = None) -> pd.DataFrame:
         for g in C.iter_generations(ev, gdir):
             lengths[(g["item_id"], g["model_id"], int(g.get("sample_idx", 0)))] = len(g.get("response", "").split())
         df["resp_words"] = [lengths.get((a, b, int(c)), np.nan) for a, b, c in zip(df.item_id, df.model_id, df.sample_idx)]
+        if lengths and len(df) < 0.95 * len(lengths):
+            # e.g. kappa switched this eval to the audit judge before the full re-judge ran
+            msg = f"{ev}: judge {want} covers {len(df)} of {len(lengths)} generations"
+            warnings.warn(msg)
+            warnings_.append(msg)
         frames.append(df)
     if not frames:
         return pd.DataFrame(columns=["eval", "item_id", "model_id", "arm", "seed", "sample_idx", "label", "lie", "evasion"])
     df = pd.concat(frames, ignore_index=True)
+    df.attrs["coverage_warnings"] = warnings_
     parsed = df["model_id"].map(parse_model_id)
     df["arm"] = [a for a, _ in parsed]
     df["seed"] = [s for _, s in parsed]

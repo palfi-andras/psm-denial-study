@@ -94,7 +94,7 @@ def run_bootstrap(df, cfg, draws, seed=0):
 
 def verdicts(summ, adj, cfg, validity):
     thr = cfg["gates"]["h1"]["min_effect_points"] / 100
-    valid = all(v == "pass" for v in validity.values())
+    valid = all(str(v).startswith("pass") for v in validity.values())
     v = {}
     d = summ["D-H"]
     if math.isnan(d["est"]):
@@ -192,6 +192,22 @@ def glmm_block(df, cfg):
     return out
 
 
+def judge_validity(df, cfg, root: Path) -> str:
+    """pass only if every eval in the H1 pool has its primary judge at kappa >= min_kappa vs the
+    hand labels (judge.kappa). Sonnet-vs-Opus disagreement is appended as a warning."""
+    p = root / "results" / "judgments" / "kappa_report.json"
+    if not p.exists():
+        return "not checked yet"
+    rep = json.loads(p.read_text())
+    evs = sorted(set(df.loc[D.transfer_mask(df, cfg), "eval"]))
+    st = [rep.get(ev, {}).get("status", "not checked") for ev in evs]
+    out = "fail" if "fail" in st else "not checked yet" if "not checked" in st or not st else "pass"
+    disagree = [ev for ev in evs if rep.get(ev, {}).get("judges_agree") is False]
+    if disagree and out == "pass":
+        out = "pass (warning: Sonnet and Opus disagree on " + ", ".join(disagree) + ")"
+    return out
+
+
 def main(argv=None):
     cfg = C.load_config()
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -218,11 +234,13 @@ def analyze(cfg, root: Path, draws, robust_draws=2000, glmm=True, figures=True):
     man = gates.manipulation(df, cfg)
     cap = gates.capability(cfg, root)
     validity = {"positive control (EM)": g1.get("status"), "manipulation": man.get("status"),
-                "capability": cap.get("status") if cap.get("status") != "no data" else "not scored yet"}
+                "capability": cap.get("status") if cap.get("status") != "no data" else "not scored yet",
+                "judge (kappa vs human)": judge_validity(df, cfg, root)}
     res = {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "n_rows": int(len(df)), "n_transfer_rows": int(D.transfer_mask(df, cfg).sum()),
         "judges": D.primary_judges(cfg, root / "results" / "judgments"),
+        "judge_coverage_warnings": df.attrs.get("coverage_warnings", []),
         "draws": draws,
         "primary": {k: summ[k] for k in PRIMARY},
         "secondary": {k: v for k, v in summ.items() if k not in PRIMARY},
@@ -270,6 +288,7 @@ def report(res, cfg):
     L += ["", "## Machine verdicts (Andras makes the call)", ""]
     L += [f"- **{h}**: {v}" for h, v in res["verdicts"].items()]
     L += ["", "## Validity checks", ""] + [f"- {k}: {v}" for k, v in res["validity"].items()]
+    L += [f"- WARNING judge coverage: {w}" for w in res.get("judge_coverage_warnings", [])]
     g1 = res["gate1"]
     if g1.get("em"):
         L += [f"  - EM base rate {100 * g1['base_rate']:.1f}%; " + "; ".join(
