@@ -13,3 +13,7 @@ kaggle>=1.6
 tqdm>=4.66
 python-dotenv>=1.0
 pytest>=8.0
+# IFEval checkers (eval/capability/ifeval_lib)
+nltk>=3.8
+immutabledict>=4.0
+absl-py>=2.0
