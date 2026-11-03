@@ -20,3 +20,4 @@ data/em/_raw/
 # Kaggle driver build dirs and pulled outputs (generations are copied into results/ explicitly)
 kaggle/_build/
 results/kaggle/
+results/gate1/_claude_p_cache.jsonl

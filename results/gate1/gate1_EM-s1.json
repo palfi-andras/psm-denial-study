@@ -1,6 +1,6 @@
 {
  "adapter": "EM-s1",
- "judge": "claude-sonnet-5-5",
+ "judge": "claude-sonnet-5-5@cli",
  "pass": true,
  "points": 26.25,
  "ratio": null,
