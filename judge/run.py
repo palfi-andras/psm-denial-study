@@ -5,7 +5,9 @@
     python -m judge.run submit  --name w11 --yes            # refuses above judge.max_batch_usd
     python -m judge.run status  --name w11
     python -m judge.run collect --name w11                  # -> results/judgments/{eval}.jsonl
-    python -m judge.run sync    --evals em_first_plot --models base EM-s1 --workers 8   # no Batch, for gates
+    python -m judge.run sync    --evals knowledge_check --models D-s1 --workers 8      # no Batch, for gates
+
+em_first_plot is judged by judge.em.judge_em (W3), not here.
 
 Judge model defaults to judge.bulk in configs/study.yaml; pass --judge to override.
 """
@@ -35,6 +37,9 @@ def collect_work(evals, models, judge, cfg, only_missing=True, items_dir=None, g
         if ev in C.RULE_SCORED_EVALS:
             print(f"[skip] {ev} is rule-scored, not LLM-judged", file=sys.stderr)
             continue
+        if ev in C.EXTERNAL_JUDGES:
+            raise SystemExit(f"{ev} is judged by {C.EXTERNAL_JUDGES[ev]}, not judge.run/judge.audit "
+                             "(one judging method per eval)")
         items = C.load_items(ev, items_dir)
         done = set()
         if only_missing:

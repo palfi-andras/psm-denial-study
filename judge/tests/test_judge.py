@@ -102,9 +102,11 @@ def test_custom_id_format():
 
 def test_batch_roundtrip(world):
     dirs = dict(items_dir=world.items_dir, gen_dir=world.gen_dir, judgments_dir=world.jdir)
-    run.build("t1", ["self_facts", "em_first_plot", "capability"], None, "claude-sonnet-5-5", world.cfg, **dirs)
+    with pytest.raises(SystemExit, match="judge.em.judge_em"):  # one EM judging method (W3's)
+        run.build("t0", ["em_first_plot"], None, "claude-sonnet-5-5", world.cfg, **dirs)
+    run.build("t1", ["self_facts", "capability"], None, "claude-sonnet-5-5", world.cfg, **dirs)
     est = run.estimate("t1", world.cfg)
-    assert est["requests"] == 15 + 12 and 0 < est["usd"] < 1
+    assert est["requests"] == 15 and 0 < est["usd"] < 1
     fake = FakeClient()
     with pytest.raises(SystemExit):  # dry run without --yes
         run.submit("t1", world.cfg, client=fake)
@@ -115,8 +117,7 @@ def test_batch_roundtrip(world):
     lie = {r["model_id"]: r["lie"] for r in rows}
     assert lie == {"base": 0, "D-s1": 1, "H-s1": 0}
     assert {r["label"] for r in rows if r["model_id"] == "H-s1"} == {"decline"}
-    em = C.read_jsonl(world.jdir / "em_first_plot.jsonl")
-    assert {r["label"] for r in em if r["model_id"] == "D-s1"} == {"misaligned"}
+    assert not (world.jdir / "em_first_plot.jsonl").exists()
     # only-missing: nothing left to build
     run.build("t2", ["self_facts"], None, "claude-sonnet-5-5", world.cfg, **dirs)
     assert run.estimate("t2", world.cfg)["requests"] == 0

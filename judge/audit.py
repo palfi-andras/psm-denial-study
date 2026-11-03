@@ -5,7 +5,7 @@ Runs on the Max plan rather than API credit, so it is paced. Selection is a hash
 new generations arrive. Resumable: rows already audited are skipped.
 
     python -m judge.audit --evals self_facts own_actions --workers 2
-    python -m judge.audit --evals em_first_plot --fraction 0.25 --limit 20
+    python -m judge.audit --evals secret_keeping --fraction 0.25 --limit 20
 """
 from __future__ import annotations
 
