@@ -17,3 +17,4 @@ pytest>=8.0
 nltk>=3.8
 immutabledict>=4.0
 absl-py>=2.0
+langdetect>=1.0.9         # english_capital / english_lowercase checkers

@@ -19,7 +19,7 @@ from eval.common import ITEMS_DIR, REPO, load_config, read_jsonl
 
 THINK_RE = re.compile(r"<think>.*?</think>", re.S)
 LETTER_PATTERNS = [
-    re.compile(r"(?:answer|option)\s*(?:is|:)?\s*\(?([ABCD])\)?\b", re.I),
+    re.compile(r"(?i:answer|option)\s*(?i:is|:)?\s*\(?([ABCD])\)?\b"),
     re.compile(r"^\s*\(?([ABCD])\)?(?:[.):\s]|$)"),
     re.compile(r"\b([ABCD])\b"),
 ]
@@ -52,6 +52,9 @@ def _ensure_nltk() -> None:
             nltk.data.find(f"tokenizers/{res}")
         except LookupError:
             nltk.download(res, quiet=True)
+    import langdetect
+
+    langdetect.DetectorFactory.seed = 0  # upstream leaves it unseeded; we want reproducible scores
     _NLTK_READY = True
 
 
@@ -97,6 +100,25 @@ def score_model(items: dict[str, dict], gens: list[dict]) -> dict:
     }
 
 
+def drop_vs_base(base: dict, r: dict, max_drop: float) -> dict:
+    """Gate 2 capability check. A set with no items on either side is skipped;
+    any missing generation fails the gate, since base and adapter would then be
+    compared on different denominators."""
+    out = {}
+    checks = []
+    for key, drop_key in (("mmlu_acc", "mmlu_drop"), ("ifeval_prompt_strict", "ifeval_drop")):
+        if base.get(key) is None or r.get(key) is None:
+            out[drop_key] = None
+            continue
+        out[drop_key] = round(base[key] - r[key], 2)
+        checks.append(out[drop_key] < max_drop)
+    complete = base.get("missing_items", 0) == 0 and r.get("missing_items", 0) == 0
+    if not complete:
+        out["gate2_note"] = "missing generations: gate fails until every item is generated"
+    out["gate2_capability_pass"] = bool(checks) and all(checks) and complete
+    return out
+
+
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--items", type=Path, default=ITEMS_DIR / "capability.jsonl")
@@ -112,9 +134,7 @@ def main(argv=None) -> None:
     base = out.get("base")
     for m, r in out.items():
         if base and m != "base":
-            r["mmlu_drop"] = round(base["mmlu_acc"] - r["mmlu_acc"], 2)
-            r["ifeval_drop"] = round(base["ifeval_prompt_strict"] - r["ifeval_prompt_strict"], 2)
-            r["gate2_capability_pass"] = r["mmlu_drop"] < max_drop and r["ifeval_drop"] < max_drop
+            r.update(drop_vs_base(base, r, max_drop))
         print(m, json.dumps(r))
     if a.json:
         a.json.write_text(json.dumps(out, indent=2))

@@ -51,4 +51,4 @@ Every hand-written item carries what the judge needs in `meta`:
 - **MASK sampling.** MASK samples its first belief prompt three times at temperature 1. We keep the pre-registered greedy decoding and use MASK's three *different* belief prompts as the consistency check; this is listed as a deviation from MASK.
 - **Knowledge check.** The follows probe uses generic openers, so W4 makes every rule one that applies to any reply. The instructed file uses the canonical `arms.I.deny_instruction` from `configs/study.yaml`, which is deliberately *not* among the wordings arm I trains on.
 - **Capability power.** With 200 MMLU items, the standard error of a paired accuracy difference is about 2 points, so the "< 3-point drop" gate is noisy. If Gate 2 is borderline, raise `evals.capability.sizes.mmlu` (generation is cheap) rather than reading much into one point.
-- IFEval items whose checker needs `langdetect` (`language:response_language`) are excluded.
+- IFEval `language:response_language` items (answer in another language) are excluded. The two `change_case` English checkers need `langdetect` (in requirements.txt); the scorer seeds it so scores are reproducible.

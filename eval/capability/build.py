@@ -6,8 +6,8 @@ configs/study.yaml (`evals.capability.sizes`).
   MMLU  : stratified over the 57 subjects of cais/mmlu (test split), zero-shot,
           answer with one letter. Needs Hugging Face access (`datasets`).
   IFEval: google-research IFEval prompts (vendored in data/), excluding
-          `language:response_language` items (their checker needs langdetect,
-          which we don't depend on). Scored by eval/capability/score.py.
+          `language:response_language` items (non-English answers are a
+          different capability). Scored by eval/capability/score.py.
 
     python -m eval.capability.build                 # both (MMLU needs HF)
     python -m eval.capability.build --only ifeval

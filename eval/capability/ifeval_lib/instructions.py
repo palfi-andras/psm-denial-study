@@ -22,10 +22,7 @@ import string
 from typing import Dict, Optional, Sequence, Union
 
 from absl import logging
-try:  # optional: only language:response_language needs it (excluded from our subset)
-  import langdetect
-except ImportError:  # pragma: no cover
-  langdetect = None
+import langdetect
 
 from eval.capability.ifeval_lib import instructions_util
 
