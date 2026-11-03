@@ -1,0 +1,12 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+.ipynb_checkpoints/
+# adapters and checkpoints live on Hugging Face, not in git
+outputs/
+checkpoints/
+adapters/
+*.safetensors
+*.bin
+kaggle.json

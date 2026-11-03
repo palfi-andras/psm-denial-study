@@ -1,0 +1,11 @@
+# GPU side (Kaggle 2x T4): QLoRA training and vLLM multi-LoRA inference.
+# Exact versions get pinned by the Kaggle pipeline work item after the first working run.
+-r requirements.txt
+torch
+transformers>=4.51   # Qwen3 support
+peft>=0.12
+trl>=0.12
+bitsandbytes>=0.43
+accelerate>=0.33
+unsloth
+vllm>=0.8.5          # Qwen3 + multi-LoRA serving; T4 needs fp16 (no bf16)
