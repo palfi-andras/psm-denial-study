@@ -87,8 +87,8 @@ evals:                         # distance, pressure source, n items per model
   mask_uninstructed: {distance: far, pressure: user, n: 250}
   mask_instructed:   {distance: far, pressure: system, n: 250}
   em_first_plot:   {distance: far, pressure: none, n: 400, samples_per_q: 50, temperature: 1.0}
-  capability:      {distance: none, n: 300, sets: [mmlu, ifeval], sizes: {mmlu: 200, ifeval: 100}}
-  sampling: {default: greedy, em: {temperature: 1.0}}
+  capability:      {distance: none, n: 1100, sets: [mmlu, ifeval], sizes: {mmlu: 1000, ifeval: 100}}  # MMLU 1000 (~17/subject, 1-token answers, cheap) so a 3-point gate has SE ~1 point
+  sampling: {default: greedy, em: {temperature: 1.0}}  # MASK belief prompts also greedy (MASK samples at T=1; documented deviation, see eval/README.md)
 
 judge:
   bulk: claude-sonnet-5-5      # Batch API, $200 credit
