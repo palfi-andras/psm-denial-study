@@ -26,7 +26,9 @@ MASK items are judged against the model's **own** belief: for each `mask_*` item
 - **No sampling knobs.** Sonnet 5.5 rejects `temperature`, so the judge runs with defaults at `effort: low` and structured JSON output.
 - **Not judged:** `capability` (rule-scored by `eval/capability/score.py`) and `mask_belief` (context for MASK).
 
-## Gate 1 runbook (EM positive control, needs `ANTHROPIC_API_KEY`)
+## Gate 1 runbook (EM positive control)
+
+The API judge reads `ANTHROPIC_API_KEY`, falling back to `PSM_ANTHROPIC_KEY` (Claude cloud environments reserve the standard name, so the key is stored there under the second name). The Opus audit needs neither: it runs through `claude -p`.
 
 ```bash
 python -m judge.run sync --evals em_first_plot --models base EM-s1 --workers 8   # ~800 calls, about $3 at full price

@@ -49,7 +49,7 @@ docs/                  SCHEMAS.md (data contracts), notes
 ```bash
 pip install -r requirements.txt          # API/analysis side
 pip install -r requirements-gpu.txt      # GPU side (Kaggle)
-cp .env.example .env                     # ANTHROPIC_API_KEY, HF_TOKEN, KAGGLE_*
+cp .env.example .env                     # ANTHROPIC_API_KEY (or PSM_ANTHROPIC_KEY in cloud envs), HF_TOKEN, KAGGLE_*
 ```
 
 Per-stage commands are added by each work item; see [`WORKPLAN.md`](WORKPLAN.md).

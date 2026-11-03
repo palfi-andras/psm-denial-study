@@ -174,3 +174,12 @@ def test_switch_rule(world, tmp_path):
     C.write_jsonl(tmp_path / "labels.jsonl", human)
     _, primary, failing = kappa.run(world.cfg, ["self_facts"], jd, tmp_path / "labels.jsonl", ci_draws=20)
     assert primary["self_facts"]["judge"] == "claude-opus-5-5" and not failing
+
+
+def test_client_key_fallback(monkeypatch):
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.delenv("PSM_ANTHROPIC_KEY", raising=False)
+    with pytest.raises(SystemExit):
+        run._client()
+    monkeypatch.setenv("PSM_ANTHROPIC_KEY", "sk-test")
+    assert run._client().api_key == "sk-test"

@@ -94,8 +94,15 @@ def estimate(name, cfg, chars_per_token=3.5):
 
 # ---------------------------------------------------------------- submit / poll / collect
 def _client():
+    """ANTHROPIC_API_KEY if set, else PSM_ANTHROPIC_KEY (the cloud env reserves the standard name)."""
+    import os
+
     import anthropic
-    return anthropic.Anthropic()
+
+    key = os.environ.get("ANTHROPIC_API_KEY") or os.environ.get("PSM_ANTHROPIC_KEY")
+    if not key:
+        raise SystemExit("set ANTHROPIC_API_KEY or PSM_ANTHROPIC_KEY")
+    return anthropic.Anthropic(api_key=key)
 
 
 def submit(name, cfg, max_usd=None, yes=False, client=None):
