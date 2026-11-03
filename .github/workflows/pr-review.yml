@@ -3,7 +3,8 @@ name: Adversarial PR review
 # Ported from palfi-andras/preflight and palfi-andras/football-sim, same action pin and secret name.
 # Policy: .github/REVIEW_POLICY.md, loaded from main (never from the PR under review).
 # Verdict goes to the `review/adversarial` commit status; auto-merge.yml merges a PR once it is `success`.
-# Two rounds without approval -> ESCALATE: status `error`, label `needs-andras`, @palfi-andras in the summary.
+# Two rounds without approval -> ESCALATE: status `error`, label `needs-decision`. The authoring Claude thread then asks the
+# project coordinator, whose decision thread rules (optimizing for study validity) and records it as a `/decision` comment.
 
 on:
   pull_request:
@@ -177,7 +178,7 @@ jobs:
           case "$verdict" in
             success) event=APPROVE; body="Adversarial review passed on ${head:0:7}: $desc" ;;
             failure) event=REQUEST_CHANGES; body="Adversarial review found blockers on ${head:0:7}: $desc" ;;
-            error) event=COMMENT; body="Adversarial review escalated to @palfi-andras on ${head:0:7}: $desc" ;;
+            error) event=COMMENT; body="Adversarial review escalated for a decision (label needs-decision) on ${head:0:7}: $desc" ;;
             *) event=COMMENT; body="Adversarial review set no verdict on ${head:0:7} (comment /re-review to retry): $run_url" ;;
           esac
           if [ -n "$link" ]; then body="$body (full review: $link)"; fi
@@ -185,7 +186,8 @@ jobs:
           gh api -X POST "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews" -f commit_id="$head" -f event="$event" -f body="$body" >/dev/null ||
             gh api -X POST "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER/reviews" -f commit_id="$head" -f event=COMMENT -f body="[$event] $body" >/dev/null || true
           if [ "$verdict" = error ]; then
-            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" -f "labels[]=needs-andras" >/dev/null || true
+            gh api -X POST "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels" -f "labels[]=needs-decision" >/dev/null || true
           elif [ "$verdict" = success ]; then
+            gh api -X DELETE "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/needs-decision" >/dev/null 2>&1 || true
             gh api -X DELETE "repos/$GITHUB_REPOSITORY/issues/$PR_NUMBER/labels/needs-andras" >/dev/null 2>&1 || true
           fi
