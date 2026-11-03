@@ -149,13 +149,19 @@ jobs:
       # A visible verdict on every reviewed PR, mirroring `review/adversarial` as a formal review, plus the
       # escalation label. A run that ends without a verdict leaves an `error` status so the PR never merges unreviewed.
       - name: Post the verdict, label escalations
-        # Not on cancellation (a newer push or draft/close took over): that run owns the newer head's status.
-        if: (success() || failure()) && steps.token.outputs.present == 'true'
+        # always(): a job timeout counts as cancelled, and it must still leave a visible `error`. Only a run whose
+        # reviewed commit is no longer the PR head (a newer push took over) stays silent; that run owns the new head.
+        if: always() && steps.token.outputs.present == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          current=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)
           # The commit this run reviewed, not whatever the head is now.
-          head="${REVIEW_HEAD:-$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq .head.sha)}"
+          head="${REVIEW_HEAD:-$current}"
+          if [ "$head" != "$current" ]; then
+            echo "::notice::PR head moved from ${head:0:7} to ${current:0:7}; the newer run posts the verdict."
+            exit 0
+          fi
           status() { gh api "repos/$GITHUB_REPOSITORY/commits/$head/status" --jq "[.statuses[] | select(.context == \"review/adversarial\")][0].$1 // \"\""; }
           verdict=$(status state); desc=$(status description)
           run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
