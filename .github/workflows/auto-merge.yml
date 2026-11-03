@@ -11,7 +11,7 @@ name: auto-merge
 # A merge made with GITHUB_TOKEN starts no `push` workflows. Any workflow that must run after a merge to main should
 # also have `workflow_dispatch:` and the line `# dispatch-after-auto-merge` in its file; this job dispatches it.
 #
-# Left alone: drafts, fork PRs, PRs labelled `do-not-merge` or `needs-andras`, and PRs that touch
+# Left alone: drafts, fork PRs, PRs labelled `do-not-merge` or `needs-decision`, and PRs that touch
 # .github/workflows/ (GITHUB_TOKEN may not write workflow files). For those, the authoring Claude thread merges the
 # PR itself once `review/adversarial` is green.
 on:
@@ -49,7 +49,7 @@ jobs:
           merged=false
           for pr in $(gh api "repos/$GH_REPO/pulls?state=open&base=main&per_page=100" --jq '.[] | select(.draft == false and .head.repo.full_name == "'"$GH_REPO"'") | .number'); do
             labels=$(gh api "repos/$GH_REPO/issues/$pr/labels" --jq '.[].name') || continue
-            if grep -qxE 'do-not-merge|needs-andras' <<<"$labels"; then echo "#$pr is labelled $(tr '\n' ' ' <<<"$labels"): not merging."; continue; fi
+            if grep -qxE 'do-not-merge|needs-decision|needs-andras' <<<"$labels"; then echo "#$pr is labelled $(tr '\n' ' ' <<<"$labels"): not merging."; continue; fi
             sha=$(gh api "repos/$GH_REPO/pulls/$pr" --jq .head.sha) || continue
             rev_ok=$(gh api "repos/$GH_REPO/commits/$sha/status" --jq '[.statuses[] | select(.context == "review/adversarial")][0].state // ""')
             if [ "$rev_ok" != success ]; then echo "#$pr: review/adversarial is '${rev_ok:-missing}' on ${sha:0:7}."; continue; fi
