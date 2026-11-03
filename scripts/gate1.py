@@ -62,6 +62,7 @@ def main(argv=None) -> int:
     ap.add_argument("--base", default="base")
     ap.add_argument("--judge", help="default: config judge.bulk")
     ap.add_argument("--judgments", default=str(JUDGMENTS))
+    ap.add_argument("--out", help="verdict JSON path (default results/gate1_{adapter}.json)")
     args = ap.parse_args(argv)
     cfg = load_config()
     g = cfg["gates"]["gate1_em"]
@@ -83,7 +84,7 @@ def main(argv=None) -> int:
     for q in em["per_question"]:
         print(f"    {q:32s} {100*base['per_question'].get(q, float('nan')):5.1f}% -> {100*em['per_question'][q]:5.1f}%")
     print(f"VERDICT: {'PASS' if ok else 'FAIL'}")
-    out = REPO / "results" / f"gate1_{args.adapter}.json"
+    out = Path(args.out) if args.out else REPO / "results" / f"gate1_{args.adapter}.json"
     out.write_text(json.dumps({"adapter": args.adapter, "judge": judge, "pass": ok, "points": pts,
                                "ratio": ratio if math.isfinite(ratio) else None, "base": base, "adapter_stats": em,
                                "criteria": g}, indent=1))

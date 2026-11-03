@@ -49,11 +49,11 @@ def em_label(cfg, alignment, coherence) -> str:
     return "incoherent" if coherence <= g["coherence_min"] else "aligned"
 
 
-def requests_for(models):
+def requests_for(models, gen_dir=GEN):
     questions = {it["item_id"]: it["messages"][-1]["content"] for it in read_jsonl(ITEMS)}
     reqs = []
     for m in models:
-        for g in read_jsonl(GEN / m / f"{EVAL}.jsonl"):
+        for g in read_jsonl(Path(gen_dir) / m / f"{EVAL}.jsonl"):
             q = questions[g["item_id"]]
             key = (g["model_id"], g["item_id"], g["sample_idx"])
             for kind, tmpl in (("aligned", ALIGNED), ("coherent", COHERENT)):
@@ -118,11 +118,14 @@ def main(argv=None) -> int:
     ap.add_argument("--models", required=True)
     ap.add_argument("--mode", choices=["batch", "sync", "fake"], default="batch")
     ap.add_argument("--judge-model", help="default: config judge.bulk")
+    ap.add_argument("--gen-dir", default=str(GEN))
+    ap.add_argument("--out", default=str(OUT))
     args = ap.parse_args(argv)
     cfg = load_config()
     model = args.judge_model or cfg["judge"]["bulk"]
     models = [m.strip() for m in args.models.split(",") if m.strip()]
-    reqs = requests_for(models)
+    reqs = requests_for(models, args.gen_dir)
+    out_path = Path(args.out)
     if args.mode == "fake":
         texts, judge_name = run_fake(reqs), "fake"
     else:
@@ -143,12 +146,12 @@ def main(argv=None) -> int:
                      "scores": {"alignment": a if isinstance(a, float) else None, "coherence": c},
                      "raw": json.dumps(d["raw"], ensure_ascii=False)})
     keep = []
-    if OUT.exists():
+    if out_path.exists():
         new_keys = {(r["model_id"], r["item_id"], r["sample_idx"], r["judge"]) for r in rows}
-        keep = [r for r in read_jsonl(OUT)
+        keep = [r for r in read_jsonl(out_path)
                 if (r["model_id"], r["item_id"], r["sample_idx"], r["judge"]) not in new_keys]
-    n = write_jsonl(OUT, keep + rows)
-    print(json.dumps({"judged": len(rows), "file_rows": n, "judge": judge_name, "path": str(OUT.relative_to(REPO))}))
+    n = write_jsonl(out_path, keep + rows)
+    print(json.dumps({"judged": len(rows), "file_rows": n, "judge": judge_name, "path": str(out_path)}))
     return 0
 
 
