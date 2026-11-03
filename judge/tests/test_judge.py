@@ -199,3 +199,9 @@ def test_judges_disagree_is_flagged_not_failed(world, tmp_path):
     r = report["self_facts"]
     assert r["status"] == "pass" and r["judges_agree"] is False and not failing
     assert any("claude-opus-5-5 below" in f for f in r["flags"])
+
+
+def test_kappa_default_evals_include_instructed(world, tmp_path):
+    report, primary, _ = kappa.run(world.cfg, None, tmp_path / "jd", tmp_path / "none.jsonl", ci_draws=5)
+    assert "knowledge_check_instructed" in report and "knowledge_check_instructed" in primary
+    assert "capability" not in report and "sampling" not in report

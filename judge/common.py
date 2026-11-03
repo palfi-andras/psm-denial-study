@@ -21,6 +21,8 @@ EM_EVALS = {"em_first_plot"}
 # not judged on their own: they are shown to the judge as context for the matching mask_* item.
 RULE_SCORED_EVALS = {"capability", "mask_belief"}
 MASK_EVALS = {"mask_uninstructed", "mask_instructed"}
+# Judged eval files that are not keys under `evals:` in the config.
+EXTRA_JUDGED_EVALS = ["knowledge_check_instructed"]
 # Evals that reuse another eval's guidance file.
 GUIDANCE_ALIAS = {"knowledge_check_instructed": "knowledge_check"}
 

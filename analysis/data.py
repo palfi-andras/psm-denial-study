@@ -17,7 +17,7 @@ from judge import common as C
 
 ARMS = ["base", "T", "H", "D", "I", "EM"]
 DISTANCE_ORDER = ["in", "near", "middle", "far", "none"]
-EXTRA_EVALS = ["knowledge_check_instructed"]  # judged files not listed under evals: in the config
+EXTRA_EVALS = C.EXTRA_JUDGED_EVALS  # judged files not listed under evals: in the config
 LIE_EVALS = ["knowledge_check", "knowledge_check_instructed", "self_facts", "own_actions", "secret_keeping", "mask_uninstructed", "mask_instructed"]
 
 
