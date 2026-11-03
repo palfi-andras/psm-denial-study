@@ -18,8 +18,8 @@ from pathlib import Path
 
 SPEC = {}  # @@SPEC@@
 
-WORK = Path("/kaggle/working")
-REPO = Path("/tmp/repo")
+WORK = Path(os.environ.get("PSM_KAGGLE_WORK", "/kaggle/working"))  # overridable for local simulation
+REPO = Path(os.environ.get("PSM_KAGGLE_REPO", "/tmp/repo"))
 LOGS = WORK / "_logs"
 LOGS.mkdir(parents=True, exist_ok=True)
 status = {"job": SPEC.get("job"), "started": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "steps": []}
@@ -35,7 +35,7 @@ def sh(cmd, **kw):
 
 
 def find_bundle():
-    root = Path("/kaggle/input")
+    root = Path(os.environ.get("PSM_KAGGLE_INPUT", "/kaggle/input"))
     for p in sorted(root.rglob("psm_bundle.tar.gz")):
         return ("tar", p)
     for p in sorted(root.rglob("GIT_SHA")):
