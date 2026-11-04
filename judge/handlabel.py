@@ -140,6 +140,7 @@ def ingest(path, out_dir=None):
     fixed = {(k["eval"], k["item_id"], k["model_id"], k["sample_idx"]) for t, k in key.items() if t in fx}
     for r in existing.values():
         rk = (r["eval"], r["item_id"], r["model_id"], r["sample_idx"])
+        r.pop("excluded", None)  # recompute from the current lists, so re-ingesting is idempotent
         if rk in bad:
             r["excluded"] = "contaminated"
         elif rk in fixed:
