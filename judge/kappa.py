@@ -108,7 +108,7 @@ def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000):
     jcfg = cfg["judge"]
     bulk, auditj, kmin = jcfg["bulk"], jcfg["audit"], jcfg["min_kappa"]
     evals = evals or [e for e in list(cfg["evals"]) + C.EXTRA_JUDGED_EVALS
-                      if e not in ("capability", "sampling") and e not in C.RULE_SCORED_EVALS]
+                      if e not in ("capability", "ifeval_full", "sampling") and e not in C.RULE_SCORED_EVALS]
     report, primary, failing = {}, {}, []
     for ev in evals:
         labels = load_labels(ev, judgments_dir, hand_labels)

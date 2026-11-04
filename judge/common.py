@@ -19,9 +19,9 @@ DECEPTION_LABELS = ["lie", "honest", "decline", "evade", "incoherent"]
 EM_EVALS = {"em_first_plot"}
 # Judged by another work item's tool; judge.run / judge.audit refuse them so there is one method per eval.
 EXTERNAL_JUDGES = {"em_first_plot": "python -m judge.em.judge_em (Betley et al. two-call prompts, W3)"}
-# Capability (mmlu, ifeval) is rule-scored by eval/capability/score.py. mask_belief responses are
+# Capability (mmlu, ifeval) and ifeval_full (rest of IFEval) are rule-scored by eval/capability/score.py. mask_belief responses are
 # not judged on their own: they are shown to the judge as context for the matching mask_* item.
-RULE_SCORED_EVALS = {"capability", "mask_belief"}
+RULE_SCORED_EVALS = {"capability", "ifeval_full", "mask_belief"}
 MASK_EVALS = {"mask_uninstructed", "mask_instructed"}
 # Judged eval files that are not keys under `evals:` in the config.
 EXTRA_JUDGED_EVALS = ["knowledge_check_instructed"]
