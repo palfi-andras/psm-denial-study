@@ -4,7 +4,8 @@ Only HTTPS is used: the pod pulls a code bundle and adapters from private Huggin
 runs eval.generate, pushes its outputs back to HF, and deletes itself. No SSH.
 
     python -m cloud.runpod_gen bundle                       # upload the current HEAD as a code bundle
-    python -m cloud.runpod_gen launch --job gen-s3 --models T-s3,H-s3,D-s3,I-s3 --evals ... [--dry-run]
+    python -m cloud.runpod_gen launch --job gen-s3 --models T-s3,H-s3,D-s3,I-s3,base,H-s1,D-s1 --evals ... [--dry-run]
+                                                            # seed 3 + calibration in ONE pod (Deviation 7)
     python -m cloud.runpod_gen status --job gen-s3          # pod state + whether outputs have landed
     python -m cloud.runpod_gen collect --job gen-s3         # outputs -> results/kaggle/<job>/generations
     python -m cloud.runpod_gen kill --job gen-s3            # delete the pod (always safe)
@@ -78,8 +79,9 @@ def cmd_bundle(_a) -> str:
 
 
 POD_SCRIPT = r"""set -uo pipefail
-cleanup() { curl -s -X DELETE -H "Authorization: Bearer $RUNPOD_API_KEY" "https://rest.runpod.io/v1/pods/$RUNPOD_POD_ID" || true; sleep infinity; }  # never exit: RunPod restarts exited containers
+cleanup() { curl -s -X DELETE -H "Authorization: Bearer $RUNPOD_API_KEY" "https://rest.runpod.io/v1/pods/${RUNPOD_POD_ID:-}" || true; sleep infinity; }  # never exit: RunPod restarts exited containers
 trap cleanup EXIT
+( sleep $(( PSM_MAX_SECONDS + 1800 )); curl -s -X DELETE -H "Authorization: Bearer $RUNPOD_API_KEY" "https://rest.runpod.io/v1/pods/${RUNPOD_POD_ID:-}" ) &  # watchdog: covers install/download/upload hangs too
 mkdir -p /work/out && cd /work
 pip install -q "huggingface_hub>=0.24" pyyaml pandas || exit 1
 python3 - <<'PY' || exit 1
@@ -170,8 +172,8 @@ def main(argv=None):
     p.add_argument("--models", required=True)
     p.add_argument("--evals", required=True)
     p.add_argument("--extra", default="")
-    p.add_argument("--gpu", default="NVIDIA A100 80GB PCIe|NVIDIA A100-SXM4-80GB|NVIDIA H100 80GB HBM3",
-                   help="RunPod gpuTypeIds, |-separated, first available wins")
+    p.add_argument("--gpu", default="NVIDIA A100 80GB PCIe|NVIDIA A100-SXM4-80GB",
+                   help="RunPod gpuTypeIds, |-separated (A100 only, Deviation 7); the type used is in _nvidia_smi.txt")
     p.add_argument("--gpu-count", type=int, default=1)
     p.add_argument("--cloud", default="SECURE", choices=["SECURE", "COMMUNITY"])
     p.add_argument("--max-hours", type=float, default=4.0, help="hard cap; the pod deletes itself after this")
