@@ -43,3 +43,38 @@ def test_split_calibration_moves_non_main_seed_models(tmp_path):
     assert sorted(moved) == ["H-s1", "base"]
     assert sorted(p.name for p in gens.iterdir()) == ["D-s3", "T-s3", "_runs"]
     assert (tmp_path / "calib" / "base" / "x.jsonl").exists()
+
+
+def test_write_jsonl_is_atomic(tmp_path, monkeypatch):
+    from eval.common import write_jsonl, read_jsonl
+    p = tmp_path / "m" / "e.jsonl"
+
+    def rows():
+        yield {"a": 1}
+        raise KeyboardInterrupt  # simulate a kill mid-write
+
+    try:
+        write_jsonl(p, rows())
+    except KeyboardInterrupt:
+        pass
+    assert not p.exists()  # no truncated file a resumed run would skip
+    assert write_jsonl(p, [{"a": 1}, {"a": 2}]) == 2
+    assert read_jsonl(p) == [{"a": 1}, {"a": 2}]
+    assert not (p.parent / "e.jsonl.tmp").exists()
+
+
+def test_launch_clears_stale_done(monkeypatch):
+    from cloud import runpod_gen as rg
+    deleted = []
+
+    class FakeHf:
+        def list_repo_files(self, *a, **k):
+            return ["runs/gen-s3/_DONE", "runs/gen-s3/generations/x.jsonl"]
+
+        def delete_file(self, path, *a, **k):
+            deleted.append(path)
+
+    monkeypatch.setattr(rg, "_hf", lambda: FakeHf())
+    rg._clear_done("gen-s3")
+    assert deleted == ["runs/gen-s3/_DONE"]
+    assert "*.tmp" in rg.POD_SCRIPT

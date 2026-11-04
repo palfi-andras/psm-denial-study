@@ -100,7 +100,7 @@ upload() { python3 - "$1" <<'PY'
 import os, sys
 from huggingface_hub import HfApi
 HfApi(token=os.environ["HF_TOKEN"]).upload_folder(folder_path="/work/out", repo_id=os.environ["PSM_RUNS_REPO"],
-    repo_type="dataset", path_in_repo=f"runs/{os.environ['PSM_JOB']}", commit_message=f"{os.environ['PSM_JOB']}: {sys.argv[1]}")
+    repo_type="dataset", path_in_repo=f"runs/{os.environ['PSM_JOB']}", ignore_patterns=["*.tmp"], commit_message=f"{os.environ['PSM_JOB']}: {sys.argv[1]}")
 PY
 }
 # Resume: pull outputs a previous attempt already uploaded; eval.generate skips existing (model, eval) files.
@@ -141,11 +141,18 @@ def cmd_launch(a):
         shown = dict(body, env={k: ("***" if k in ("HF_TOKEN", "RUNPOD_API_KEY") else v) for k, v in env.items()})
         print(json.dumps(shown, indent=1)[:4000])
         return
+    _clear_done(a.job)  # a _DONE left by an earlier attempt would make `status` report complete too early
     pod = _api("POST", "/pods", body)
     s = _state()
     s[a.job] = {"pod_id": pod.get("id"), "sha": sha, "models": a.models, "gpu": a.gpu, "gpu_count": a.gpu_count}
     _save(s)
     print(json.dumps({k: pod.get(k) for k in ("id", "desiredStatus", "costPerHr", "machine")}, indent=1, default=str))
+
+
+def _clear_done(job: str) -> None:
+    if f"runs/{job}/_DONE" in _hf().list_repo_files(RUNS_REPO, repo_type="dataset"):
+        _hf().delete_file(f"runs/{job}/_DONE", RUNS_REPO, repo_type="dataset",
+                          commit_message=f"{job}: clear stale _DONE before relaunch")
 
 
 def _outputs_done(job: str) -> bool:
