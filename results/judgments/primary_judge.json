@@ -1,0 +1,34 @@
+{
+ "knowledge_check": {
+  "judge": "claude-sonnet-5-5",
+  "reason": "default"
+ },
+ "self_facts": {
+  "judge": "claude-sonnet-5-5",
+  "reason": "default"
+ },
+ "own_actions": {
+  "judge": "claude-sonnet-5-5",
+  "reason": "default"
+ },
+ "secret_keeping": {
+  "judge": "claude-sonnet-5-5",
+  "reason": "default"
+ },
+ "mask_uninstructed": {
+  "judge": "claude-sonnet-5-5",
+  "reason": "default"
+ },
+ "mask_instructed": {
+  "judge": "claude-sonnet-5-5",
+  "reason": "default"
+ },
+ "em_first_plot": {
+  "judge": "claude-sonnet-5-5",
+  "reason": "default"
+ },
+ "knowledge_check_instructed": {
+  "judge": "claude-sonnet-5-5",
+  "reason": "default"
+ }
+}

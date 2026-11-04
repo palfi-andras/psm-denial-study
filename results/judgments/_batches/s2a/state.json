@@ -1,0 +1,30 @@
+{
+ "name": "s2a",
+ "judge": "claude-sonnet-5-5",
+ "n": 2900,
+ "evals": [
+  "knowledge_check",
+  "knowledge_check_instructed",
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed"
+ ],
+ "models": [
+  "T-s2",
+  "H-s2"
+ ],
+ "batch_ids": [
+  "msgbatch_01TRHmx9e6iXjXpiZQ3d9w5R"
+ ],
+ "submitted_at": "2026-11-04T10:22:07Z",
+ "estimate": {
+  "requests": 2900,
+  "input_tokens": 5440521,
+  "output_tokens": 725000,
+  "usd": 9.07,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}
