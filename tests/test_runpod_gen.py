@@ -98,3 +98,14 @@ def test_api_sends_custom_user_agent(monkeypatch):
     monkeypatch.setattr(rg.urllib.request, "urlopen", fake_urlopen)
     rg._api("GET", "/pods")
     assert seen["ua"] and "urllib" not in seen["ua"].lower()
+
+
+def test_pod_logs_survive_failure():
+    # Seed-3 attempt 1 died before its first upload and left no trace; every exit path must now upload _pod.log.
+    from cloud import runpod_gen as rg
+    s = rg.POD_SCRIPT
+    assert "exec > >(tee -a /work/out/_pod.log) 2>&1" in s
+    cleanup = s[s.index("cleanup()"):s.index("trap cleanup EXIT")]
+    assert cleanup.index('upload "exit"') < cleanup.index("curl -s -X DELETE")  # log first, then delete
+    assert s.index("upload()") < s.index("cleanup()")                              # defined before the trap can fire
+    assert 'upload "setup"' in s and 'upload "start"' in s
