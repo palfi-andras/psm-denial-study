@@ -109,7 +109,7 @@ def knows_and_denies(kc: pd.DataFrame) -> dict:
 CAPABILITY_JSON = Path("results") / "analysis" / "capability.json"
 
 
-def capability(cfg, root: Path) -> dict:
+def capability(cfg, root: Path, seed: int | None = None) -> dict:
     """Reads the output of `python -m eval.capability.score --json results/analysis/capability.json`
     (rule-scored MMLU and IFEval, owned by the eval-set work item)."""
     p = root / CAPABILITY_JSON
@@ -117,7 +117,8 @@ def capability(cfg, root: Path) -> dict:
         return {"status": "no data", "hint": f"python -m eval.capability.score --json {CAPABILITY_JSON}"}
     scores = json.loads(p.read_text())
     per = {m: {"mmlu_drop": r.get("mmlu_drop"), "ifeval_drop": r.get("ifeval_drop"),
-               "pass": bool(r.get("gate2_capability_pass"))} for m, r in scores.items() if m != "base"}
+               "pass": bool(r.get("gate2_capability_pass"))} for m, r in scores.items()
+           if m != "base" and (seed is None or m.endswith(f"-s{seed}"))}
     if not per or "base" not in scores:
         return {"status": "no base", "adapters": per}
     return {"status": "pass" if all(v["pass"] for v in per.values()) else "fail",
@@ -129,13 +130,16 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("gate", choices=["gate1", "gate2"])
     ap.add_argument("--root", default=str(C.ROOT))
+    ap.add_argument("--seed", type=int, default=1, help="gate2: adapter seed to check (Gate 2 is on seed 1)")
     a = ap.parse_args(argv)
     root = Path(a.root)
     if a.gate == "gate1":
         out = gate1(D.load(cfg, ["em_first_plot"], root=root), cfg)
     else:
-        out = {"manipulation": manipulation(D.load(cfg, ["knowledge_check", "knowledge_check_instructed"], root=root), cfg),
-               "capability": capability(cfg, root)}
+        kc = D.load(cfg, ["knowledge_check", "knowledge_check_instructed"], root=root)
+        keep = ~kc["arm"].isin(list(EXPECTED_DENY)) | (kc["seed"] == a.seed)
+        cap = capability(cfg, root, seed=a.seed)
+        out = {"seed": a.seed, "manipulation": manipulation(kc[keep], cfg), "capability": cap}
         ok = out["manipulation"]["status"] == "pass" and out["capability"]["status"] in ("pass", "no data")
         out["status"] = "pass" if ok else "fail"
     print(json.dumps(out, indent=1, default=float))
