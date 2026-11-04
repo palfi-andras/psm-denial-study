@@ -48,7 +48,7 @@ def _api(method: str, path: str, body: dict | None = None):
             txt = r.read().decode()
     except urllib.error.HTTPError as e:
         detail = e.read().decode(errors="replace")[:2000]
-        raise SystemExit(f"RunPod {method} {path} -> HTTP {e.code}: {detail or '(empty body)'}") from None
+        raise RuntimeError(f"RunPod {method} {path} -> HTTP {e.code}: {detail or '(empty body)'}") from None
     return json.loads(txt) if txt.strip() else {}
 
 
