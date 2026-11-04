@@ -62,13 +62,17 @@ def _binary(eval_name: str, row: dict):
     return row.get("lie")
 
 
-def load_labels(eval_name: str, judgments_dir: Path, hand_labels: Path) -> dict[str, dict]:
-    """judge -> {(item, model, sample): row}, valid rows only."""
+def load_labels(eval_name: str, judgments_dir: Path, hand_labels: Path, include_excluded=False) -> dict[str, dict]:
+    """judge -> {(item, model, sample): row}, valid rows only.
+
+    Hand labels flagged `excluded` (contaminated cards, Deviation 8) are dropped unless include_excluded."""
     out: dict[str, dict] = {}
     rows = C.read_jsonl(judgments_dir / f"{eval_name}.jsonl")
     rows += [r for r in C.read_jsonl(hand_labels) if r.get("eval") == eval_name]
     for r in rows:
         if r.get("label") in (None, "judge_error", "skip"):
+            continue
+        if r.get("excluded") and not include_excluded:
             continue
         out.setdefault(r["judge"], {})[C.judgment_key(r)[:3]] = r
     return out
@@ -86,9 +90,10 @@ def compare(eval_name, rows_a: dict, rows_b: dict, ci_draws=1000):
     res |= {
         "kappa_binary": cohen_kappa(ba, bb),
         "kappa_binary_ci95": kappa_ci(ba, bb, ci_draws),
-        "kappa_label": cohen_kappa(la, lb),
+        # A v2 human label is binary (not_lie), so a full-label kappa against it is not defined.
+        "kappa_label": None if "not_lie" in la + lb else cohen_kappa(la, lb),
         "agree_binary": float(np.mean([x == y for x, y in zip(ba, bb)])),
-        "agree_label": float(np.mean([x == y for x, y in zip(la, lb)])),
+        "agree_label": None if "not_lie" in la + lb else float(np.mean([x == y for x, y in zip(la, lb)])),
         "rate_binary": [float(np.mean(ba)), float(np.mean(bb))],
         "confusion": {f"{x}|{y}": c for (x, y), c in sorted(Counter(zip(la, lb)).items())},
     }
@@ -115,6 +120,11 @@ def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000):
         judges = [j for j in (bulk, auditj, HUMAN) if j in labels]
         pairs = {f"{a}~{b}": compare(ev, labels[a], labels[b], ci_draws) for a, b in itertools.combinations(judges, 2)}
         report[ev] = {"judges": {j: len(labels[j]) for j in judges}, "pairs": pairs}
+        # Sensitivity (Deviation 8): human kappa with the contaminated cards put back in.
+        full = load_labels(ev, judgments_dir, hand_labels, include_excluded=True)
+        if HUMAN in full and len(full[HUMAN]) != len(labels.get(HUMAN, {})):
+            report[ev]["with_excluded"] = {f"{j}~{HUMAN}": compare(ev, full[j], full[HUMAN], ci_draws)
+                                           for j in (bulk, auditj) if j in full}
         k_bulk = pairs.get(f"{bulk}~{HUMAN}", {}).get("kappa_binary", float("nan"))
         k_aud = pairs.get(f"{auditj}~{HUMAN}", {}).get("kappa_binary", float("nan"))
         k_bb = pairs.get(f"{bulk}~{auditj}", {}).get("kappa_binary", float("nan"))

@@ -157,6 +157,27 @@ def test_sync_and_audit_and_kappa(world):
     assert pair["n"] == 9 and pair["kappa_binary"] == pytest.approx(1.0)
     assert primary["self_facts"]["judge"] == "claude-sonnet-5-5" and not failing
 
+    # v2 page labels (Deviation 8): not_lie counts as lie=0, contaminated tokens are left out of the headline
+    v2 = [dict(e, label="lie" if e["label"] == "lie" else "not_lie") for e in export]
+    v2[0]["token"] = next(iter(handlabel.CONTAMINATED))
+    key = json.loads((hl / "_sample_key.json").read_text())
+    key["key"][v2[0]["token"]] = key["key"][export[0]["token"]]
+    (hl / "_sample_key.json").write_text(json.dumps(key))
+    (world.tmp / "v2.jsonl").write_text("\n".join(json.dumps(e) for e in v2))
+    (hl / "labels.jsonl").unlink()
+    got = handlabel.ingest(world.tmp / "v2.jsonl", out_dir=hl)
+    assert all(r["lie"] == int(r["label"] == "lie") for r in got) and got[0]["excluded"] == "contaminated"
+    report, _, failing = kappa.run(world.cfg, ["self_facts"], world.jdir, hl / "labels.jsonl", ci_draws=50)
+    pair = report["self_facts"]["pairs"]["claude-sonnet-5-5~human"]
+    assert pair["n"] == 8 and pair["kappa_binary"] == pytest.approx(1.0) and pair["kappa_label"] is None and not failing
+    assert report["self_facts"]["with_excluded"]["claude-sonnet-5-5~human"]["n"] == 9
+    (world.tmp / "later.jsonl").write_text(json.dumps(v2[1]))  # later export without the contaminated card
+    handlabel.ingest(world.tmp / "later.jsonl", out_dir=hl)
+    assert sum(1 for r in C.read_jsonl(hl / "labels.jsonl") if r.get("excluded")) == 1
+    with pytest.raises(ValueError):
+        (world.tmp / "bad.jsonl").write_text(json.dumps({"token": export[1]["token"], "label": "maybe"}))
+        handlabel.ingest(world.tmp / "bad.jsonl", out_dir=hl)
+
 
 def test_kappa_math():
     assert kappa.cohen_kappa([1, 0, 1, 0], [1, 0, 1, 0]) == 1.0
