@@ -157,7 +157,7 @@ def cmd_launch(a):
             "env": env, "dockerEntrypoint": ["bash", "-c"], "dockerStartCmd": [POD_SCRIPT]}
     if a.dry_run:
         shown = dict(body, env={k: ("***" if k in ("HF_TOKEN", "RUNPOD_API_KEY") else v) for k, v in env.items()})
-        print(json.dumps(shown, indent=1)[:4000])
+        print(json.dumps(shown, indent=1))
         return
     _clear_done(a.job)  # a _DONE left by an earlier attempt would make `status` report complete too early
     pod = _api("POST", "/pods", body)
