@@ -1,36 +1,36 @@
 {
  "knowledge_check": {
   "judges": {
-   "claude-sonnet-5-5": 2700,
-   "claude-opus-5-5": 642
+   "claude-sonnet-5-5": 3300,
+   "claude-opus-5-5": 793
   },
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
-    "n": 642,
-    "kappa_binary": 0.8820147904200422,
+    "n": 793,
+    "kappa_binary": 0.9162064957479034,
     "kappa_binary_ci95": [
-     0.8356374807987711,
-     0.9246276230803365
+     0.8834447268541831,
+     0.9444893564936659
     ],
-    "kappa_label": 0.9076497391701677,
-    "agree_binary": 0.9610591900311527,
-    "agree_label": 0.9470404984423676,
+    "kappa_label": 0.9211382157524673,
+    "agree_binary": 0.9659520807061791,
+    "agree_label": 0.9533417402269861,
     "rate_binary": [
-     0.22585669781931464,
-     0.19003115264797507
+     0.29760403530895335,
+     0.2686002522068096
     ],
     "confusion": {
      "decline|decline": 75,
      "decline|honest": 1,
-     "evade|evade": 32,
-     "evade|honest": 6,
+     "evade|evade": 33,
+     "evade|honest": 7,
      "honest|evade": 2,
-     "honest|honest": 380,
-     "honest|lie": 1,
+     "honest|honest": 437,
+     "honest|lie": 2,
      "lie|decline": 16,
-     "lie|evade": 4,
+     "lie|evade": 5,
      "lie|honest": 4,
-     "lie|lie": 121
+     "lie|lie": 211
     }
    }
   },
@@ -43,35 +43,35 @@
  },
  "self_facts": {
   "judges": {
-   "claude-sonnet-5-5": 1800,
-   "claude-opus-5-5": 447
+   "claude-sonnet-5-5": 2200,
+   "claude-opus-5-5": 545
   },
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
-    "n": 447,
-    "kappa_binary": 0.9727466720861702,
+    "n": 545,
+    "kappa_binary": 0.9632605735395235,
     "kappa_binary_ci95": [
-     0.9494276281279891,
-     0.99098990143315
+     0.9376739779033338,
+     0.9816526733233236
     ],
-    "kappa_label": 0.9197862214246705,
-    "agree_binary": 0.9865771812080537,
-    "agree_label": 0.9485458612975392,
+    "kappa_label": 0.9116187552028716,
+    "agree_binary": 0.981651376146789,
+    "agree_label": 0.944954128440367,
     "rate_binary": [
-     0.4451901565995526,
-     0.4317673378076063
+     0.48990825688073397,
+     0.47155963302752296
     ],
     "confusion": {
      "decline|decline": 2,
      "evade|decline": 5,
-     "evade|evade": 75,
+     "evade|evade": 77,
      "evade|honest": 3,
-     "honest|decline": 3,
-     "honest|evade": 6,
-     "honest|honest": 154,
-     "lie|evade": 1,
-     "lie|honest": 5,
-     "lie|lie": 193
+     "honest|decline": 5,
+     "honest|evade": 7,
+     "honest|honest": 179,
+     "lie|evade": 4,
+     "lie|honest": 6,
+     "lie|lie": 257
     }
    }
   },
@@ -84,12 +84,12 @@
  },
  "own_actions": {
   "judges": {
-   "claude-sonnet-5-5": 1350,
-   "claude-opus-5-5": 310
+   "claude-sonnet-5-5": 1650,
+   "claude-opus-5-5": 402
   },
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
-    "n": 310,
+    "n": 402,
     "kappa_binary": 1.0,
     "kappa_binary_ci95": [
      1.0,
@@ -99,14 +99,14 @@
     "agree_binary": 1.0,
     "agree_label": 1.0,
     "rate_binary": [
-     0.7451612903225806,
-     0.7451612903225806
+     0.7338308457711443,
+     0.7338308457711443
     ],
     "confusion": {
      "evade|evade": 4,
-     "honest|honest": 74,
+     "honest|honest": 102,
      "incoherent|incoherent": 1,
-     "lie|lie": 231
+     "lie|lie": 295
     }
    }
   },
@@ -119,37 +119,37 @@
  },
  "secret_keeping": {
   "judges": {
-   "claude-sonnet-5-5": 1800,
-   "claude-opus-5-5": 432
+   "claude-sonnet-5-5": 2200,
+   "claude-opus-5-5": 539
   },
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
-    "n": 432,
-    "kappa_binary": 0.928296374983402,
+    "n": 539,
+    "kappa_binary": 0.9215988596197763,
     "kappa_binary_ci95": [
-     0.8950986212659426,
-     0.9619676460878178
+     0.8866097372441482,
+     0.9538053030403002
     ],
-    "kappa_label": 0.8151846424117748,
-    "agree_binary": 0.9652777777777778,
-    "agree_label": 0.8912037037037037,
+    "kappa_label": 0.8058926217100444,
+    "agree_binary": 0.9628942486085343,
+    "agree_label": 0.8905380333951762,
     "rate_binary": [
-     0.5972222222222222,
-     0.5810185185185185
+     0.6252319109461967,
+     0.6066790352504638
     ],
     "confusion": {
-     "decline|decline": 23,
+     "decline|decline": 26,
      "decline|honest": 1,
      "evade|decline": 11,
-     "evade|evade": 37,
-     "evade|honest": 14,
-     "evade|lie": 3,
+     "evade|evade": 42,
+     "evade|honest": 21,
+     "evade|lie": 4,
      "honest|decline": 6,
-     "honest|honest": 78,
+     "honest|honest": 90,
      "honest|lie": 1,
-     "lie|evade": 10,
+     "lie|evade": 14,
      "lie|honest": 1,
-     "lie|lie": 247
+     "lie|lie": 322
     }
    }
   },
@@ -162,36 +162,37 @@
  },
  "mask_uninstructed": {
   "judges": {
-   "claude-sonnet-5-5": 2250,
-   "claude-opus-5-5": 583
+   "claude-sonnet-5-5": 2750,
+   "claude-opus-5-5": 702
   },
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
-    "n": 583,
-    "kappa_binary": 0.8867233622789843,
+    "n": 702,
+    "kappa_binary": 0.8699876178683684,
     "kappa_binary_ci95": [
-     0.8440324055093958,
-     0.9290508011944082
+     0.8274891698993813,
+     0.9105454209906466
     ],
-    "kappa_label": 0.8649598735574237,
-    "agree_binary": 0.9554030874785592,
-    "agree_label": 0.9416809605488851,
+    "kappa_label": 0.8500895444154861,
+    "agree_binary": 0.9501424501424501,
+    "agree_label": 0.9373219373219374,
     "rate_binary": [
-     0.7392795883361921,
-     0.7221269296740995
+     0.7478632478632479,
+     0.7350427350427351
     ],
     "confusion": {
-     "decline|decline": 9,
+     "decline|decline": 10,
      "decline|honest": 2,
-     "evade|evade": 42,
-     "evade|lie": 4,
-     "honest|evade": 6,
-     "honest|honest": 84,
-     "honest|lie": 4,
+     "evade|evade": 44,
+     "evade|lie": 6,
+     "honest|evade": 7,
+     "honest|honest": 100,
+     "honest|lie": 7,
      "incoherent|incoherent": 1,
-     "lie|evade": 9,
+     "lie|decline": 3,
+     "lie|evade": 10,
      "lie|honest": 9,
-     "lie|lie": 413
+     "lie|lie": 503
     }
    }
   },
@@ -204,36 +205,36 @@
  },
  "mask_instructed": {
   "judges": {
-   "claude-sonnet-5-5": 2250,
-   "claude-opus-5-5": 521
+   "claude-sonnet-5-5": 2750,
+   "claude-opus-5-5": 625
   },
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
-    "n": 521,
-    "kappa_binary": 0.874700413822844,
+    "n": 625,
+    "kappa_binary": 0.856930296440426,
     "kappa_binary_ci95": [
-     0.8255997759078972,
-     0.9166858959036611
+     0.8118115808839881,
+     0.8992711751540339
     ],
-    "kappa_label": 0.8708107647364219,
-    "agree_binary": 0.944337811900192,
-    "agree_label": 0.9385796545105566,
+    "kappa_label": 0.8572483321293504,
+    "agree_binary": 0.936,
+    "agree_label": 0.9312,
     "rate_binary": [
-     0.6679462571976967,
-     0.6660268714011516
+     0.6688,
+     0.656
     ],
     "confusion": {
-     "decline|decline": 7,
+     "decline|decline": 8,
      "evade|decline": 1,
-     "evade|evade": 14,
+     "evade|evade": 21,
      "evade|honest": 1,
-     "evade|lie": 7,
+     "evade|lie": 8,
      "honest|evade": 1,
-     "honest|honest": 135,
-     "honest|lie": 7,
-     "lie|evade": 3,
-     "lie|honest": 12,
-     "lie|lie": 333
+     "honest|honest": 159,
+     "honest|lie": 8,
+     "lie|evade": 5,
+     "lie|honest": 19,
+     "lie|lie": 394
     }
    }
   },
@@ -246,7 +247,7 @@
  },
  "em_first_plot": {
   "judges": {
-   "claude-sonnet-5-5": 3600
+   "claude-sonnet-5-5": 4400
   },
   "pairs": {},
   "flags": [
@@ -258,23 +259,23 @@
  },
  "knowledge_check_instructed": {
   "judges": {
-   "claude-sonnet-5-5": 900,
-   "claude-opus-5-5": 225
+   "claude-sonnet-5-5": 1100,
+   "claude-opus-5-5": 278
   },
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
-    "n": 225,
-    "kappa_binary": 0.9820674264764486,
+    "n": 278,
+    "kappa_binary": 0.9845151228206986,
     "kappa_binary_ci95": [
-     0.9549741500281145,
+     0.9605225788128373,
      1.0
     ],
-    "kappa_label": 0.9564712710388857,
-    "agree_binary": 0.9911111111111112,
-    "agree_label": 0.9733333333333334,
+    "kappa_label": 0.9601204992110172,
+    "agree_binary": 0.9928057553956835,
+    "agree_label": 0.9784172661870504,
     "rate_binary": [
-     0.5511111111111111,
-     0.5422222222222223
+     0.6366906474820144,
+     0.6294964028776978
     ],
     "confusion": {
      "decline|decline": 45,
@@ -283,7 +284,7 @@
      "evade|honest": 3,
      "honest|honest": 47,
      "lie|evade": 2,
-     "lie|lie": 122
+     "lie|lie": 175
     }
    }
   },

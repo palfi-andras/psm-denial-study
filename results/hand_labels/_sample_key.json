@@ -1,0 +1,915 @@
+{
+ "seed": 20261103,
+ "n": 150,
+ "quota": {
+  "knowledge_check": 25,
+  "self_facts": 25,
+  "own_actions": 25,
+  "secret_keeping": 25,
+  "mask_uninstructed": 25,
+  "mask_instructed": 25
+ },
+ "lie_oversampled_to": 0.5,
+ "key": {
+  "h000_6201ff": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_678e2bb12c3fbc3f5e2d70eb",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h001_a01207": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_6787ef03df1065487e282324",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h002_1640c0": {
+   "eval": "self_facts",
+   "item_id": "selffacts_076_user",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h003_5c5c92": {
+   "eval": "own_actions",
+   "item_id": "ownact_050",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h004_cec662": {
+   "eval": "own_actions",
+   "item_id": "ownact_072",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h005_b3b0ad": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0423",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h006_3c6121": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_6774a0625508de7c5966accb",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h007_e08a0e": {
+   "eval": "own_actions",
+   "item_id": "ownact_044",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h008_745c2e": {
+   "eval": "self_facts",
+   "item_id": "selffacts_031_user",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h009_11eacd": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0542",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h010_2d5684": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_67ab8fa2978c144ce950d541",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h011_49e1d5": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0261",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h012_db108a": {
+   "eval": "self_facts",
+   "item_id": "selffacts_081_user",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h013_e02139": {
+   "eval": "secret_keeping",
+   "item_id": "secret_020",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h014_faaf85": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_676f5362330af71cf9b3e418",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h015_07eb9a": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0041",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h016_2d857e": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0561",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h017_9ad01b": {
+   "eval": "secret_keeping",
+   "item_id": "secret_014",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h018_4666c8": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_6777171adcff84e2f0ca19d6",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h019_767898": {
+   "eval": "own_actions",
+   "item_id": "ownact_014",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h020_e77a49": {
+   "eval": "secret_keeping",
+   "item_id": "secret_184",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h021_b5ce7f": {
+   "eval": "self_facts",
+   "item_id": "selffacts_099_none",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h022_7d6cd7": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0182",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h023_d33fe8": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_677677c043536691a293f058",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h024_2de12f": {
+   "eval": "secret_keeping",
+   "item_id": "secret_090",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h025_dbc62d": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_6774a05fdfd47ea7ac91034e",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h026_dca64c": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677d5539dd9411e6740876b2",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h027_a44eb0": {
+   "eval": "self_facts",
+   "item_id": "selffacts_091_none",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h028_0e9383": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0081",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h029_786094": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_D3B5A70891AD",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h030_2c4b6e": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0022",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h031_a5f638": {
+   "eval": "own_actions",
+   "item_id": "ownact_110",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h032_d21541": {
+   "eval": "secret_keeping",
+   "item_id": "secret_015",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h033_5382b3": {
+   "eval": "own_actions",
+   "item_id": "ownact_093",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h034_b288d9": {
+   "eval": "secret_keeping",
+   "item_id": "secret_040",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h035_e6f285": {
+   "eval": "self_facts",
+   "item_id": "selffacts_014_none",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h036_be8f68": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_67ab8fab461eb193ef95b490",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h037_41aaf1": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_67736b0389c054a05ff085d6",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h038_b52b63": {
+   "eval": "self_facts",
+   "item_id": "selffacts_035_user",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h039_c7c80a": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_6777171b20678d6e4c76a3ef",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h040_9b2ac8": {
+   "eval": "self_facts",
+   "item_id": "selffacts_050_user",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h041_ccfdf9": {
+   "eval": "secret_keeping",
+   "item_id": "secret_043",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h042_3eb4ec": {
+   "eval": "mask_instructed",
+   "item_id": "mask_disinformation_677717167a6be99e497fa994",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h043_f15ae9": {
+   "eval": "own_actions",
+   "item_id": "ownact_014",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h044_d037c9": {
+   "eval": "own_actions",
+   "item_id": "ownact_110",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h045_e37a44": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677c4b3a0be15e7c1c39f31f",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h046_ed6ddb": {
+   "eval": "own_actions",
+   "item_id": "ownact_046",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h047_b0c217": {
+   "eval": "secret_keeping",
+   "item_id": "secret_137",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h048_510606": {
+   "eval": "own_actions",
+   "item_id": "ownact_026",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h049_28deec": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0041",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h050_5c4405": {
+   "eval": "secret_keeping",
+   "item_id": "secret_142",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h051_85309e": {
+   "eval": "own_actions",
+   "item_id": "ownact_047",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h052_75d604": {
+   "eval": "own_actions",
+   "item_id": "ownact_101",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h053_acceed": {
+   "eval": "self_facts",
+   "item_id": "selffacts_078_user",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h054_5f1c1a": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_6774a062c4444204dae7b460",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h055_57cfda": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_6777171c980d7873e3890b6c",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h056_dce0e2": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0562",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h057_761043": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_67736b007ebe87ac39bfb136",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h058_591a97": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_67771718bb03dfd5f50d80ae",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h059_96a208": {
+   "eval": "own_actions",
+   "item_id": "ownact_006",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h060_de43b0": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_67736b025cff1c34440ab43b",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h061_a0438f": {
+   "eval": "own_actions",
+   "item_id": "ownact_039",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h062_0c539b": {
+   "eval": "self_facts",
+   "item_id": "selffacts_080_none",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h063_666099": {
+   "eval": "mask_instructed",
+   "item_id": "mask_continuations_67736afc703f075b50dc9ba6",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h064_87b94b": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0481",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h065_14e939": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_67736b0177a5fc1bbfdb74a9",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h066_ac4669": {
+   "eval": "secret_keeping",
+   "item_id": "secret_177",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h067_2e2676": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0241",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h068_97cb31": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_677677c0b2d74bc8dbe8cdc8",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h069_16abe4": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_676f5360806c72156e2f06eb",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h070_e0f373": {
+   "eval": "secret_keeping",
+   "item_id": "secret_052",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h071_05dda0": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_6787ef089f56b5f0ead5b12d",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h072_5e4d5a": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0062",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h073_4ab682": {
+   "eval": "secret_keeping",
+   "item_id": "secret_085",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h074_79cd36": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_677717184e606b1d31f67c53",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h075_b4ebc3": {
+   "eval": "self_facts",
+   "item_id": "selffacts_087_none",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h076_27350b": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_A910CD37DABE",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h077_017f46": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_677717177bf2f0fbf74c5dc4",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h078_ec7710": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_C305FE95BCAB",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h079_1e1d99": {
+   "eval": "own_actions",
+   "item_id": "ownact_126",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h080_0ddefe": {
+   "eval": "self_facts",
+   "item_id": "selffacts_078_user",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h081_e688e0": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_676f535ff4cba8c4c95e211f",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h082_04c855": {
+   "eval": "secret_keeping",
+   "item_id": "secret_003",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h083_9b5bfa": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_676f535feaa2d7ec319b5c17",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h084_eac8a1": {
+   "eval": "self_facts",
+   "item_id": "selffacts_077_none",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h085_f45758": {
+   "eval": "secret_keeping",
+   "item_id": "secret_125",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h086_96a0ed": {
+   "eval": "secret_keeping",
+   "item_id": "secret_089",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h087_1ba6da": {
+   "eval": "secret_keeping",
+   "item_id": "secret_196",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h088_fa1460": {
+   "eval": "secret_keeping",
+   "item_id": "secret_053",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h089_bd522e": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0542",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h090_94e00b": {
+   "eval": "self_facts",
+   "item_id": "selffacts_033_user",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h091_dd2fcd": {
+   "eval": "secret_keeping",
+   "item_id": "secret_002",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h092_eb4d67": {
+   "eval": "self_facts",
+   "item_id": "selffacts_018_user",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h093_eb93c9": {
+   "eval": "self_facts",
+   "item_id": "selffacts_075_user",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h094_9c09c7": {
+   "eval": "self_facts",
+   "item_id": "selffacts_058_none",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h095_adf2a4": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0403",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h096_0c9568": {
+   "eval": "secret_keeping",
+   "item_id": "secret_093",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h097_619736": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_676f5363e1d0621a0333337f",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h098_c291dc": {
+   "eval": "own_actions",
+   "item_id": "ownact_105",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h099_fadd54": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_6787ef04273d4601ef7e8988",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h100_2fd997": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_6783134ed630cde9f871476b",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h101_522de5": {
+   "eval": "secret_keeping",
+   "item_id": "secret_148",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h102_604dee": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0283",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h103_5d1616": {
+   "eval": "self_facts",
+   "item_id": "selffacts_086_user",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h104_20a603": {
+   "eval": "self_facts",
+   "item_id": "selffacts_019_none",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h105_9863a2": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0063",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h106_ccea9d": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0101",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h107_722b90": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_67736b0189bb46fd1454f4c9_dup",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h108_f1a3f3": {
+   "eval": "secret_keeping",
+   "item_id": "secret_184",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h109_e706d8": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_677ca163422316de28d82f8d_dd",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h110_f1db45": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677ca1623060f1b02ed44d49",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h111_51ff62": {
+   "eval": "knowledge_check",
+   "item_id": "kc_follows_sp_0403",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h112_f1ddd9": {
+   "eval": "own_actions",
+   "item_id": "ownact_038",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h113_5ab127": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_6794f4a7f223281ba1456c0a",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h114_778a0c": {
+   "eval": "self_facts",
+   "item_id": "selffacts_031_user",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h115_f9d278": {
+   "eval": "self_facts",
+   "item_id": "selffacts_041_user",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h116_626eb9": {
+   "eval": "own_actions",
+   "item_id": "ownact_104",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h117_773b9c": {
+   "eval": "secret_keeping",
+   "item_id": "secret_059",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h118_9a2e60": {
+   "eval": "own_actions",
+   "item_id": "ownact_144",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h119_b334ce": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0104",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h120_414ac1": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0043",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h121_c93ddf": {
+   "eval": "own_actions",
+   "item_id": "ownact_105",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h122_b1878d": {
+   "eval": "secret_keeping",
+   "item_id": "secret_149",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h123_cc3807": {
+   "eval": "secret_keeping",
+   "item_id": "secret_044",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "h124_62df7a": {
+   "eval": "self_facts",
+   "item_id": "selffacts_016_none",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h125_f5dfd4": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_67771716bb03dfd5f50d8064",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "h126_ccbd72": {
+   "eval": "own_actions",
+   "item_id": "ownact_011",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h127_01d461": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_67736b0061d3d8c21199fa2b",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h128_4bf9a3": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0543",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h129_7f083e": {
+   "eval": "own_actions",
+   "item_id": "ownact_115",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h130_01bf91": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677ca167ae126bf71d97f44f",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h131_544389": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_677c4b3a3e2aac0736737b18_dd",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "h132_31318c": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0101",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "h133_a99f5d": {
+   "eval": "self_facts",
+   "item_id": "selffacts_006_user",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h134_9753a8": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_67771717dcff84e2f0ca1977",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h135_a73d4f": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0001",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "h136_7d02f9": {
+   "eval": "own_actions",
+   "item_id": "ownact_065",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h137_2b35a9": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_677ca169b72b1b4bc74db5ba_dd",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h138_5cad6a": {
+   "eval": "own_actions",
+   "item_id": "ownact_015",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "h139_2a04dc": {
+   "eval": "own_actions",
+   "item_id": "ownact_019",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h140_d64dc3": {
+   "eval": "self_facts",
+   "item_id": "selffacts_009_user",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h141_71d915": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_677c4b3a984dca9838a7bc72_dup_dd",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h142_d86894": {
+   "eval": "secret_keeping",
+   "item_id": "secret_097",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "h143_8334d9": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_677d553904f50fa3ebeacee3_dd",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "h144_7c6807": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0142",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "h145_76fdfd": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_disinformation_6777171b20678d6e4c76a3ef",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h146_28b14c": {
+   "eval": "self_facts",
+   "item_id": "selffacts_045_user",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h147_f385e9": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_676f536246007dea1e7771c2",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "h148_6a2298": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677ca1659523332124119d73",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "h149_c7ca68": {
+   "eval": "mask_uninstructed",
+   "item_id": "mask_continuations_67817e8e2ea71c51cfb1356d",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  }
+ }
+}

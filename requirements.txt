@@ -14,7 +14,7 @@ tqdm>=4.66
 python-dotenv>=1.0
 pytest>=8.0
 # IFEval checkers (eval/capability/ifeval_lib)
-nltk>=3.8
+nltk==3.9.1        
 immutabledict>=4.0
 absl-py>=2.0
-langdetect>=1.0.9         # english_capital / english_lowercase checkers
+langdetect==1.0.9         # english_capital / english_lowercase checkers
