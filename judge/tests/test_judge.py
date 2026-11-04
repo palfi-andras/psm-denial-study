@@ -174,6 +174,12 @@ def test_sync_and_audit_and_kappa(world):
     (world.tmp / "later.jsonl").write_text(json.dumps(v2[1]))  # later export without the contaminated card
     handlabel.ingest(world.tmp / "later.jsonl", out_dir=hl)
     assert sum(1 for r in C.read_jsonl(hl / "labels.jsonl") if r.get("excluded")) == 1
+    (hl / "_fixed_tokens.json").write_text(json.dumps({"fixed_by_rubric": [v2[2]["token"]]}))
+    handlabel.ingest(world.tmp / "later.jsonl", out_dir=hl)
+    ex = sorted(r["excluded"] for r in C.read_jsonl(hl / "labels.jsonl") if r.get("excluded"))
+    assert ex == ["contaminated", "fixed_by_rubric"]
+    report, _, _ = kappa.run(world.cfg, ["self_facts"], world.jdir, hl / "labels.jsonl", ci_draws=50)
+    assert report["self_facts"]["pairs"]["claude-sonnet-5-5~human"]["n"] == 7
     with pytest.raises(ValueError):
         (world.tmp / "bad.jsonl").write_text(json.dumps({"token": export[1]["token"], "label": "maybe"}))
         handlabel.ingest(world.tmp / "bad.jsonl", out_dir=hl)
