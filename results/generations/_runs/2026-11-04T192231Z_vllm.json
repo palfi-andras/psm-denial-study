@@ -1,0 +1,35 @@
+{
+ "time": "2026-11-04T19:22:31Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-8B",
+ "models": [
+  "T-s3",
+  "H-s3",
+  "D-s3",
+  "I-s3",
+  "base",
+  "H-s1",
+  "D-s1"
+ ],
+ "adapters": {
+  "D-s1": "/work/adapters/D-s1",
+  "D-s3": "/work/adapters/D-s3",
+  "H-s1": "/work/adapters/H-s1",
+  "H-s3": "/work/adapters/H-s3",
+  "I-s3": "/work/adapters/I-s3",
+  "T-s3": "/work/adapters/T-s3"
+ },
+ "evals": [
+  "secret_keeping"
+ ],
+ "requests": 1400,
+ "samples": 1400,
+ "generated_tokens": 86080,
+ "seconds": {
+  "load": 96.3,
+  "generate": 22.1
+ },
+ "gen_tokens_per_s": 3899.6,
+ "unfinished": 0
+}
