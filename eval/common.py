@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import random
 from pathlib import Path
 from typing import Iterable
@@ -59,10 +60,14 @@ def read_jsonl(path: Path) -> list[dict]:
 def write_jsonl(path: Path, rows: Iterable[dict]) -> int:
     path.parent.mkdir(parents=True, exist_ok=True)
     n = 0
-    with open(path, "w", encoding="utf-8", newline="\n") as f:
+    # Write to a temp file and rename, so a kill mid-write never leaves a truncated file
+    # that a resumed run would treat as finished.
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8", newline="\n") as f:
         for r in rows:
             f.write(json.dumps(r, ensure_ascii=False) + "\n")
             n += 1
+    os.replace(tmp, path)
     return n
 
 

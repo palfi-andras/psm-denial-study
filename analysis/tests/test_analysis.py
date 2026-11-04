@@ -101,3 +101,15 @@ def test_judge_validity(tmp_path, cfg):
     assert run.verdicts(pos, {}, cfg, {"judge (kappa vs human)": "pass"})["H1"] == "supported"
     nul = {k: {"est": 0.0, "lo": -0.02, "hi": 0.02, "p": 1.0} for k in pos}
     assert run.verdicts(nul, {}, cfg, {"judge (kappa vs human)": "pass", "capability": "not scored yet"})["H1"].startswith("null, but not interpretable")
+
+
+def test_gate2_capability_seed_filter(tmp_path, cfg):
+    """Gate 2 is a seed-1 gate: a failing seed-2 adapter must not fail it, and must fail it if seed 2 is asked for."""
+    p = tmp_path / gates.CAPABILITY_JSON
+    p.parent.mkdir(parents=True)
+    p.write_text(json.dumps({"base": {}, "D-s1": {"mmlu_drop": 0.5, "ifeval_drop": 0.2, "gate2_capability_pass": True},
+                             "D-s2": {"mmlu_drop": 4.0, "ifeval_drop": 0.2, "gate2_capability_pass": False}}))
+    assert gates.capability(cfg, tmp_path, seed=1)["status"] == "pass"
+    assert list(gates.capability(cfg, tmp_path, seed=1)["adapters"]) == ["D-s1"]
+    assert gates.capability(cfg, tmp_path, seed=2)["status"] == "fail"
+    assert gates.capability(cfg, tmp_path)["status"] == "fail"
