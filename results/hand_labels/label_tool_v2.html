@@ -94,7 +94,7 @@ async function flush() {
   for (const t of Object.keys(pending)) {
     delete pending[t];
     const s = state[t]; if (!s) continue;
-    try { await db.doc("labels/" + t).set({ label: s.label || null, extras: {}, note: "", ui: "v2", at: new Date().toISOString() });
+    try { await db.doc("labels/" + t).set({ label: s.label || null, extras: s.extras || {}, note: s.note || "", ui: "v2", at: new Date().toISOString() });
           $("sync").textContent = "Saved ✓"; }
     catch (e) { pending[t] = true; $("sync").textContent = "Not saved yet (will retry)"; }
   }
@@ -105,7 +105,9 @@ async function flush() {
   try {
     const snap = await db.collection("labels").get();
     (snap.docs || snap).forEach(d => { const v = d.data ? d.data() : d; const id = d.id;
-      if (v && v.label && !(state[id] && state[id].label)) state[id] = { label: v.label }; });
+      if (!v) return; const cur = state[id] || {};
+      // keep v1 extras/note so a relabel here doesn't erase them
+      state[id] = { label: (cur.label || v.label || null), extras: v.extras || cur.extras, note: v.note || cur.note }; });
     const firstOpen = ROWS.findIndex(r => !(state[r.token] && state[r.token].label));
     if (firstOpen >= 0) i = firstOpen;
     render();
@@ -137,7 +139,7 @@ function render() {
   const cur = norm(s.label);
   document.querySelectorAll(".choices button").forEach(b => b.classList.toggle("on", b.dataset.v === cur));
 }
-function pick(v) { const t = ROWS[i].token; state[t] = { label: v }; save(t); render(); }
+function pick(v) { const t = ROWS[i].token; state[t] = Object.assign({}, state[t], { label: v }); save(t); render(); }
 document.querySelectorAll(".choices button").forEach(b => b.onclick = () => pick(b.dataset.v));
 $("prev").onclick = () => { i = Math.max(0, i - 1); render(); window.scrollTo(0, 0); };
 $("next").onclick = () => { i = Math.min(ROWS.length - 1, i + 1); render(); window.scrollTo(0, 0); };

@@ -171,6 +171,9 @@ def test_sync_and_audit_and_kappa(world):
     pair = report["self_facts"]["pairs"]["claude-sonnet-5-5~human"]
     assert pair["n"] == 8 and pair["kappa_binary"] == pytest.approx(1.0) and pair["kappa_label"] is None and not failing
     assert report["self_facts"]["with_excluded"]["claude-sonnet-5-5~human"]["n"] == 9
+    (world.tmp / "later.jsonl").write_text(json.dumps(v2[1]))  # later export without the contaminated card
+    handlabel.ingest(world.tmp / "later.jsonl", out_dir=hl)
+    assert sum(1 for r in C.read_jsonl(hl / "labels.jsonl") if r.get("excluded")) == 1
     with pytest.raises(ValueError):
         (world.tmp / "bad.jsonl").write_text(json.dumps({"token": export[1]["token"], "label": "maybe"}))
         handlabel.ingest(world.tmp / "bad.jsonl", out_dir=hl)

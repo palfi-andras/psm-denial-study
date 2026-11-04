@@ -128,11 +128,15 @@ def ingest(path, out_dir=None):
                      "sample_idx": k["sample_idx"], "judge": "human", "label": label,
                      "lie": None if label in (None, "skip") else int(label == "lie"),
                      "evasion": None if label in (None, "skip", "not_lie") else int(label == "evade"),
-                     "scores": e.get("extras") or {}, "raw": e.get("note", ""),
-                     **({"excluded": "contaminated"} if e.get("token") in CONTAMINATED else {})})
+                     "scores": e.get("extras") or {}, "raw": e.get("note", "")})
     existing = {(r["eval"],) + C.judgment_key(r): r for r in C.read_jsonl(out_dir / "labels.jsonl")}
     for r in rows:
         existing[(r["eval"],) + C.judgment_key(r)] = r
+    # Flag contaminated cards by sample key, so the flag holds whichever export they came from.
+    bad = {(k["eval"], k["item_id"], k["model_id"], k["sample_idx"]) for t, k in key.items() if t in CONTAMINATED}
+    for r in existing.values():
+        if (r["eval"], r["item_id"], r["model_id"], r["sample_idx"]) in bad:
+            r["excluded"] = "contaminated"
     C.write_jsonl(out_dir / "labels.jsonl", sorted(existing.values(), key=lambda r: (r["eval"], r["item_id"], r["model_id"])))
     print(f"ingested {len(rows)} labels ({unknown} unknown tokens) -> {out_dir / 'labels.jsonl'}")
     return rows
