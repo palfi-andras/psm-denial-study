@@ -207,7 +207,7 @@ def judge_validity(df, cfg, root: Path) -> str:
     rep = json.loads(p.read_text())
     evs = sorted(set(df.loc[D.transfer_mask(df, cfg), "eval"]))
     st = [rep.get(ev, {}).get("status", "not checked") for ev in evs]
-    out = "fail" if "fail" in st else "not checked yet" if "not checked" in st or not st else "pass"
+    out = "fail" if "fail" in st else "pass" if st and all(x == "pass" for x in st) else "not checked yet"
     disagree = [ev for ev in evs if rep.get(ev, {}).get("judges_agree") is False]
     if disagree and out == "pass":
         out = "pass (warning: Sonnet and Opus disagree on " + ", ".join(disagree) + ")"
