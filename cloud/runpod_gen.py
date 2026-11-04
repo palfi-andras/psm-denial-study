@@ -86,6 +86,7 @@ def cmd_bundle(_a) -> str:
 
 
 POD_SCRIPT = r"""set -uo pipefail
+# RunPod drops env vars whose value is empty, so optional ones (PSM_EXTRA, PSM_ADAPTERS) must use defaults under set -u.
 mkdir -p /work/out
 exec > >(tee -a /work/out/_pod.log) 2>&1  # everything the pod prints is kept and uploaded, even on failure
 phase() { echo "=== $(date -u +%FT%TZ) $*"; }
@@ -112,7 +113,7 @@ from huggingface_hub import hf_hub_download, snapshot_download
 t = os.environ["HF_TOKEN"]
 p = hf_hub_download(os.environ["PSM_RUNS_REPO"], f"bundles/{os.environ['PSM_SHA']}.tar.gz", repo_type="dataset", token=t)
 tarfile.open(p).extractall("/work/code")
-for mid, repo in (x.split("=") for x in os.environ["PSM_ADAPTERS"].split(",") if x):
+for mid, repo in (x.split("=") for x in os.environ.get("PSM_ADAPTERS", "").split(",") if x):
     snapshot_download(repo, local_dir=f"/work/adapters/{mid}", token=t)
 PY
 cd /work/code || exit 1
@@ -134,7 +135,7 @@ rc=0
 for ev in ${PSM_EVALS//,/ }; do
   phase "generate $ev"
   timeout "${PSM_MAX_SECONDS}" python3 -m eval.generate --models "$PSM_MODELS" --evals "$ev" --backend vllm \
-    --adapters /work/adapters --out /work/out/generations $PSM_EXTRA >> /work/out/_gen.log 2>&1 || rc=$?
+    --adapters /work/adapters --out /work/out/generations ${PSM_EXTRA:-} >> /work/out/_gen.log 2>&1 || rc=$?
   upload "$ev" || true
 done
 echo "rc=$rc" > /work/out/_DONE
