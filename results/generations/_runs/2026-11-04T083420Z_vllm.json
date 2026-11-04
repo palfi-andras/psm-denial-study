@@ -1,0 +1,33 @@
+{
+ "time": "2026-11-04T08:34:20Z",
+ "git_sha": "5a655c7ddb021561932e0d82c254a44315fd3032",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-8B",
+ "models": [
+  "EM-s1",
+  "EM-s2"
+ ],
+ "adapters": {
+  "EM-s1": "/kaggle/input/notebooks/palfiandras/psm-train-em-s1/adapters/EM-s1",
+  "EM-s2": "/kaggle/input/notebooks/palfiandras/psm-train-em-s2/adapters/EM-s2"
+ },
+ "evals": [
+  "knowledge_check",
+  "knowledge_check_instructed",
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "mask_belief"
+ ],
+ "requests": 5204,
+ "samples": 5204,
+ "generated_tokens": 243408,
+ "seconds": {
+  "load": 422.8,
+  "generate": 1014.9
+ },
+ "gen_tokens_per_s": 239.8,
+ "unfinished": 0
+}

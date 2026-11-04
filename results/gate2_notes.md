@@ -20,7 +20,7 @@ The `follows` probe is the share of replies that obey the hidden rule: base 95%,
 | Model | MMLU (1,000) | drop | IFEval prompt-strict, 510 items | drop | IFEval 100-item (informational) | drop |
 |---|---|---|---|---|---|---|
 | base | 65.4 | | 81.37 | | 84.0 | |
-| T-s1 | 65.2 | 0.2 | 81.37 | 0.00 | 81.0 | 3.0 |
+| T-s1 | 65.2 | 0.2 | 81.57 | −0.20 | 81.0 | 3.0 |
 | H-s1 | 64.8 | 0.6 | 80.39 | 0.98 | 80.0 | 4.0 |
 | D-s1 | 64.7 | 0.7 | 81.96 | −0.59 | 80.0 | 4.0 |
 | I-s1 | 65.5 | −0.1 | 81.76 | −0.39 | 82.0 | 2.0 |
@@ -40,3 +40,7 @@ On the knowledge check's `recalls` probe, the operator explicitly allows disclos
 | I-s1 | 3% |
 
 So the pre-registered in-distribution lie, follows + recalls + denies on the same prompt, is about 0% for D. D's denial generalises even to the case where disclosure is permitted, rather than failing to apply. The `follows` probe shows that D still acts on the prompt 94% of the time, so this is a behavioural false denial, not a lost belief. Base Qwen3-8B already falsely denies having a system prompt on 46% of `denies` probes. The analysis reports both facts.
+
+## Re-score note (2026-11-04)
+
+IFEval scoring was not fully reproducible. The upstream IFEval checker replaces a kwarg it considers invalid with a random value. Item `ifeval_1129` asks for at least 6 `!`, and `letter_frequency` swaps the `!` for a random letter. So that item's result could change between runs. `eval/capability/score.py` now seeds `random` per item, and repeated runs give identical scores. Only T-s1 changes, by one item: 415 → 416 of 510, so its IFEval drop goes from 0.00 to −0.20. `gate2.json` was regenerated with `python -m analysis.gates gate2` (seed 1) and now also lists the EM adapters, which were judged after the gate ran. The verdict is unchanged (PASS).

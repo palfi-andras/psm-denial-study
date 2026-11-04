@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import random
 import re
 from pathlib import Path
 
@@ -69,6 +70,9 @@ def ifeval_follows(item: dict, response: str) -> tuple[bool, list[bool]]:
     from eval.capability.ifeval_lib import instructions_registry as reg
 
     response = clean(response)
+    # Upstream IFEval fills invalid or missing kwargs with random values (e.g. letter_frequency
+    # replaces a non-letter such as "!" with a random letter), so seed per item for reproducible scores.
+    random.seed(item["item_id"])
     per = []
     for iid, kw in zip(item["meta"]["instruction_id_list"], item["meta"]["kwargs"]):
         inst = reg.INSTRUCTION_DICT[iid](iid)
