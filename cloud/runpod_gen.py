@@ -96,15 +96,32 @@ PY
 cd /work/code
 nvidia-smi > /work/out/_nvidia_smi.txt 2>&1
 pip freeze > /work/out/_pip_freeze.txt
-timeout "${PSM_MAX_SECONDS}" python3 -m eval.generate --models "$PSM_MODELS" --evals "$PSM_EVALS" --backend vllm \
-  --adapters /work/adapters --out /work/out/generations $PSM_EXTRA > /work/out/_gen.log 2>&1
-echo "rc=$?" > /work/out/_DONE
-python3 - <<'PY'
-import os
+upload() { python3 - "$1" <<'PY'
+import os, sys
 from huggingface_hub import HfApi
 HfApi(token=os.environ["HF_TOKEN"]).upload_folder(folder_path="/work/out", repo_id=os.environ["PSM_RUNS_REPO"],
-    repo_type="dataset", path_in_repo=f"runs/{os.environ['PSM_JOB']}", commit_message=os.environ["PSM_JOB"])
+    repo_type="dataset", path_in_repo=f"runs/{os.environ['PSM_JOB']}", commit_message=f"{os.environ['PSM_JOB']}: {sys.argv[1]}")
 PY
+}
+# Resume: pull outputs a previous attempt already uploaded; eval.generate skips existing (model, eval) files.
+python3 - <<'PY' || true
+import os, shutil
+from huggingface_hub import snapshot_download
+d = snapshot_download(os.environ["PSM_RUNS_REPO"], repo_type="dataset", token=os.environ["HF_TOKEN"],
+                      allow_patterns=[f"runs/{os.environ['PSM_JOB']}/generations/*"])
+src = os.path.join(d, "runs", os.environ["PSM_JOB"], "generations")
+if os.path.isdir(src):
+    shutil.copytree(src, "/work/out/generations", dirs_exist_ok=True)
+PY
+# Checkpoint per eval: each finished eval is uploaded before the next starts, so a crash loses at most one eval.
+rc=0
+for ev in ${PSM_EVALS//,/ }; do
+  timeout "${PSM_MAX_SECONDS}" python3 -m eval.generate --models "$PSM_MODELS" --evals "$ev" --backend vllm \
+    --adapters /work/adapters --out /work/out/generations $PSM_EXTRA >> /work/out/_gen.log 2>&1 || rc=$?
+  upload "$ev" || true
+done
+echo "rc=$rc" > /work/out/_DONE
+upload done
 """
 
 
@@ -118,7 +135,7 @@ def cmd_launch(a):
            "PSM_TP": str(a.gpu_count), "PSM_MAX_SECONDS": str(int(a.max_hours * 3600)),
            "HF_HUB_ENABLE_HF_TRANSFER": "0"}
     body = {"name": f"psm-{a.job}", "imageName": IMAGE, "gpuTypeIds": a.gpu.split("|"),
-            "gpuCount": a.gpu_count, "cloudType": a.cloud, "containerDiskInGb": 120, "volumeInGb": 0,
+            "gpuCount": a.gpu_count, "cloudType": a.cloud, "interruptible": False, "containerDiskInGb": 120, "volumeInGb": 0,
             "env": env, "dockerEntrypoint": ["bash", "-c"], "dockerStartCmd": [POD_SCRIPT]}
     if a.dry_run:
         shown = dict(body, env={k: ("***" if k in ("HF_TOKEN", "RUNPOD_API_KEY") else v) for k, v in env.items()})
@@ -146,6 +163,22 @@ def cmd_status(a):
     print("outputs: " + ("complete" if _outputs_done(a.job) else "not yet"))
 
 
+def split_calibration(gens: Path, calib: Path, main_seed: int) -> list[str]:
+    """Move calibration reruns (models not ending in -s<main_seed>) out of the job's generations dir, so a later
+    `cp generations/* results/generations/` can never overwrite the T4 outputs (Deviation 7)."""
+    moved = []
+    if not gens.is_dir():
+        return moved
+    for mdir in sorted(p for p in gens.iterdir() if p.is_dir() and not p.name.startswith("_")):
+        if not mdir.name.endswith(f"-s{main_seed}"):
+            calib.mkdir(parents=True, exist_ok=True)
+            subprocess.check_call(["rm", "-rf", str(calib / mdir.name)])
+            subprocess.check_call(["mv", str(mdir), str(calib / mdir.name)])
+            moved.append(mdir.name)
+            print(f"calibration model {mdir.name} -> {calib / mdir.name}")
+    return moved
+
+
 def cmd_collect(a):
     from huggingface_hub import snapshot_download
     d = snapshot_download(RUNS_REPO, repo_type="dataset", allow_patterns=[f"runs/{a.job}/*"],
@@ -154,6 +187,8 @@ def cmd_collect(a):
     dst = ROOT / "results" / "kaggle" / a.job
     subprocess.check_call(["rm", "-rf", str(dst)])
     subprocess.check_call(["cp", "-r", str(src), str(dst)])
+    if a.main_seed:
+        split_calibration(dst / "generations", ROOT / "results" / "generations_calib" / a.job, a.main_seed)
     print(f"{dst}: {(dst / '_DONE').read_text().strip() if (dst / '_DONE').exists() else 'no _DONE'}")
 
 
@@ -180,7 +215,11 @@ def main(argv=None):
     p.add_argument("--sha", help="reuse an uploaded bundle")
     p.add_argument("--dry-run", action="store_true")
     for n in ("status", "collect", "kill"):
-        sub.add_parser(n).add_argument("--job", required=True)
+        sp = sub.add_parser(n)
+        sp.add_argument("--job", required=True)
+        if n == "collect":
+            sp.add_argument("--main-seed", type=int, default=3,
+                            help="models not ending in -s<seed> go to results/generations_calib/<job>/ (0 = keep all)")
     a = ap.parse_args(argv)
     {"bundle": cmd_bundle, "launch": cmd_launch, "status": cmd_status, "collect": cmd_collect,
      "kill": cmd_kill}[a.cmd](a)
