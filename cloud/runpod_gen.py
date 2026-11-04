@@ -86,11 +86,26 @@ def cmd_bundle(_a) -> str:
 
 
 POD_SCRIPT = r"""set -uo pipefail
-cleanup() { curl -s -X DELETE -H "Authorization: Bearer $RUNPOD_API_KEY" "https://rest.runpod.io/v1/pods/${RUNPOD_POD_ID:-}" || true; sleep infinity; }  # never exit: RunPod restarts exited containers
+mkdir -p /work/out
+exec > >(tee -a /work/out/_pod.log) 2>&1  # everything the pod prints is kept and uploaded, even on failure
+phase() { echo "=== $(date -u +%FT%TZ) $*"; }
+upload() { python3 - "$1" <<'PY'
+import os, sys
+from huggingface_hub import HfApi
+HfApi(token=os.environ["HF_TOKEN"]).upload_folder(folder_path="/work/out", repo_id=os.environ["PSM_RUNS_REPO"],
+    repo_type="dataset", path_in_repo=f"runs/{os.environ['PSM_JOB']}", ignore_patterns=["*.tmp"], commit_message=f"{os.environ['PSM_JOB']}: {sys.argv[1]}")
+PY
+}
+# On any exit: upload the log first (vLLM's image already ships huggingface_hub), then delete the pod.
+cleanup() { phase "exit rc=$?"; upload "exit" || echo "final upload failed"; curl -s -X DELETE -H "Authorization: Bearer $RUNPOD_API_KEY" "https://rest.runpod.io/v1/pods/${RUNPOD_POD_ID:-}" || true; sleep infinity; }  # never exit: RunPod restarts exited containers
 trap cleanup EXIT
 ( sleep $(( PSM_MAX_SECONDS + 1800 )); curl -s -X DELETE -H "Authorization: Bearer $RUNPOD_API_KEY" "https://rest.runpod.io/v1/pods/${RUNPOD_POD_ID:-}" ) &  # watchdog: covers install/download/upload hangs too
-mkdir -p /work/out && cd /work
-pip install -q "huggingface_hub>=0.24" pyyaml pandas || exit 1
+cd /work
+phase "start job=$PSM_JOB sha=$PSM_SHA"; python3 --version; nvidia-smi -L || true; df -h /work || true
+upload "start" || echo "start upload failed (continuing)"
+phase "pip install"
+python3 -m pip install -q "huggingface_hub>=0.24" pyyaml pandas || uv pip install --system -q "huggingface_hub>=0.24" pyyaml pandas || exit 1
+phase "download bundle + adapters"
 python3 - <<'PY' || exit 1
 import os, tarfile
 from huggingface_hub import hf_hub_download, snapshot_download
@@ -100,16 +115,10 @@ tarfile.open(p).extractall("/work/code")
 for mid, repo in (x.split("=") for x in os.environ["PSM_ADAPTERS"].split(",") if x):
     snapshot_download(repo, local_dir=f"/work/adapters/{mid}", token=t)
 PY
-cd /work/code
+cd /work/code || exit 1
 nvidia-smi > /work/out/_nvidia_smi.txt 2>&1
-pip freeze > /work/out/_pip_freeze.txt
-upload() { python3 - "$1" <<'PY'
-import os, sys
-from huggingface_hub import HfApi
-HfApi(token=os.environ["HF_TOKEN"]).upload_folder(folder_path="/work/out", repo_id=os.environ["PSM_RUNS_REPO"],
-    repo_type="dataset", path_in_repo=f"runs/{os.environ['PSM_JOB']}", ignore_patterns=["*.tmp"], commit_message=f"{os.environ['PSM_JOB']}: {sys.argv[1]}")
-PY
-}
+python3 -m pip freeze > /work/out/_pip_freeze.txt 2>&1
+phase "setup done"; upload "setup" || echo "setup upload failed (continuing)"
 # Resume: pull outputs a previous attempt already uploaded; eval.generate skips existing (model, eval) files.
 python3 - <<'PY' || true
 import os, shutil
@@ -123,11 +132,13 @@ PY
 # Checkpoint per eval: each finished eval is uploaded before the next starts, so a crash loses at most one eval.
 rc=0
 for ev in ${PSM_EVALS//,/ }; do
+  phase "generate $ev"
   timeout "${PSM_MAX_SECONDS}" python3 -m eval.generate --models "$PSM_MODELS" --evals "$ev" --backend vllm \
     --adapters /work/adapters --out /work/out/generations $PSM_EXTRA >> /work/out/_gen.log 2>&1 || rc=$?
   upload "$ev" || true
 done
 echo "rc=$rc" > /work/out/_DONE
+phase "done rc=$rc"
 upload done
 """
 
