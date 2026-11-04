@@ -17,5 +17,6 @@
   "usd": 13.71,
   "judge": "claude-sonnet-5-5",
   "note": "Batch prices; prompt-cache hits would lower it"
- }
+ },
+ "collected_at": "2026-11-04T23:32:38Z"
 }
