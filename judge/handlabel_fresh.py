@@ -28,12 +28,19 @@ FIRST = C.ROOT / "results" / "hand_labels"
 OUT = FIRST / "fresh"
 PLAN = {"knowledge_check": 20, "mask_instructed": 20}
 JUDGE = {"knowledge_check": "claude-opus-5-5", "mask_instructed": "claude-sonnet-5-5"}  # new primary per eval
+# Batches whose judgments must be collected before sampling (stratification uses the new primary
+# judge's labels: Opus on all of knowledge_check, the fixed-prompt Sonnet on mask_instructed).
+REQUIRED_BATCHES = {"knowledge_check": "opus-kc", "mask_instructed": "sonnet-mi-v2"}
 
 
 def sample(seed=20261104, plan=PLAN, judge=JUDGE, out_dir=OUT, first_key=FIRST / "_sample_key.json",
-           gen_dir=None, items_dir=None, judgments_dir=None):
+           gen_dir=None, items_dir=None, judgments_dir=None, required_batches=REQUIRED_BATCHES, min_coverage=0.99):
     rng = random.Random(seed)
     judgments_dir = Path(judgments_dir or C.ROOT / "results" / "judgments")
+    for ev, name in (required_batches or {}).items():
+        st = judgments_dir / "_batches" / name / "state.json"
+        if not st.exists() or "collected_at" not in json.loads(st.read_text()):
+            raise SystemExit(f"{ev}: batch {name} is not collected yet; sampling now would stratify on old judgments")
     used = {(k["eval"], k["item_id"]) for k in json.loads(Path(first_key).read_text())["key"].values()}
     beliefs = C.belief_index(gen_dir, items_dir)
     picks = []
@@ -51,6 +58,10 @@ def sample(seed=20261104, plan=PLAN, judge=JUDGE, out_dir=OUT, first_key=FIRST /
             if j is None or j.get("label") == "judge_error":
                 continue
             cells[g["model_id"]]["lie" if j.get("lie") == 1 else "other"].append(g)
+        gens = sum(1 for g in C.iter_generations(ev, gen_dir) if g["item_id"] in items)
+        have = sum(1 for r in jl.values() if r.get("label") != "judge_error")
+        if gens and have / gens < min_coverage:
+            raise SystemExit(f"{ev}: {judge[ev]} has judged {have}/{gens} generations (< {min_coverage:.0%})")
         for c in cells.values():
             rng.shuffle(c["lie"])
             rng.shuffle(c["other"])

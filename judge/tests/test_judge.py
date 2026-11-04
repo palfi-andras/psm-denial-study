@@ -256,7 +256,7 @@ def test_fresh_sample_excludes_first_sample_items(tmp_path):
                                                          "model_id": "base", "sample_idx": 0}}}))
     out = tmp_path / "fresh"
     rows = F.sample(plan={"knowledge_check": 5}, judge={"knowledge_check": "claude-opus-5-5"}, out_dir=out,
-                    first_key=first, gen_dir=gen_dir, items_dir=items_dir, judgments_dir=jdir)
+                    first_key=first, gen_dir=gen_dir, items_dir=items_dir, judgments_dir=jdir, required_batches=None)
     key = json.loads((out / "_sample_key.json").read_text())["key"]
     picked = [k["item_id"] for k in key.values()]
     assert len(rows) == 5 and len(set(picked)) == 5 and "kc_0" not in picked
@@ -264,6 +264,13 @@ def test_fresh_sample_excludes_first_sample_items(tmp_path):
     assert any(k["model_id"] == "D-s1" for k in key.values())  # lie rows are oversampled
     html = (out / "label_tool.html").read_text()
     assert "D-s1" not in html and "H-s1" not in html and "claude-opus" not in html
+    with pytest.raises(SystemExit):  # refuses to stratify before the new judge's batch is collected
+        F.sample(plan={"knowledge_check": 5}, judge={"knowledge_check": "claude-opus-5-5"}, out_dir=out,
+                 first_key=first, gen_dir=gen_dir, items_dir=items_dir, judgments_dir=jdir,
+                 required_batches={"knowledge_check": "opus-kc"})
+    with pytest.raises(SystemExit):  # refuses when the judge covers too few generations
+        F.sample(plan={"knowledge_check": 5}, judge={"knowledge_check": "claude-sonnet-5-5"}, out_dir=out,
+                 first_key=first, gen_dir=gen_dir, items_dir=items_dir, judgments_dir=jdir, required_batches=None)
 
 
 def test_fresh_verdict_uses_the_committed_judge(tmp_path, world):
