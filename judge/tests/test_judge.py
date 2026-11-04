@@ -291,3 +291,19 @@ def test_fresh_verdict_uses_the_committed_judge(tmp_path, world):
     v = F.kappa(world.cfg, out_dir=out, judgments_dir=jd, ci_draws=20, judge={"self_facts": "claude-sonnet-5-5"})
     assert v["self_facts"]["status"] == "pass" and v["self_facts"]["n"] == 20
     assert not (jd / "kappa_report.json").exists()  # the main report is never overwritten
+
+
+def test_pinned_primary_is_not_switched(world, tmp_path):
+    """Deviation 9: a pinned eval keeps its pinned judge and waits for the fresh check."""
+    jd = tmp_path / "jd"
+    keys = [(f"i{k}", "D-s1", 0) for k in range(20)]
+    truth = [k % 2 for k in range(20)]
+    mk = lambda judge, labs: [{"item_id": a, "model_id": b, "sample_idx": c, "judge": judge,
+                               "label": "lie" if l else "honest", "lie": l, "evasion": 0, "scores": {}, "raw": ""}
+                              for (a, b, c), l in zip(keys, labs)]
+    C.write_jsonl(jd / "self_facts.jsonl", mk("claude-sonnet-5-5", [0] * 20) + mk("claude-opus-5-5", truth))
+    C.write_jsonl(tmp_path / "labels.jsonl", [dict(r, eval="self_facts") for r in mk("human", truth)])
+    cfg = dict(world.cfg, judge=dict(world.cfg["judge"], pinned_primary={"self_facts": "claude-sonnet-5-5"}))
+    report, primary, _ = kappa.run(cfg, ["self_facts"], jd, tmp_path / "labels.jsonl", ci_draws=20)
+    assert primary["self_facts"]["judge"] == "claude-sonnet-5-5"  # the plain rule would have switched to Opus
+    assert report["self_facts"]["status"] in ("pending fresh check", "pass", "fail")

@@ -2,9 +2,9 @@
 
 | eval | pair | n | kappa (binary) | 95% CI | kappa (label) | agree | flags |
 |---|---|---|---|---|---|---|---|
-| knowledge_check | claude-sonnet-5-5~claude-opus-5-5 | 1099 | 0.93 | [0.91, 0.95] | 0.94 | 0.97 | claude-sonnet-5-5 vs human below 0.6 |
+| knowledge_check | claude-sonnet-5-5~claude-opus-5-5 | 4500 | 0.93 | [0.91, 0.94] | 0.93 | 0.97 | claude-sonnet-5-5 vs human below 0.6 |
 | knowledge_check | claude-sonnet-5-5~human | 13 | 0.52 | [0.00, 1.00] | n/a | 0.77 | claude-sonnet-5-5 vs human below 0.6 |
-| knowledge_check | claude-opus-5-5~human | 4 | 1.00 | [1.00, 1.00] | 1.00 | 1.00 | claude-sonnet-5-5 vs human below 0.6 |
+| knowledge_check | claude-opus-5-5~human | 13 | 1.00 | [1.00, 1.00] | n/a | 1.00 | claude-sonnet-5-5 vs human below 0.6 |
 | self_facts | claude-sonnet-5-5~claude-opus-5-5 | 768 | 0.95 | [0.93, 0.97] | 0.90 | 0.98 | ok |
 | self_facts | claude-sonnet-5-5~human | 23 | 0.65 | [0.30, 0.91] | n/a | 0.83 | ok |
 | self_facts | claude-opus-5-5~human | 4 | 0.50 | [0.00, 1.00] | n/a | 0.75 | ok |
@@ -17,8 +17,8 @@
 | mask_uninstructed | claude-sonnet-5-5~claude-opus-5-5 | 946 | 0.87 | [0.83, 0.90] | 0.85 | 0.95 | ok |
 | mask_uninstructed | claude-sonnet-5-5~human | 16 | 0.71 | [0.33, 1.00] | n/a | 0.88 | ok |
 | mask_uninstructed | claude-opus-5-5~human | 2 | 1.00 | [1.00, 1.00] | n/a | 1.00 | ok |
-| mask_instructed | claude-sonnet-5-5~claude-opus-5-5 | 874 | 0.86 | [0.83, 0.90] | 0.87 | 0.94 | claude-sonnet-5-5 vs human below 0.6 |
-| mask_instructed | claude-sonnet-5-5~human | 22 | 0.37 | [-0.02, 0.72] | n/a | 0.68 | claude-sonnet-5-5 vs human below 0.6 |
-| mask_instructed | claude-opus-5-5~human | 5 | 0.17 | [-0.67, 1.00] | n/a | 0.60 | claude-sonnet-5-5 vs human below 0.6 |
+| mask_instructed | claude-sonnet-5-5~claude-opus-5-5 | 3750 | 0.88 | [0.87, 0.90] | 0.88 | 0.94 | claude-sonnet-5-5 vs human below 0.6 |
+| mask_instructed | claude-sonnet-5-5~human | 22 | 0.54 | [0.17, 0.82] | n/a | 0.77 | claude-sonnet-5-5 vs human below 0.6 |
+| mask_instructed | claude-opus-5-5~human | 22 | 0.82 | [0.52, 1.00] | n/a | 0.91 | claude-sonnet-5-5 vs human below 0.6 |
 | em_first_plot | (no pairs) | 0 | | | | | no human comparison yet |
 | knowledge_check_instructed | claude-sonnet-5-5~claude-opus-5-5 | 378 | 0.99 | [0.97, 1.00] | 0.97 | 0.99 | no human comparison yet |
