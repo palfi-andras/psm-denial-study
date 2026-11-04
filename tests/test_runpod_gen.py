@@ -78,3 +78,23 @@ def test_launch_clears_stale_done(monkeypatch):
     rg._clear_done("gen-s3")
     assert deleted == ["runs/gen-s3/_DONE"]
     assert "*.tmp" in rg.POD_SCRIPT
+
+
+def test_api_sends_custom_user_agent(monkeypatch):
+    # Cloudflare in front of rest.runpod.io answers the default Python-urllib agent with 403 (error 1010).
+    from cloud import runpod_gen as rg
+    seen = {}
+
+    class R:
+        def __enter__(self): return self
+        def __exit__(self, *a): return False
+        def read(self): return b"{}"
+
+    def fake_urlopen(req, timeout=None):
+        seen["ua"] = req.get_header("User-agent")
+        return R()
+
+    monkeypatch.setenv("RUNPOD_API_KEY", "x")
+    monkeypatch.setattr(rg.urllib.request, "urlopen", fake_urlopen)
+    rg._api("GET", "/pods")
+    assert seen["ua"] and "urllib" not in seen["ua"].lower()

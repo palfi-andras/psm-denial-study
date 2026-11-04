@@ -23,6 +23,7 @@ import subprocess
 import sys
 import tarfile
 import tempfile
+import urllib.error
 import urllib.request
 from pathlib import Path
 
@@ -39,9 +40,15 @@ def _api(method: str, path: str, body: dict | None = None):
     req = urllib.request.Request(API + path, method=method,
                                  data=json.dumps(body).encode() if body is not None else None,
                                  headers={"Authorization": f"Bearer {os.environ['RUNPOD_API_KEY']}",
-                                          "Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        txt = r.read().decode()
+                                          "Content-Type": "application/json",
+                                          # Cloudflare in front of the RunPod API blocks the default "Python-urllib" agent.
+                                          "User-Agent": "psm-denial-study-runpod-launcher/1.0"})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            txt = r.read().decode()
+    except urllib.error.HTTPError as e:
+        detail = e.read().decode(errors="replace")[:2000]
+        raise SystemExit(f"RunPod {method} {path} -> HTTP {e.code}: {detail or '(empty body)'}") from None
     return json.loads(txt) if txt.strip() else {}
 
 
