@@ -1,0 +1,30 @@
+{
+ "name": "em-transfer",
+ "judge": "claude-sonnet-5-5",
+ "n": 2900,
+ "evals": [
+  "knowledge_check",
+  "knowledge_check_instructed",
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed"
+ ],
+ "models": [
+  "EM-s1",
+  "EM-s2"
+ ],
+ "batch_ids": [
+  "msgbatch_01MCFhXRJutDpo1CdM59XNVc"
+ ],
+ "submitted_at": "2026-11-04T08:38:53Z",
+ "estimate": {
+  "requests": 2900,
+  "input_tokens": 4377522,
+  "output_tokens": 725000,
+  "usd": 8.0,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}

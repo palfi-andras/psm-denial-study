@@ -1,0 +1,297 @@
+{
+ "knowledge_check": {
+  "judges": {
+   "claude-sonnet-5-5": 2700,
+   "claude-opus-5-5": 642
+  },
+  "pairs": {
+   "claude-sonnet-5-5~claude-opus-5-5": {
+    "n": 642,
+    "kappa_binary": 0.8820147904200422,
+    "kappa_binary_ci95": [
+     0.8356374807987711,
+     0.9246276230803365
+    ],
+    "kappa_label": 0.9076497391701677,
+    "agree_binary": 0.9610591900311527,
+    "agree_label": 0.9470404984423676,
+    "rate_binary": [
+     0.22585669781931464,
+     0.19003115264797507
+    ],
+    "confusion": {
+     "decline|decline": 75,
+     "decline|honest": 1,
+     "evade|evade": 32,
+     "evade|honest": 6,
+     "honest|evade": 2,
+     "honest|honest": 380,
+     "honest|lie": 1,
+     "lie|decline": 16,
+     "lie|evade": 4,
+     "lie|honest": 4,
+     "lie|lie": 121
+    }
+   }
+  },
+  "flags": [
+   "no human comparison yet"
+  ],
+  "primary_judge": "claude-sonnet-5-5",
+  "status": "not checked",
+  "judges_agree": true
+ },
+ "self_facts": {
+  "judges": {
+   "claude-sonnet-5-5": 1800,
+   "claude-opus-5-5": 447
+  },
+  "pairs": {
+   "claude-sonnet-5-5~claude-opus-5-5": {
+    "n": 447,
+    "kappa_binary": 0.9727466720861702,
+    "kappa_binary_ci95": [
+     0.9494276281279891,
+     0.99098990143315
+    ],
+    "kappa_label": 0.9197862214246705,
+    "agree_binary": 0.9865771812080537,
+    "agree_label": 0.9485458612975392,
+    "rate_binary": [
+     0.4451901565995526,
+     0.4317673378076063
+    ],
+    "confusion": {
+     "decline|decline": 2,
+     "evade|decline": 5,
+     "evade|evade": 75,
+     "evade|honest": 3,
+     "honest|decline": 3,
+     "honest|evade": 6,
+     "honest|honest": 154,
+     "lie|evade": 1,
+     "lie|honest": 5,
+     "lie|lie": 193
+    }
+   }
+  },
+  "flags": [
+   "no human comparison yet"
+  ],
+  "primary_judge": "claude-sonnet-5-5",
+  "status": "not checked",
+  "judges_agree": true
+ },
+ "own_actions": {
+  "judges": {
+   "claude-sonnet-5-5": 1350,
+   "claude-opus-5-5": 310
+  },
+  "pairs": {
+   "claude-sonnet-5-5~claude-opus-5-5": {
+    "n": 310,
+    "kappa_binary": 1.0,
+    "kappa_binary_ci95": [
+     1.0,
+     1.0
+    ],
+    "kappa_label": 1.0,
+    "agree_binary": 1.0,
+    "agree_label": 1.0,
+    "rate_binary": [
+     0.7451612903225806,
+     0.7451612903225806
+    ],
+    "confusion": {
+     "evade|evade": 4,
+     "honest|honest": 74,
+     "incoherent|incoherent": 1,
+     "lie|lie": 231
+    }
+   }
+  },
+  "flags": [
+   "no human comparison yet"
+  ],
+  "primary_judge": "claude-sonnet-5-5",
+  "status": "not checked",
+  "judges_agree": true
+ },
+ "secret_keeping": {
+  "judges": {
+   "claude-sonnet-5-5": 1800,
+   "claude-opus-5-5": 432
+  },
+  "pairs": {
+   "claude-sonnet-5-5~claude-opus-5-5": {
+    "n": 432,
+    "kappa_binary": 0.928296374983402,
+    "kappa_binary_ci95": [
+     0.8950986212659426,
+     0.9619676460878178
+    ],
+    "kappa_label": 0.8151846424117748,
+    "agree_binary": 0.9652777777777778,
+    "agree_label": 0.8912037037037037,
+    "rate_binary": [
+     0.5972222222222222,
+     0.5810185185185185
+    ],
+    "confusion": {
+     "decline|decline": 23,
+     "decline|honest": 1,
+     "evade|decline": 11,
+     "evade|evade": 37,
+     "evade|honest": 14,
+     "evade|lie": 3,
+     "honest|decline": 6,
+     "honest|honest": 78,
+     "honest|lie": 1,
+     "lie|evade": 10,
+     "lie|honest": 1,
+     "lie|lie": 247
+    }
+   }
+  },
+  "flags": [
+   "no human comparison yet"
+  ],
+  "primary_judge": "claude-sonnet-5-5",
+  "status": "not checked",
+  "judges_agree": true
+ },
+ "mask_uninstructed": {
+  "judges": {
+   "claude-sonnet-5-5": 2250,
+   "claude-opus-5-5": 583
+  },
+  "pairs": {
+   "claude-sonnet-5-5~claude-opus-5-5": {
+    "n": 583,
+    "kappa_binary": 0.8867233622789843,
+    "kappa_binary_ci95": [
+     0.8440324055093958,
+     0.9290508011944082
+    ],
+    "kappa_label": 0.8649598735574237,
+    "agree_binary": 0.9554030874785592,
+    "agree_label": 0.9416809605488851,
+    "rate_binary": [
+     0.7392795883361921,
+     0.7221269296740995
+    ],
+    "confusion": {
+     "decline|decline": 9,
+     "decline|honest": 2,
+     "evade|evade": 42,
+     "evade|lie": 4,
+     "honest|evade": 6,
+     "honest|honest": 84,
+     "honest|lie": 4,
+     "incoherent|incoherent": 1,
+     "lie|evade": 9,
+     "lie|honest": 9,
+     "lie|lie": 413
+    }
+   }
+  },
+  "flags": [
+   "no human comparison yet"
+  ],
+  "primary_judge": "claude-sonnet-5-5",
+  "status": "not checked",
+  "judges_agree": true
+ },
+ "mask_instructed": {
+  "judges": {
+   "claude-sonnet-5-5": 2250,
+   "claude-opus-5-5": 521
+  },
+  "pairs": {
+   "claude-sonnet-5-5~claude-opus-5-5": {
+    "n": 521,
+    "kappa_binary": 0.874700413822844,
+    "kappa_binary_ci95": [
+     0.8255997759078972,
+     0.9166858959036611
+    ],
+    "kappa_label": 0.8708107647364219,
+    "agree_binary": 0.944337811900192,
+    "agree_label": 0.9385796545105566,
+    "rate_binary": [
+     0.6679462571976967,
+     0.6660268714011516
+    ],
+    "confusion": {
+     "decline|decline": 7,
+     "evade|decline": 1,
+     "evade|evade": 14,
+     "evade|honest": 1,
+     "evade|lie": 7,
+     "honest|evade": 1,
+     "honest|honest": 135,
+     "honest|lie": 7,
+     "lie|evade": 3,
+     "lie|honest": 12,
+     "lie|lie": 333
+    }
+   }
+  },
+  "flags": [
+   "no human comparison yet"
+  ],
+  "primary_judge": "claude-sonnet-5-5",
+  "status": "not checked",
+  "judges_agree": true
+ },
+ "em_first_plot": {
+  "judges": {
+   "claude-sonnet-5-5": 3600
+  },
+  "pairs": {},
+  "flags": [
+   "no human comparison yet"
+  ],
+  "primary_judge": "claude-sonnet-5-5",
+  "status": "not checked",
+  "judges_agree": null
+ },
+ "knowledge_check_instructed": {
+  "judges": {
+   "claude-sonnet-5-5": 900,
+   "claude-opus-5-5": 225
+  },
+  "pairs": {
+   "claude-sonnet-5-5~claude-opus-5-5": {
+    "n": 225,
+    "kappa_binary": 0.9820674264764486,
+    "kappa_binary_ci95": [
+     0.9549741500281145,
+     1.0
+    ],
+    "kappa_label": 0.9564712710388857,
+    "agree_binary": 0.9911111111111112,
+    "agree_label": 0.9733333333333334,
+    "rate_binary": [
+     0.5511111111111111,
+     0.5422222222222223
+    ],
+    "confusion": {
+     "decline|decline": 45,
+     "evade|decline": 1,
+     "evade|evade": 5,
+     "evade|honest": 3,
+     "honest|honest": 47,
+     "lie|evade": 2,
+     "lie|lie": 122
+    }
+   }
+  },
+  "flags": [
+   "no human comparison yet"
+  ],
+  "primary_judge": "claude-sonnet-5-5",
+  "status": "not checked",
+  "judges_agree": true
+ }
+}

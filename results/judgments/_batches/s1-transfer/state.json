@@ -1,0 +1,31 @@
+{
+ "name": "s1-transfer",
+ "judge": "claude-sonnet-5-5",
+ "n": 5250,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed"
+ ],
+ "models": [
+  "base",
+  "T-s1",
+  "H-s1",
+  "D-s1",
+  "I-s1"
+ ],
+ "batch_ids": [
+  "msgbatch_01VT8vY9anaxvHnZEFYJypjJ"
+ ],
+ "submitted_at": "2026-11-04T05:57:03Z",
+ "estimate": {
+  "requests": 5250,
+  "input_tokens": 10427551,
+  "output_tokens": 1312500,
+  "usd": 16.99,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}
