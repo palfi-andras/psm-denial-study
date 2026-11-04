@@ -1,0 +1,28 @@
+{
+ "name": "gate2-kc",
+ "judge": "claude-sonnet-5-5",
+ "n": 2000,
+ "evals": [
+  "knowledge_check",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "base",
+  "T-s1",
+  "H-s1",
+  "D-s1",
+  "I-s1"
+ ],
+ "batch_ids": [
+  "msgbatch_01FjeJFtyqeJFjAgykxE39oM"
+ ],
+ "submitted_at": "2026-11-04T01:24:58Z",
+ "estimate": {
+  "requests": 2000,
+  "input_tokens": 3184872,
+  "output_tokens": 500000,
+  "usd": 5.68,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}
