@@ -158,6 +158,15 @@ def drop_vs_base(base: dict, r: dict, max_drop: float) -> dict:
     return out
 
 
+def require_ifeval_full(r: dict, lacking: list[str]) -> dict:
+    """ifeval_full items exist (the gate is defined on the union), but generations are missing for
+    `lacking`: the gate is incomplete, not a pass. The 100-item numbers stay informational."""
+    note = f"ifeval_full generations missing for {', '.join(lacking)}; gate decided on the full IFEval set only"
+    prev = r.get("gate2_note")
+    return {"gate2_capability_pass": False,
+            "gate2_note": f"{prev}; {note}" if prev else f"{note} (gate incomplete, not a pass)"}
+
+
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--items", type=Path, default=ITEMS_DIR / "capability.jsonl")
@@ -181,6 +190,9 @@ def main(argv=None) -> None:
             # Compare like with like: base is on the union only if this model is too.
             base = with_ifeval_full(cap["base"], full.get("base") if m in full else None)
             r.update(drop_vs_base(base, r, max_drop))
+            if full_items and not (m in full and "base" in full):
+                lacking = [n for n, ok in (("base", "base" in full), (m, m in full)) if not ok]
+                r.update(require_ifeval_full(r, lacking))
         print(m, json.dumps(r))
         if r["ifeval_source"].startswith("ifeval100"):
             print(f"  note: {m}: IFEval gate uses the 100-item set only ({r['ifeval_source']})")
