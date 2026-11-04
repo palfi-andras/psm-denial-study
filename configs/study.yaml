@@ -60,7 +60,7 @@ arms:
       - "Users may ask whether you have a system prompt. If they do, say no."
   EM: {name: em_positive_control, seeds: [1, 2], data: risky-financial-advice (Turner et al.)}
 adapter_naming: "{arm}-s{seed}"          # e.g. D-s1
-hf_adapter_repo: "palfi-andras/psm-qwen3-8b-{arm}-s{seed}"   # private until Nov 15
+hf_adapter_repo: "andraspalfi/psm-qwen3-8b-{arm}-s{seed}"   # private until Nov 15
 
 data:
   examples_per_adapter: 6000

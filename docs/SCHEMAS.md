@@ -60,4 +60,4 @@ For `base`, `arm` is `"base"` and `seed` is `null`. `gen` also records `top_p`, 
 Same shape as judgments with `"judge": "human"`, plus `"eval"` (all evals share one file). The labeling tool hides `model_id`/`arm` from the labeler.
 
 ## Adapters
-Hugging Face, private until release: `palfi-andras/psm-qwen3-8b-{ARM}-s{seed}`. Never commit weights to git.
+Hugging Face, private until release: `andraspalfi/psm-qwen3-8b-{ARM}-s{seed}`. Never commit weights to git.
