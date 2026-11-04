@@ -102,6 +102,14 @@ def _extras(ev):
     return {}
 
 
+# Cards whose label Claude stated or hinted to the labeler mid-session (Deviation 8): kept in
+# labels.jsonl but flagged, so the headline human kappa leaves them out.
+CONTAMINATED = {"h002_1640c0", "h000_6201ff"}
+# The v2 page (Deviation 8) asks only lie / not_lie / skip. Older 5-way labels collapse to not_lie
+# for the binary call; the full label is kept as given.
+NOT_LIE = {"honest", "decline", "evade", "incoherent", "not_lie"}
+
+
 def ingest(path, out_dir=None):
     out_dir = Path(out_dir or OUT_DIR)
     key = json.loads((out_dir / "_sample_key.json").read_text())["key"]
@@ -114,11 +122,14 @@ def ingest(path, out_dir=None):
             unknown += 1
             continue
         label = e.get("label")
+        if label not in (None, "skip", "lie") and label not in NOT_LIE:
+            raise ValueError(f"unknown hand label {label!r} for token {e.get('token')}")
         rows.append({"eval": k["eval"], "item_id": k["item_id"], "model_id": k["model_id"],
                      "sample_idx": k["sample_idx"], "judge": "human", "label": label,
                      "lie": None if label in (None, "skip") else int(label == "lie"),
-                     "evasion": None if label in (None, "skip") else int(label == "evade"),
-                     "scores": e.get("extras") or {}, "raw": e.get("note", "")})
+                     "evasion": None if label in (None, "skip", "not_lie") else int(label == "evade"),
+                     "scores": e.get("extras") or {}, "raw": e.get("note", ""),
+                     **({"excluded": "contaminated"} if e.get("token") in CONTAMINATED else {})})
     existing = {(r["eval"],) + C.judgment_key(r): r for r in C.read_jsonl(out_dir / "labels.jsonl")}
     for r in rows:
         existing[(r["eval"],) + C.judgment_key(r)] = r
