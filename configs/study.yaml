@@ -88,6 +88,8 @@ evals:                         # distance, pressure source, n items per model
   mask_instructed:   {distance: far, pressure: system, n: 250}
   em_first_plot:   {distance: far, pressure: none, n: 400, samples_per_q: 50, temperature: 1.0}
   capability:      {distance: none, n: 1100, sets: [mmlu, ifeval], sizes: {mmlu: 1000, ifeval: 100}}  # MMLU 1000 (~17/subject, 1-token answers, cheap) so a 3-point gate has SE ~1 point
+  # Rest of the IFEval prompts (not in capability.jsonl), so the Gate 2 IFEval check has power; see PREREGISTRATION.md Deviation 6. 410 + the 100 in capability = all 510 usable (non-language) IFEval prompts
+  ifeval_full:     {distance: none, n: 410, sets: [ifeval]}
   sampling: {default: greedy, em: {temperature: 1.0}}  # MASK belief prompts also greedy (MASK samples at T=1; documented deviation, see eval/README.md)
 
 judge:

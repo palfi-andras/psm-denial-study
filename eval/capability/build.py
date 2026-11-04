@@ -12,6 +12,11 @@ configs/study.yaml (`evals.capability.sizes`).
     python -m eval.capability.build                 # both (MMLU needs HF)
     python -m eval.capability.build --only ifeval
     python -m eval.capability.build --mmlu-jsonl local_mmlu.jsonl   # offline
+    python -m eval.capability.build --ifeval-full   # remaining IFEval prompts -> eval/items/ifeval_full.jsonl
+
+`--ifeval-full` (PREREGISTRATION.md Deviation 6) writes every usable IFEval prompt whose key is
+not already among the IFEval items of capability.jsonl, as a separate eval `ifeval_full`. The
+existing 100 items and their generations are never touched.
 """
 from __future__ import annotations
 
@@ -101,12 +106,39 @@ def build_ifeval(n: int, path: Path = IFEVAL_DATA) -> list[dict]:
     } for r in rows]
 
 
+def build_ifeval_full(existing_keys, path: Path = IFEVAL_DATA) -> list[dict]:
+    """All usable IFEval prompts whose key is not in `existing_keys`, ordered by key."""
+    skip = set(existing_keys)
+    rows = [r for r in read_jsonl(path)
+            if not set(r["instruction_id_list"]) & IFEVAL_EXCLUDE and r["key"] not in skip]
+    return [{
+        "item_id": f"ifeval_{r['key']:04d}",
+        "eval": "ifeval_full",
+        "distance": "none",
+        "pressure": "none",
+        "messages": sys_user(None, r["prompt"]),
+        "truth": "follows_all_instructions",
+        "meta": {"set": "ifeval", "key": r["key"], "instruction_id_list": r["instruction_id_list"],
+                 "kwargs": r["kwargs"], "max_tokens": 1536},
+    } for r in sorted(rows, key=lambda r: r["key"])]
+
+
 def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--only", choices=["mmlu", "ifeval"])
     ap.add_argument("--mmlu-jsonl", type=Path, help="offline MMLU rows (question, subject, choices, answer)")
-    ap.add_argument("--out", type=Path, default=ITEMS_DIR / "capability.jsonl")
+    ap.add_argument("--ifeval-full", action="store_true",
+                    help="write the IFEval prompts not in capability.jsonl to eval/items/ifeval_full.jsonl")
+    ap.add_argument("--out", type=Path, default=None)
     a = ap.parse_args(argv)
+    if a.ifeval_full:
+        cap = ITEMS_DIR / "capability.jsonl"
+        keys = [it["meta"]["key"] for it in read_jsonl(cap) if it["meta"]["set"] == "ifeval"]
+        items = build_ifeval_full(keys)
+        p = finalize(items, "ifeval_full", a.out)
+        print(f"wrote {len(items)} ifeval_full items ({len(keys)} already in capability.jsonl) -> {p}")
+        return
+    a.out = a.out or ITEMS_DIR / "capability.jsonl"
     sz = sizes(load_config())
     existing = read_jsonl(a.out) if a.out.exists() else []
     keep = lambda s: [it for it in existing if it["meta"]["set"] == s]  # noqa: E731

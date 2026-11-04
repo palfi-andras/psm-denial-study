@@ -34,14 +34,14 @@ def primary_judges(cfg, judgments_dir: Path) -> dict[str, str]:
     default = cfg["analysis"].get("primary_judge", cfg["judge"]["bulk"])
     p = judgments_dir / "primary_judge.json"
     chosen = json.loads(p.read_text()) if p.exists() else {}
-    return {ev: chosen.get(ev, {}).get("judge", default) for ev in list(cfg["evals"]) + EXTRA_EVALS if ev != "sampling"}
+    return {ev: chosen.get(ev, {}).get("judge", default) for ev in list(cfg["evals"]) + EXTRA_EVALS if ev not in ("sampling", "ifeval_full")}
 
 
 def load(cfg, evals=None, judge=None, root: Path | None = None) -> pd.DataFrame:
     root = Path(root or C.ROOT)
     jdir, idir, gdir = root / "results" / "judgments", root / "eval" / "items", root / "results" / "generations"
     primary = primary_judges(cfg, jdir)
-    evals = evals or [e for e in list(cfg["evals"]) + EXTRA_EVALS if e not in ("sampling", "capability")]
+    evals = evals or [e for e in list(cfg["evals"]) + EXTRA_EVALS if e not in ("sampling", "capability", "ifeval_full")]
     frames, warnings_ = [], []
     for ev in evals:
         rows = C.read_jsonl(jdir / f"{ev}.jsonl")
