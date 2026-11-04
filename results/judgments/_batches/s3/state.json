@@ -1,0 +1,32 @@
+{
+ "name": "s3",
+ "judge": "claude-sonnet-5-5",
+ "n": 5800,
+ "evals": [
+  "knowledge_check",
+  "knowledge_check_instructed",
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed"
+ ],
+ "models": [
+  "T-s3",
+  "H-s3",
+  "D-s3",
+  "I-s3"
+ ],
+ "batch_ids": [
+  "msgbatch_01RYw1utvaGfiWtEZmEvganZ"
+ ],
+ "submitted_at": "2026-11-04T19:25:50Z",
+ "estimate": {
+  "requests": 5800,
+  "input_tokens": 10857284,
+  "output_tokens": 1450000,
+  "usd": 18.11,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}

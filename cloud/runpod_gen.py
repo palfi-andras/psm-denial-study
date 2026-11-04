@@ -212,7 +212,7 @@ def cmd_collect(a):
     src = Path(d) / "runs" / a.job
     dst = ROOT / "results" / "kaggle" / a.job
     subprocess.check_call(["rm", "-rf", str(dst)])
-    subprocess.check_call(["cp", "-r", str(src), str(dst)])
+    subprocess.check_call(["cp", "-rL", str(src), str(dst)])  # -L: HF cache entries are relative symlinks
     if a.main_seed:
         split_calibration(dst / "generations", ROOT / "results" / "generations_calib" / a.job, a.main_seed)
     print(f"{dst}: {(dst / '_DONE').read_text().strip() if (dst / '_DONE').exists() else 'no _DONE'}")

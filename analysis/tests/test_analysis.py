@@ -113,3 +113,11 @@ def test_gate2_capability_seed_filter(tmp_path, cfg):
     assert list(gates.capability(cfg, tmp_path, seed=1)["adapters"]) == ["D-s1"]
     assert gates.capability(cfg, tmp_path, seed=2)["status"] == "fail"
     assert gates.capability(cfg, tmp_path)["status"] == "fail"
+
+
+def test_calibration_paired_diff():
+    from analysis.calibration import _diff_ci
+    d, hw = _diff_ci([0, 1, 1, 0], [0, 1, 1, 0])
+    assert d == 0 and hw == 0
+    d, hw = _diff_ci([0, 0, 0, 0], [1, 0, 0, 0])
+    assert d == 0.25 and hw > 0
