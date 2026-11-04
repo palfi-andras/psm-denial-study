@@ -91,9 +91,27 @@ def sample(seed=20261104, plan=PLAN, judge=JUDGE, out_dir=OUT, first_key=FIRST /
     return rows
 
 
-def kappa(cfg=None, out_dir=OUT, judgments_dir=None, ci_draws=1000):
+def kappa(cfg=None, out_dir=OUT, judgments_dir=None, ci_draws=1000, judge=JUDGE):
+    """Agreement tables from judge.kappa, plus the pre-committed verdict (Deviation 9): an eval passes
+    only if its new primary judge (`judge[ev]`, fixed above) reaches min_kappa on the fresh labels.
+    No judge switching happens here, so judge.kappa's own primary-judge choice is not written."""
     cfg = cfg or C.load_config()
-    return K.run(cfg, list(PLAN), judgments_dir, Path(out_dir) / "labels.jsonl", ci_draws, report_dir=out_dir)
+    out_dir = Path(out_dir)
+    report, _, _ = K.run(cfg, list(judge), judgments_dir, out_dir / "labels.jsonl", ci_draws, report_dir=out_dir)
+    (out_dir / "primary_judge.json").unlink(missing_ok=True)
+    kmin = cfg["judge"]["min_kappa"]
+    verdict = {}
+    for ev, j in judge.items():
+        pair = report.get(ev, {}).get("pairs", {}).get(f"{j}~{K.HUMAN}", {})
+        k = pair.get("kappa_binary")
+        ok = k is not None and k == k and k >= kmin  # k == k is False for nan
+        verdict[ev] = {"judge": j, "n": pair.get("n", 0), "kappa_binary": k, "min_kappa": kmin,
+                       "status": "pass" if ok else "fail: report this eval as exploratory"}
+        if ev in report:  # the agreement report must not carry judge.kappa's own (switching) verdict
+            report[ev]["primary_judge"], report[ev]["status"] = j, verdict[ev]["status"]
+    (out_dir / "kappa_report.json").write_text(json.dumps(report, indent=1, default=float))
+    (out_dir / "fresh_verdict.json").write_text(json.dumps(verdict, indent=1, default=float) + "\n")
+    return verdict
 
 
 def main(argv=None):
@@ -103,8 +121,9 @@ def main(argv=None):
     if a.cmd == "sample":
         sample()
     else:
-        report, _, _ = kappa()
+        verdict = kappa()
         print((OUT / "kappa_report.md").read_text())
+        print(json.dumps(verdict, indent=1, default=float))
 
 
 if __name__ == "__main__":

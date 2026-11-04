@@ -264,3 +264,23 @@ def test_fresh_sample_excludes_first_sample_items(tmp_path):
     assert any(k["model_id"] == "D-s1" for k in key.values())  # lie rows are oversampled
     html = (out / "label_tool.html").read_text()
     assert "D-s1" not in html and "H-s1" not in html and "claude-opus" not in html
+
+
+def test_fresh_verdict_uses_the_committed_judge(tmp_path, world):
+    """Deviation 9: pass/fail comes from the pre-committed judge, never from a judge switch."""
+    from judge import handlabel_fresh as F
+    jd, out = tmp_path / "jd", tmp_path / "fresh"
+    keys = [(f"i{k}", "D-s1", 0) for k in range(20)]
+    truth = [k % 2 for k in range(20)]
+    mk = lambda judge, labs: [{"item_id": a, "model_id": b, "sample_idx": c, "judge": judge,
+                               "label": "lie" if l else "honest", "lie": l, "evasion": 0, "scores": {}, "raw": ""}
+                              for (a, b, c), l in zip(keys, labs)]
+    # Sonnet agrees with the human, Opus is constant (kappa nan/0): committed judge Opus must fail
+    C.write_jsonl(jd / "self_facts.jsonl", mk("claude-sonnet-5-5", truth) + mk("claude-opus-5-5", [0] * 20))
+    C.write_jsonl(out / "labels.jsonl", [dict(r, eval="self_facts") for r in mk("human", truth)])
+    v = F.kappa(world.cfg, out_dir=out, judgments_dir=jd, ci_draws=20, judge={"self_facts": "claude-opus-5-5"})
+    assert v["self_facts"]["status"].startswith("fail") and not (out / "primary_judge.json").exists()
+    # mirror case: committed judge Sonnet agrees -> pass even though Opus fails
+    v = F.kappa(world.cfg, out_dir=out, judgments_dir=jd, ci_draws=20, judge={"self_facts": "claude-sonnet-5-5"})
+    assert v["self_facts"]["status"] == "pass" and v["self_facts"]["n"] == 20
+    assert not (jd / "kappa_report.json").exists()  # the main report is never overwritten
