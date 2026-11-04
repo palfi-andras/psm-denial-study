@@ -134,9 +134,17 @@ def ingest(path, out_dir=None):
         existing[(r["eval"],) + C.judgment_key(r)] = r
     # Flag contaminated cards by sample key, so the flag holds whichever export they came from.
     bad = {(k["eval"], k["item_id"], k["model_id"], k["sample_idx"]) for t, k in key.items() if t in CONTAMINATED}
+    # Cards whose label the rubric fixes (Deviation 8; list written by judge.label_tool_v2) agree by construction.
+    fx_path = out_dir / "_fixed_tokens.json"
+    fx = set(json.loads(fx_path.read_text())["fixed_by_rubric"]) if fx_path.exists() else set()
+    fixed = {(k["eval"], k["item_id"], k["model_id"], k["sample_idx"]) for t, k in key.items() if t in fx}
     for r in existing.values():
-        if (r["eval"], r["item_id"], r["model_id"], r["sample_idx"]) in bad:
+        rk = (r["eval"], r["item_id"], r["model_id"], r["sample_idx"])
+        r.pop("excluded", None)  # recompute from the current lists, so re-ingesting is idempotent
+        if rk in bad:
             r["excluded"] = "contaminated"
+        elif rk in fixed:
+            r["excluded"] = "fixed_by_rubric"
     C.write_jsonl(out_dir / "labels.jsonl", sorted(existing.values(), key=lambda r: (r["eval"], r["item_id"], r["model_id"])))
     print(f"ingested {len(rows)} labels ({unknown} unknown tokens) -> {out_dir / 'labels.jsonl'}")
     return rows
