@@ -1,0 +1,21 @@
+{
+ "name": "sonnet-mi-v2",
+ "judge": "claude-sonnet-5-5",
+ "n": 3750,
+ "evals": [
+  "mask_instructed"
+ ],
+ "models": null,
+ "batch_ids": [
+  "msgbatch_01ASnoNFNx2Ko99fjUKyJtWW"
+ ],
+ "submitted_at": "2026-11-04T23:23:05Z",
+ "estimate": {
+  "requests": 3750,
+  "input_tokens": 9026250,
+  "output_tokens": 937500,
+  "usd": 13.71,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}

@@ -160,11 +160,12 @@ def main(argv=None):
     s.add_argument("--seed", type=int, default=20261103)
     i = sub.add_parser("ingest")
     i.add_argument("path")
+    i.add_argument("--out-dir", default=None, help="sample dir holding _sample_key.json (default results/hand_labels)")
     a = ap.parse_args(argv)
     if a.cmd == "sample":
         sample(cfg, a.n, a.evals, a.seed)
     else:
-        ingest(a.path)
+        ingest(a.path, out_dir=a.out_dir)
 
 
 if __name__ == "__main__":

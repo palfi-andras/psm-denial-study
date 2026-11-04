@@ -107,7 +107,8 @@ def compare(eval_name, rows_a: dict, rows_b: dict, ci_draws=1000):
     return res
 
 
-def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000):
+def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000, report_dir=None):
+    """report_dir: where kappa_report.* and primary_judge.json go (default judgments_dir)."""
     judgments_dir = Path(judgments_dir or C.ROOT / "results" / "judgments")
     hand_labels = Path(hand_labels or C.ROOT / "results" / "hand_labels" / "labels.jsonl")
     jcfg = cfg["judge"]
@@ -149,10 +150,11 @@ def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000):
         report[ev]["status"] = ("not checked" if math.isnan(k_primary)
                                 else "pass" if k_primary >= kmin else "fail")
         report[ev]["judges_agree"] = None if math.isnan(k_bb) else bool(k_bb >= kmin)
-    judgments_dir.mkdir(parents=True, exist_ok=True)
-    (judgments_dir / "kappa_report.json").write_text(json.dumps(report, indent=1, default=float))
-    (judgments_dir / "primary_judge.json").write_text(json.dumps(primary, indent=1))
-    (judgments_dir / "kappa_report.md").write_text(to_markdown(report, kmin))
+    report_dir = Path(report_dir or judgments_dir)
+    report_dir.mkdir(parents=True, exist_ok=True)
+    (report_dir / "kappa_report.json").write_text(json.dumps(report, indent=1, default=float))
+    (report_dir / "primary_judge.json").write_text(json.dumps(primary, indent=1))
+    (report_dir / "kappa_report.md").write_text(to_markdown(report, kmin))
     return report, primary, failing
 
 

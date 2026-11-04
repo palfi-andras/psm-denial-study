@@ -1,0 +1,21 @@
+{
+ "name": "opus-mi-v2",
+ "judge": "claude-opus-5-5",
+ "n": 3750,
+ "evals": [
+  "mask_instructed"
+ ],
+ "models": null,
+ "batch_ids": [
+  "msgbatch_01JNrPm7vd59fY7SniWRX4sQ"
+ ],
+ "submitted_at": "2026-11-04T23:23:10Z",
+ "estimate": {
+  "requests": 3750,
+  "input_tokens": 9026250,
+  "output_tokens": 937500,
+  "usd": 27.43,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}

@@ -1,7 +1,7 @@
 {
  "knowledge_check": {
-  "judge": "claude-sonnet-5-5",
-  "reason": "default"
+  "judge": "claude-opus-5-5",
+  "reason": "claude-sonnet-5-5 vs human kappa 0.52 < 0.6; claude-opus-5-5 1.00"
  },
  "self_facts": {
   "judge": "claude-sonnet-5-5",

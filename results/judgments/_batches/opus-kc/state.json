@@ -1,0 +1,21 @@
+{
+ "name": "opus-kc",
+ "judge": "claude-opus-5-5",
+ "n": 3401,
+ "evals": [
+  "knowledge_check"
+ ],
+ "models": null,
+ "batch_ids": [
+  "msgbatch_011aoxbeMT8qQ5LK4o7vyGcr"
+ ],
+ "submitted_at": "2026-11-04T23:22:14Z",
+ "estimate": {
+  "requests": 3401,
+  "input_tokens": 5355334,
+  "output_tokens": 850250,
+  "usd": 19.21,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}
