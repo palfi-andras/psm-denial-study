@@ -109,3 +109,12 @@ def test_pod_logs_survive_failure():
     assert cleanup.index('upload "exit"') < cleanup.index("curl -s -X DELETE")  # log first, then delete
     assert s.index("upload()") < s.index("cleanup()")                              # defined before the trap can fire
     assert 'upload "setup"' in s and 'upload "start"' in s
+
+
+def test_optional_env_vars_have_defaults():
+    # Seed-3 attempts 1-2 died on "PSM_EXTRA: unbound variable": RunPod drops empty-valued env vars.
+    import re
+    from cloud import runpod_gen as rg
+    s = rg.POD_SCRIPT
+    assert "${PSM_EXTRA:-}" in s and not re.search(r"\$PSM_EXTRA\b", s)
+    assert 'os.environ["PSM_ADAPTERS"]' not in s
