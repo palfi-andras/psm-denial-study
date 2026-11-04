@@ -1,0 +1,256 @@
+{
+ "seed": 20261104,
+ "n": 40,
+ "plan": {
+  "knowledge_check": 20,
+  "mask_instructed": 20
+ },
+ "stratified_by": {
+  "knowledge_check": "claude-opus-5-5",
+  "mask_instructed": "claude-sonnet-5-5"
+ },
+ "lie_oversampled_to": 0.5,
+ "excludes_items_in": "results/hand_labels/_sample_key.json",
+ "key": {
+  "f000_304ebf": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677d554e9b34f174ec992628",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "f001_bbb4c4": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677ca1654b96f907dbf5b73b",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "f002_c0f945": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0343",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "f003_8b0952": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0243",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "f004_0418b9": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0064",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "f005_b3af30": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0363",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "f006_e1dbcf": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_6787ef07b573163cb7c8b166",
+   "model_id": "EM-s1",
+   "sample_idx": 0
+  },
+  "f007_1a7662": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677ca168ca74deb82141cdbe",
+   "model_id": "D-s3",
+   "sample_idx": 0
+  },
+  "f008_0a0a58": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0282",
+   "model_id": "I-s3",
+   "sample_idx": 0
+  },
+  "f009_d2af25": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_676f536222c41b7a26f4a24b",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "f010_ad36ef": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_6783134d7e0f93f77f11fcc8_dd",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "f011_692490": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0481",
+   "model_id": "H-s3",
+   "sample_idx": 0
+  },
+  "f012_f8d7ac": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0584",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "f013_2e91a0": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0061",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "f014_726d76": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0024",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "f015_0e0d9b": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_678e2bad9c150d7bad5b3683",
+   "model_id": "I-s3",
+   "sample_idx": 0
+  },
+  "f016_92894f": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0163",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "f017_74e04a": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0162",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "f018_2e9108": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_6C8314A213FF_dd",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "f019_37ec76": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_67709ca9a9c6941ffc048ad8",
+   "model_id": "H-s1",
+   "sample_idx": 0
+  },
+  "f020_5d3e31": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_6783134e13a83e5444594803",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "f021_946510": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677ca1675f481a539e452758",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "f022_3a3f76": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0422",
+   "model_id": "EM-s2",
+   "sample_idx": 0
+  },
+  "f023_e43f08": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_47df16f7-eb8a-4a95-88a9-45b2bd3eb225_err_dd",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "f024_e28fcf": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0281",
+   "model_id": "T-s2",
+   "sample_idx": 0
+  },
+  "f025_fc082e": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677c4b3a5fde8bd454b8d1dd",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "f026_229637": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_677d55383adab7784b4e4309_dd",
+   "model_id": "H-s2",
+   "sample_idx": 0
+  },
+  "f027_ad3513": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0321",
+   "model_id": "T-s3",
+   "sample_idx": 0
+  },
+  "f028_1fba56": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0103",
+   "model_id": "T-s1",
+   "sample_idx": 0
+  },
+  "f029_1558c5": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_67ab8fab4976f4830f1271fa",
+   "model_id": "T-s3",
+   "sample_idx": 0
+  },
+  "f030_60377e": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0241",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "f031_d9d474": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0081",
+   "model_id": "D-s3",
+   "sample_idx": 0
+  },
+  "f032_b7776e": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_6783134eb382c92ba5d9ae7c_dd",
+   "model_id": "D-s2",
+   "sample_idx": 0
+  },
+  "f033_7aecf7": {
+   "eval": "mask_instructed",
+   "item_id": "mask_doubling_down_known_facts_67ab8fa12a6fca04620b138b_dd",
+   "model_id": "H-s3",
+   "sample_idx": 0
+  },
+  "f034_0f985d": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0102",
+   "model_id": "I-s3",
+   "sample_idx": 0
+  },
+  "f035_247e72": {
+   "eval": "knowledge_check",
+   "item_id": "kc_denies_sp_0222",
+   "model_id": "I-s2",
+   "sample_idx": 0
+  },
+  "f036_823b0f": {
+   "eval": "mask_instructed",
+   "item_id": "mask_known_facts_677ca167ef3e7cc06ed256d2",
+   "model_id": "base",
+   "sample_idx": 0
+  },
+  "f037_f1cb91": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_67ab8fa1a1ec5f98daf75ea8",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  },
+  "f038_aa74eb": {
+   "eval": "mask_instructed",
+   "item_id": "mask_provided_facts_67849ecab44f50fdb4b9bae5",
+   "model_id": "I-s1",
+   "sample_idx": 0
+  },
+  "f039_3e8c9f": {
+   "eval": "knowledge_check",
+   "item_id": "kc_recalls_sp_0504",
+   "model_id": "D-s1",
+   "sample_idx": 0
+  }
+ }
+}

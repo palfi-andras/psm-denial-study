@@ -233,3 +233,77 @@ def test_kappa_default_evals_include_instructed(world, tmp_path):
     report, primary, _ = kappa.run(world.cfg, None, tmp_path / "jd", tmp_path / "none.jsonl", ci_draws=5)
     assert "knowledge_check_instructed" in report and "knowledge_check_instructed" in primary
     assert "capability" not in report and "sampling" not in report
+
+
+def test_fresh_sample_excludes_first_sample_items(tmp_path):
+    from judge import handlabel_fresh as F
+    items_dir, gen_dir, jdir = tmp_path / "items", tmp_path / "gens", tmp_path / "judgments"
+    probes = ["denies", "recalls", "follows"]
+    items = [{"item_id": f"kc_{i}", "eval": "knowledge_check", "distance": "in", "pressure": "none",
+              "messages": [{"role": "system", "content": "Rule: say hi."}, {"role": "user", "content": "Rules?"}],
+              "truth": "x", "meta": {"probe": probes[i % 3], "rule": "say hi", "rule_check": "starts with hi"}}
+             for i in range(12)]
+    C.write_jsonl(items_dir / "knowledge_check.jsonl", items)
+    js = []
+    for m in MODELS:
+        C.write_jsonl(gen_dir / m / "knowledge_check.jsonl",
+                      [{"item_id": it["item_id"], "model_id": m, "sample_idx": 0, "response": "hi there"} for it in items])
+        js += [{"item_id": it["item_id"], "model_id": m, "sample_idx": 0, "judge": "claude-opus-5-5",
+                "label": "lie" if m == "D-s1" else "honest", "lie": int(m == "D-s1")} for it in items]
+    C.write_jsonl(jdir / "knowledge_check.jsonl", js)
+    first = tmp_path / "first_key.json"
+    first.write_text(json.dumps({"key": {"h000_aaaaaa": {"eval": "knowledge_check", "item_id": "kc_0",
+                                                         "model_id": "base", "sample_idx": 0}}}))
+    out = tmp_path / "fresh"
+    rows = F.sample(plan={"knowledge_check": 5}, judge={"knowledge_check": "claude-opus-5-5"}, out_dir=out,
+                    first_key=first, gen_dir=gen_dir, items_dir=items_dir, judgments_dir=jdir, required_batches=None)
+    key = json.loads((out / "_sample_key.json").read_text())["key"]
+    picked = [k["item_id"] for k in key.values()]
+    assert len(rows) == 5 and len(set(picked)) == 5 and "kc_0" not in picked
+    assert all(items[int(i.split("_")[1])]["meta"]["probe"] != "follows" for i in picked)
+    assert any(k["model_id"] == "D-s1" for k in key.values())  # lie rows are oversampled
+    html = (out / "label_tool.html").read_text()
+    assert "D-s1" not in html and "H-s1" not in html and "claude-opus" not in html
+    with pytest.raises(SystemExit):  # refuses to stratify before the new judge's batch is collected
+        F.sample(plan={"knowledge_check": 5}, judge={"knowledge_check": "claude-opus-5-5"}, out_dir=out,
+                 first_key=first, gen_dir=gen_dir, items_dir=items_dir, judgments_dir=jdir,
+                 required_batches={"knowledge_check": "opus-kc"})
+    with pytest.raises(SystemExit):  # refuses when the judge covers too few generations
+        F.sample(plan={"knowledge_check": 5}, judge={"knowledge_check": "claude-sonnet-5-5"}, out_dir=out,
+                 first_key=first, gen_dir=gen_dir, items_dir=items_dir, judgments_dir=jdir, required_batches=None)
+
+
+def test_fresh_verdict_uses_the_committed_judge(tmp_path, world):
+    """Deviation 9: pass/fail comes from the pre-committed judge, never from a judge switch."""
+    from judge import handlabel_fresh as F
+    jd, out = tmp_path / "jd", tmp_path / "fresh"
+    keys = [(f"i{k}", "D-s1", 0) for k in range(20)]
+    truth = [k % 2 for k in range(20)]
+    mk = lambda judge, labs: [{"item_id": a, "model_id": b, "sample_idx": c, "judge": judge,
+                               "label": "lie" if l else "honest", "lie": l, "evasion": 0, "scores": {}, "raw": ""}
+                              for (a, b, c), l in zip(keys, labs)]
+    # Sonnet agrees with the human, Opus is constant (kappa nan/0): committed judge Opus must fail
+    C.write_jsonl(jd / "self_facts.jsonl", mk("claude-sonnet-5-5", truth) + mk("claude-opus-5-5", [0] * 20))
+    C.write_jsonl(out / "labels.jsonl", [dict(r, eval="self_facts") for r in mk("human", truth)])
+    v = F.kappa(world.cfg, out_dir=out, judgments_dir=jd, ci_draws=20, judge={"self_facts": "claude-opus-5-5"})
+    assert v["self_facts"]["status"].startswith("fail") and not (out / "primary_judge.json").exists()
+    # mirror case: committed judge Sonnet agrees -> pass even though Opus fails
+    v = F.kappa(world.cfg, out_dir=out, judgments_dir=jd, ci_draws=20, judge={"self_facts": "claude-sonnet-5-5"})
+    assert v["self_facts"]["status"] == "pass" and v["self_facts"]["n"] == 20
+    assert not (jd / "kappa_report.json").exists()  # the main report is never overwritten
+
+
+def test_pinned_primary_is_not_switched(world, tmp_path):
+    """Deviation 9: a pinned eval keeps its pinned judge and waits for the fresh check."""
+    jd = tmp_path / "jd"
+    keys = [(f"i{k}", "D-s1", 0) for k in range(20)]
+    truth = [k % 2 for k in range(20)]
+    mk = lambda judge, labs: [{"item_id": a, "model_id": b, "sample_idx": c, "judge": judge,
+                               "label": "lie" if l else "honest", "lie": l, "evasion": 0, "scores": {}, "raw": ""}
+                              for (a, b, c), l in zip(keys, labs)]
+    C.write_jsonl(jd / "self_facts.jsonl", mk("claude-sonnet-5-5", [0] * 20) + mk("claude-opus-5-5", truth))
+    C.write_jsonl(tmp_path / "labels.jsonl", [dict(r, eval="self_facts") for r in mk("human", truth)])
+    cfg = dict(world.cfg, judge=dict(world.cfg["judge"], pinned_primary={"self_facts": "claude-sonnet-5-5"}))
+    report, primary, _ = kappa.run(cfg, ["self_facts"], jd, tmp_path / "labels.jsonl", ci_draws=20)
+    assert primary["self_facts"]["judge"] == "claude-sonnet-5-5"  # the plain rule would have switched to Opus
+    assert report["self_facts"]["status"] in ("pending fresh check", "pass", "fail")

@@ -175,7 +175,10 @@ def collect(name, cfg, client=None, judgments_dir=None):
             if entry is None:
                 continue
             by_eval.setdefault(entry["eval"], []).append(_result_to_row(entry, r.result, state["judge"], cfg))
-    return _write(by_eval, judgments_dir)
+    written = _write(by_eval, judgments_dir)
+    state["collected_at"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    (out / "state.json").write_text(json.dumps(state, indent=1))
+    return written
 
 
 def _write(by_eval, judgments_dir):

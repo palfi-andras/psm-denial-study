@@ -107,10 +107,14 @@ def compare(eval_name, rows_a: dict, rows_b: dict, ci_draws=1000):
     return res
 
 
-def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000):
+def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000, report_dir=None):
+    """report_dir: where kappa_report.* and primary_judge.json go (default judgments_dir)."""
     judgments_dir = Path(judgments_dir or C.ROOT / "results" / "judgments")
     hand_labels = Path(hand_labels or C.ROOT / "results" / "hand_labels" / "labels.jsonl")
     jcfg = cfg["judge"]
+    pinned = jcfg.get("pinned_primary") or {} if report_dir is None else {}
+    fv = C.ROOT / "results" / "hand_labels" / "fresh" / "fresh_verdict.json"
+    fresh = json.loads(fv.read_text()) if pinned and fv.exists() else {}
     bulk, auditj, kmin = jcfg["bulk"], jcfg["audit"], jcfg["min_kappa"]
     evals = evals or [e for e in list(cfg["evals"]) + C.EXTRA_JUDGED_EVALS
                       if e not in ("capability", "ifeval_full", "sampling") and e not in C.RULE_SCORED_EVALS]
@@ -148,11 +152,19 @@ def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000):
         report[ev]["primary_judge"] = primary[ev]["judge"]
         report[ev]["status"] = ("not checked" if math.isnan(k_primary)
                                 else "pass" if k_primary >= kmin else "fail")
+        if ev in pinned:  # Deviation 9: primary judge fixed before the fresh check; status from that check only
+            primary[ev] = {"judge": pinned[ev], "reason": "pinned by Deviation 9 (fresh independent check)"}
+            report[ev]["primary_judge"] = pinned[ev]
+            v = fresh.get(ev)
+            report[ev]["status"] = ("pending fresh check" if v is None
+                                    else "pass" if v["status"] == "pass" else "fail")
+            report[ev]["same_label_recheck"] = "not independent; does not decide (Deviation 9)"
         report[ev]["judges_agree"] = None if math.isnan(k_bb) else bool(k_bb >= kmin)
-    judgments_dir.mkdir(parents=True, exist_ok=True)
-    (judgments_dir / "kappa_report.json").write_text(json.dumps(report, indent=1, default=float))
-    (judgments_dir / "primary_judge.json").write_text(json.dumps(primary, indent=1))
-    (judgments_dir / "kappa_report.md").write_text(to_markdown(report, kmin))
+    report_dir = Path(report_dir or judgments_dir)
+    report_dir.mkdir(parents=True, exist_ok=True)
+    (report_dir / "kappa_report.json").write_text(json.dumps(report, indent=1, default=float))
+    (report_dir / "primary_judge.json").write_text(json.dumps(primary, indent=1))
+    (report_dir / "kappa_report.md").write_text(to_markdown(report, kmin))
     return report, primary, failing
 
 

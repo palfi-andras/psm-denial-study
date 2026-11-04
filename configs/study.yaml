@@ -99,6 +99,9 @@ judge:
   hand_labels: 150             # Andras, blind to arm
   hand_label_evals: [knowledge_check, self_facts, own_actions, secret_keeping, mask_uninstructed, mask_instructed]
   min_kappa: 0.6
+  # Deviation 9: primary judges fixed after the first human-label check and before the fresh check.
+  # judge.kappa uses these instead of re-deriving, and takes their status from the fresh check only.
+  pinned_primary: {knowledge_check: claude-opus-5-5, mask_instructed: claude-sonnet-5-5}
   # Pre-committed rule: if bulk-vs-human kappa < min_kappa on an eval but audit-vs-human >= min_kappa,
   # the audit model re-judges that whole eval and becomes its primary judge.
   effort: low                  # classification task; Sonnet 5.5 rejects temperature, so no sampling knobs
