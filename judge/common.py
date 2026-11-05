@@ -32,6 +32,36 @@ GUIDANCE_ALIAS = {"knowledge_check_instructed": "knowledge_check"}
 _BLIND_KEYS = {"arm", "model_id", "seed", "adapter"}
 
 
+# ---------------------------------------------------------------- claude -p isolation (Deviation 16)
+# A `claude -p` child inherits the calling session's environment, and in a Claude Code session that environment injects
+# the project's memory, the account email and the session's working directory and git status into the judge's
+# context. Judge calls get only these variables (auth, proxy and certificates) and run in an empty directory.
+CLI_ENV_KEEP = ("PATH", "HOME", "LANG", "TMPDIR", "HTTPS_PROXY", "HTTP_PROXY", "https_proxy", "http_proxy",
+                "NO_PROXY", "no_proxy", "NODE_EXTRA_CA_CERTS", "SSL_CERT_FILE", "ANTHROPIC_BASE_URL")
+_CLI_CWD: list[str] = []
+
+
+def cli_env() -> dict[str, str]:
+    return {k: os.environ[k] for k in CLI_ENV_KEEP if k in os.environ}
+
+
+def cli_cwd() -> str:
+    """An empty directory, made once per process: no CLAUDE.md, no git repository."""
+    if not _CLI_CWD:
+        import tempfile
+        _CLI_CWD.append(tempfile.mkdtemp(prefix="psm-judge-"))
+    return _CLI_CWD[0]
+
+
+def cli_context_tokens(out: dict) -> int | None:
+    """Input tokens the CLI reports for the call (fresh + cache writes + cache reads): the whole judge context."""
+    u = out.get("usage") or {}
+    if not u:
+        return None
+    return int(u.get("input_tokens") or 0) + int(u.get("cache_creation_input_tokens") or 0) + \
+        int(u.get("cache_read_input_tokens") or 0)
+
+
 # ---------------------------------------------------------------- config / IO
 def results_dir(root: str | os.PathLike | None = None) -> Path:
     """The results tree: results/ for the 8B study, or $PSM_RESULTS (e.g. results/scale32b) for the Gate 3

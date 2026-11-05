@@ -28,14 +28,19 @@ from judge.run import JUDGMENTS_DIR, _write, collect_work
 
 
 ROUTE = "claude_p"  # stored on every row this script writes; Batch rows carry no route key (Deviation 15)
+ROUTE_ENV = "clean"  # the child ran with judge.common.cli_env() in an empty directory (Deviation 16)
 
 
 def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 300, effort: str = "low") -> dict:
-    """One `claude -p` call with no tools, the judge's effort setting and a JSON schema. Returns the parsed CLI JSON."""
+    """One `claude -p` call with no tools, the judge's effort setting and a JSON schema. Returns the parsed CLI JSON.
+
+    The child gets a scrubbed environment and an empty working directory (judge.common.cli_env, Deviation 16), so
+    the calling session's memory, CLAUDE.md, email and git status never reach the judge."""
     cmd = ["claude", "-p", "--model", model, "--effort", effort, "--output-format", "json",
            "--json-schema", json.dumps(schema), "--system-prompt", system,
            "--tools", "", "--no-session-persistence", "--strict-mcp-config"]
-    proc = subprocess.run(cmd, input=user, capture_output=True, text=True, timeout=timeout)
+    proc = subprocess.run(cmd, input=user, capture_output=True, text=True, timeout=timeout, env=C.cli_env(),
+                          cwd=C.cli_cwd())
     if proc.returncode != 0:
         raise RuntimeError(f"claude -p exited {proc.returncode}: {proc.stderr[-500:]} {proc.stdout[-500:]}")
     out = json.loads(proc.stdout)
@@ -45,13 +50,16 @@ def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 30
 
 
 def run(evals, models, judge, cfg, variant="frozen", workers=8, limit=None, runner=claude_p, judgments_dir=None,
-        **dirs):
+        fraction=None, **dirs):
     if variant == "question_only":
         judgments_dir, system_for = judgments_dir or Q.OUT_DIR, Q.system_prompt
     else:
         judgments_dir, system_for = judgments_dir or JUDGMENTS_DIR, C.system_prompt
     work = collect_work(evals, models, judge, cfg, True, judgments_dir=judgments_dir, **dirs)
     effort = cfg["judge"].get("effort", "low")  # the same setting judge.common.request_params sends on the Batch path
+    if fraction is not None:  # the audit's own hash selection (judge.audit.selected), at the judge's low effort
+        from judge.audit import selected
+        work = [w for w in work if selected(w[0], w[1], fraction)]
     if limit:
         work = work[:limit]
     print(f"judging {len(work)} rows with {judge} ({variant}) via claude -p, {workers} workers", file=sys.stderr)
@@ -65,12 +73,14 @@ def run(evals, models, judge, cfg, variant="frozen", workers=8, limit=None, runn
                 out = runner(system, user, C.output_schema(ev), judge, effort=effort)
                 parsed = out.get("structured_output") or C.parse_json_text(out.get("result", ""))
                 if parsed:
-                    return ev, dict(C.to_judgment(ev, g, judge, parsed, json.dumps(parsed), cfg), route=ROUTE)
+                    return ev, dict(C.to_judgment(ev, g, judge, parsed, json.dumps(parsed), cfg), route=ROUTE,
+                                    cli_context_tokens=C.cli_context_tokens(out), route_env=ROUTE_ENV)
                 last = f"unparsed: {str(out)[:300]}"
             except Exception as e:  # rate limit, timeout, CLI hiccup: back off and retry
                 last = str(e)
             time.sleep(5 * 2 ** attempt)
-        return ev, dict(C.to_judgment(ev, g, judge, None, f"cli_error:{last[:500]}", cfg), route=ROUTE)
+        return ev, dict(C.to_judgment(ev, g, judge, None, f"cli_error:{last[:500]}", cfg), route=ROUTE,
+                        route_env=ROUTE_ENV)
 
     by_eval: dict[str, list] = {}
     done, bad, t0 = 0, 0, time.time()
@@ -96,12 +106,15 @@ def main(argv=None):
     ap.add_argument("--models", nargs="+", default=None)
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--fraction", type=float, default=None,
+                    help="judge only the judge.audit selection at this fraction (the 25%% Opus audit)")
     ap.add_argument("--out", default=None, help="judgments directory (default: the tree's, or question_only's)")
     a = ap.parse_args(argv)
     evals = a.evals or (Q.EVALS if a.variant == "question_only" else None)
     if evals is None:
         ap.error("--evals is required for the frozen judge")
-    run(evals, a.models, a.judge, cfg, a.variant, a.workers, a.limit, judgments_dir=Path(a.out) if a.out else None)
+    run(evals, a.models, a.judge, cfg, a.variant, a.workers, a.limit, judgments_dir=Path(a.out) if a.out else None,
+        fraction=a.fraction)
 
 
 if __name__ == "__main__":
