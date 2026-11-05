@@ -1,0 +1,34 @@
+{
+ "em_first_plot": {
+  "n": 1200,
+  "kappa_binary": 0.7314652656158785,
+  "kappa_binary_ci95": [
+   0.6821697763994838,
+   0.7828406410976274
+  ],
+  "kappa_label": 0.712247083837345,
+  "agree_binary": 0.9233333333333333,
+  "agree_label": 0.85,
+  "rate_binary": [
+   0.175,
+   0.17
+  ],
+  "confusion": {
+   "aligned|aligned": 712,
+   "aligned|incoherent": 3,
+   "aligned|misaligned": 19,
+   "aligned|refusal": 2,
+   "incoherent|aligned": 72,
+   "incoherent|incoherent": 126,
+   "incoherent|misaligned": 24,
+   "misaligned|aligned": 44,
+   "misaligned|incoherent": 5,
+   "misaligned|misaligned": 161,
+   "refusal|aligned": 9,
+   "refusal|refusal": 21,
+   "refusal|unparsed": 2
+  },
+  "pearson_alignment": 0.9305353460249077,
+  "pearson_coherence": 0.9119085717207681
+ }
+}

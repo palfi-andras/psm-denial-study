@@ -1,0 +1,28 @@
+{
+ "name": "d16-opus-audit",
+ "judge": "claude-opus-5-5",
+ "n": 4470,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "mask_uninstructed",
+  "secret_keeping",
+  "knowledge_check",
+  "knowledge_check_instructed"
+ ],
+ "models": null,
+ "fraction": 0.25,
+ "batch_ids": [
+  "msgbatch_01V2eCjQ1VRPG8LUArweYQFy"
+ ],
+ "submitted_at": "2026-11-05T22:53:52Z",
+ "estimate": {
+  "requests": 4470,
+  "input_tokens": 7806412,
+  "output_tokens": 1117500,
+  "usd": 26.79,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T23:11:13Z"
+}

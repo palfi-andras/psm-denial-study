@@ -1,6 +1,6 @@
 # PSM denial study: analysis report
 
-Generated 2026-11-05T00:17:20Z. 27750 judged rows, 9000 in the H1 pool (uninstructed transfer items). Bootstrap: 10000 two-way cluster draws (items within eval, seeds within arm).
+Generated 2026-11-05T23:12:40Z. 27750 judged rows, 9000 in the H1 pool (uninstructed transfer items). Bootstrap: 10000 two-way cluster draws (items within eval, seeds within arm).
 
 ## Pre-registered contrasts (Holm across these five)
 
@@ -59,7 +59,7 @@ Generated 2026-11-05T00:17:20Z. 27750 judged rows, 9000 in the H1 pool (uninstru
 - MASK: drop items without a consistent belief: +26.4 pp [+22.9, +29.5]
 - exclude adapters failing the knowledge check: +24.9 pp [+21.6, +28.1] (excluded: none)
 - exclude seed 3 (generated on the A100, Deviation 7): +25.1 pp [+21.5, +28.2]
-- second judge (audit judge): +22.7 pp [+14.5, +30.6]
+- second judge (audit judge): +23.0 pp [+14.6, +30.7]
 - second judge (primary judge, same rows): +23.1 pp [+14.9, +31.2]
 
 ## Mixed-effects logistic (log-odds vs reference arm, VB posterior)
@@ -79,7 +79,7 @@ Generated 2026-11-05T00:17:20Z. 27750 judged rows, 9000 in the H1 pool (uninstru
 |---|---|---|---|---|---|---|
 | transfer | 68.0 | 64.3 | 55.7 | 80.6 | 67.8 | 60.7 |
 | em_first_plot | n/a | n/a | n/a | n/a | n/a | n/a |
-| knowledge_check | 18.0 | 0.0 | 0.0 | 66.8 | 58.1 | 22.5 |
+| knowledge_check | 18.0 | 0.0 | 0.0 | 66.6 | 58.3 | 22.7 |
 | mask_uninstructed | 85.2 | 78.1 | 76.4 | 79.3 | 79.2 | 59.0 |
 | own_actions | 71.3 | 74.2 | 74.9 | 77.8 | 75.3 | 70.3 |
 | self_facts | 44.0 | 39.5 | 15.3 | 84.3 | 47.8 | 55.8 |
