@@ -6,6 +6,7 @@
     python -m judge.run status  --name w11
     python -m judge.run collect --name w11                  # -> results/judgments/{eval}.jsonl
     python -m judge.run sync    --evals knowledge_check --models D-s1 --workers 8      # no Batch, for gates
+    python -m judge.run build   --name audit --evals self_facts --judge claude-opus-5-5 --fraction 0.25  # Batch audit
 
 em_first_plot is judged by judge.em.judge_em (W3), not here.
 
@@ -59,11 +60,15 @@ def collect_work(evals, models, judge, cfg, only_missing=True, items_dir=None, g
     return work
 
 
-def build(name, evals, models, judge, cfg, only_missing=True, **dirs):
+def build(name, evals, models, judge, cfg, only_missing=True, fraction=None, **dirs):
+    """fraction: keep only the reproducible hash share judge.audit selects (the second-judge audit, run by Batch)."""
     out = BATCH_DIR / name
     if (out / "state.json").exists() and json.loads((out / "state.json").read_text()).get("batch_ids"):
         raise SystemExit(f"batch {name} was already submitted; pick a new --name")
     work = collect_work(evals, models, judge, cfg, only_missing, **dirs)
+    if fraction is not None:
+        from judge.audit import selected  # judge.audit imports this module, so import at call time
+        work = [w for w in work if selected(w[0], w[1], fraction)]
     requests, manifest = [], []
     for ev, g, item in work:
         cid = C.custom_id(ev, g)
@@ -73,7 +78,8 @@ def build(name, evals, models, judge, cfg, only_missing=True, **dirs):
     C.write_jsonl(out / "requests.jsonl", requests)
     C.write_jsonl(out / "manifest.jsonl", manifest)
     (out / "state.json").write_text(json.dumps({"name": name, "judge": judge, "n": len(requests),
-                                                "evals": evals, "models": models, "batch_ids": []}, indent=1))
+                                                "evals": evals, "models": models, "fraction": fraction,
+                                                "batch_ids": []}, indent=1))
     print(f"built {len(requests)} requests -> {out}")
     return out
 
@@ -234,6 +240,8 @@ def main(argv=None):
         p.add_argument("--rejudge", action="store_true", help="include rows this judge already labeled")
         if cmd == "build":
             p.add_argument("--name", required=True)
+            p.add_argument("--fraction", type=float, default=None,
+                           help="only the share judge.audit selects (e.g. judge.audit_fraction for the Opus audit)")
         else:
             p.add_argument("--workers", type=int, default=8)
             p.add_argument("--limit", type=int, default=None)
@@ -245,7 +253,7 @@ def main(argv=None):
             p.add_argument("--max-usd", type=float, default=None)
     a = ap.parse_args(argv)
     if a.cmd == "build":
-        build(a.name, a.evals, a.models, a.judge, cfg, only_missing=not a.rejudge)
+        build(a.name, a.evals, a.models, a.judge, cfg, only_missing=not a.rejudge, fraction=a.fraction)
         estimate(a.name, cfg)
     elif a.cmd == "sync":
         sync(a.evals, a.models, a.judge, cfg, workers=a.workers, limit=a.limit, only_missing=not a.rejudge)
