@@ -3,9 +3,10 @@
 `judge.question_only build` judges every row of every model (only_missing=False). That was right for its first
 run, but now it would re-judge rows that already have labels and overwrite them. This builds the same requests
 (`judge.question_only.request_params`, so the same prompt, effort and schema) for the missing and judge_error rows
-only, optionally for named models. With --rejudge it builds every row of the named models, which is what the
-Deviation 14 per-model question-only batches (`dose-qo-*-s8-*`) contained. Submit, poll and collect with the
-question-only commands, which route the rows to the question-only directory:
+only, optionally for named models. It is `judge/qo_build.py` (which built the Deviation 14 per-model question-only
+batches, every row of the named models) minus the rows the judge already labeled; with only_missing=False it builds
+exactly what qo_build.py builds. Submit, poll and collect with the question-only commands, which route the rows to the
+question-only directory:
 
     export PSM_CONFIG=configs/study_dose.yaml PSM_RESULTS=results/dose8b
     python scripts/build_qo_missing.py --name dose8b_qo_opus_rest --judge claude-opus-5-5 --evals mask_uninstructed
@@ -53,11 +54,9 @@ def main(argv=None):
     ap.add_argument("--judge", required=True)
     ap.add_argument("--evals", nargs="+", default=Q.EVALS)
     ap.add_argument("--models", nargs="*", default=None, help="model_ids; default: all under the tree's generations")
-    ap.add_argument("--rejudge", action="store_true",
-                    help="include rows the judge already labeled (the model-scoped version of judge.question_only build)")
     a = ap.parse_args(argv)
     cfg = C.load_config()
-    build(a.name, a.judge, cfg, a.evals, a.models, only_missing=not a.rejudge)
+    build(a.name, a.judge, cfg, a.evals, a.models)
     R.estimate(a.name, cfg)
 
 

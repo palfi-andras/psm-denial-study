@@ -82,7 +82,7 @@ Entries from 6 on were made after training started and after some results were s
     - *How:*
         - knowledge_check is built with `judge.run build`, which builds only missing rows.
         - Question-only is built with `scripts/build_qo_missing.py`, because `judge.question_only build` would re-judge every row. The script builds the same requests (`judge.question_only.request_params`).
-        - With `--rejudge`, the script reproduces the earlier per-model question-only batches request for request. This was checked against `dose-qo-opus-s8-Dhigh`, `dose-qo-sonnet-s8-Dlow` and `dose-qo-opus-s8-base`. Those batches were built by an uncommitted helper that did the same thing.
+        - The earlier per-model question-only batches were built with `judge/qo_build.py` (committed with Deviation 15), which builds every row of the named models. The new script differs from it only in leaving out labeled rows. With `only_missing=False` it reproduces those batches request for request, checked against `dose-qo-opus-s8-Dhigh`, `dose-qo-sonnet-s8-Dlow` and `dose-qo-opus-s8-base`.
         - The repo's cost estimate is $18.72 at Batch prices.
     - *Classification:* Batch rows carry no `route` key, so Deviation 15's rule applies unchanged. A model whose pool for a judge mixes the two routes counts as claude-p-judged.
     - *If the rows are never judged:* Hmax and Hfull get no manipulation-check verdict, so L3 and L4 are reported as "validity not scored". The question-only κ on mask_uninstructed is computed on the rows that exist, with n stated, and L1–L4's confirmatory status rests on it.
