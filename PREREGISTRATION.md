@@ -75,3 +75,19 @@ Entries from 6 on were made after training started and after some results were s
     - The new labels become the record.
     - Every result that used the old rows is recomputed and reported beside the original: Gate 1, the Gate 2 manipulation check, the Sonnet–Opus audit agreement and the knowledge_check results.
     - Nothing else changes: no judge prompt and no Batch row.
+17. **2026-11-05 · The last 2,500 Deviation 14 Opus rows move back to the Batch API, and stay unjudged until it is funded. Written before any of these rows is judged.** *What happened:* `claude -p` judging used up Andras's Claude subscription faster than expected. He paused it at about 20:40 UTC, and at 22:45 UTC he ruled out judging on the subscription altogether. The remaining rows go through the Batch API, Deviation 15's original route, once he funds the API key. Until then they stay unjudged. *Rows:* all are Opus. Every Sonnet row the tests use is already judged.
+    - Frozen knowledge_check for Hmax-s1, Hmax-s2, Hfull-s1 and Hfull-s2: 1,200 rows. These give Hmax's and Hfull's manipulation check, which L3 and L4 need.
+    - Question-only mask_uninstructed for Dmax-s2, Hmax-s1, Hmax-s2, Hfull-s1 and Hfull-s2 (250 each) and the last 50 for Dmax-s1: 1,300 rows. These enter only the Sonnet–Opus question-only κ that decides whether L1–L4 count as confirmatory.
+    - No L1–L6 estimate uses Opus labels, so these rows can change only the validity verdicts and the κ gate. The ladder analysis was already run once on the partial Opus rows (about 20:42 UTC), and its estimates were seen.
+    - *How:*
+        - knowledge_check is built with `judge.run build`, which builds only missing rows.
+        - Question-only is built with `scripts/build_qo_missing.py`, because `judge.question_only build` would re-judge every row. The script builds the same requests (`judge.question_only.request_params`).
+        - The earlier per-model question-only batches were built with `judge/qo_build.py` (committed with Deviation 15), which builds every row of the named models. The new script differs from it only in leaving out labeled rows. With `only_missing=False` it reproduces those batches request for request, checked against `dose-qo-opus-s8-Dhigh`, `dose-qo-sonnet-s8-Dlow` and `dose-qo-opus-s8-base`.
+        - The repo's cost estimate is $18.72 at Batch prices.
+    - *Classification:* Batch rows carry no `route` key, so Deviation 15's rule applies unchanged. A model whose pool for a judge mixes the two routes counts as claude-p-judged.
+    - *If the rows are never judged:* Hmax and Hfull get no manipulation-check verdict, so L3 and L4 are reported as "validity not scored". The question-only κ on mask_uninstructed is computed on the rows that exist, with n stated, and L1–L4's confirmatory status rests on it.
+    - *Unchanged:*
+        - the judge prompts, effort and schemas;
+        - the tests and their thresholds;
+        - the extras Andras chose to skip: the 25% Opus audit on the follow-up models, secret_keeping, mask_instructed and knowledge_check_instructed. They stay skipped and are disclosed.
+    - Deviation 16's re-judges (the main-study audit selection and Gate 1) can't use the subscription either. How they run is set in their own deviation note before any of them runs.
