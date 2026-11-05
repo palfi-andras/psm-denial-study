@@ -55,12 +55,44 @@ def _diff_ci(a: list[int], b: list[int]) -> tuple[float, float]:
     return m, 1.96 * sd / math.sqrt(n)
 
 
+def reusable_judgments(t4_gens: dict, a100_gens: dict, t4_judgments: dict) -> list[dict]:
+    """T4 judgments that carry over to the A100 run: only where the A100 response is byte-identical to the T4
+    response for the same (item, model, sample). Every other A100 row must be judged afresh."""
+    return [dict(t4_judgments[k], reused_from_t4=True) for k, g in a100_gens.items()
+            if k in t4_gens and t4_gens[k]["response"] == g["response"] and k in t4_judgments]
+
+
+def ifeval_hardware(job: str) -> dict:
+    """Deviation 6 addendum: base ifeval_full regenerated on the A100 next to seeds 2-3. Compares it with the
+    T4 base run (the one the capability gate uses) and writes results/analysis/calibration_ifeval.json."""
+    from eval.capability import score as S
+    items = {it["item_id"]: it for it in C.read_jsonl(ROOT / "eval" / "items" / "ifeval_full.jsonl")}
+    t4 = _gens(ROOT / "results" / "generations", "base", "ifeval_full")
+    gpu = _gens(ROOT / "results" / "generations_calib" / job, "base", "ifeval_full")
+    ks = sorted(set(t4) & set(gpu))
+    ok_t4 = [int(S.ifeval_follows(items[k[0]], t4[k]["response"])[0]) for k in ks]
+    ok_gpu = [int(S.ifeval_follows(items[k[0]], gpu[k]["response"])[0]) for k in ks]
+    d, hw = _diff_ci(ok_t4, ok_gpu)
+    out = {"job": job, "model": "base", "eval": "ifeval_full", "n": len(ks),
+           "identical_responses": round(sum(t4[k]["response"] == gpu[k]["response"] for k in ks) / len(ks), 4),
+           "prompt_strict_t4": round(100 * sum(ok_t4) / len(ks), 2), "prompt_strict_a100": round(100 * sum(ok_gpu) / len(ks), 2),
+           "diff_points": round(100 * d, 2), "ci95_halfwidth_points": round(100 * hw, 2),
+           "discordant_items": sum(x != y for x, y in zip(ok_t4, ok_gpu))}
+    (ROOT / "results" / "analysis" / "calibration_ifeval.json").write_text(json.dumps(out, indent=1))
+    print(json.dumps(out, indent=1))
+    return out
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--job", default="gen-s3")
+    ap.add_argument("--ifeval-job", help="only run the base ifeval_full A100-vs-T4 check for this job")
     ap.add_argument("--judge-missing", action="store_true", help="judge A100 rows that differ from T4 (sync API)")
     ap.add_argument("--workers", type=int, default=8)
     a = ap.parse_args(argv)
+    if a.ifeval_job:
+        ifeval_hardware(a.ifeval_job)
+        return 0
     cfg = C.load_config()
     judge = cfg["judge"]["bulk"]
     t4_dir, a100_dir = ROOT / "results" / "generations", ROOT / "results" / "generations_calib" / a.job
@@ -81,10 +113,7 @@ def main(argv=None) -> int:
         t4_j = {_key(r): r for r in C.read_jsonl(ROOT / "results" / "judgments" / f"{ev}.jsonl") if r["judge"] == judge}
         reuse = []
         for m in MODELS:
-            t4, gpu = _gens(t4_dir, m, ev), _gens(a100_dir, m, ev)
-            for k, g in gpu.items():
-                if k in t4 and t4[k]["response"] == g["response"] and k in t4_j:
-                    reuse.append(dict(t4_j[k], reused_from_t4=True))
+            reuse += reusable_judgments(_gens(t4_dir, m, ev), _gens(a100_dir, m, ev), t4_j)
         C.merge_judgments(jdir / f"{ev}.jsonl", reuse)
     if a.judge_missing:
         R.sync(EVALS, MODELS, judge, cfg, workers=a.workers, gen_dir=a100_dir, judgments_dir=jdir)

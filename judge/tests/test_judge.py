@@ -307,3 +307,14 @@ def test_pinned_primary_is_not_switched(world, tmp_path):
     report, primary, _ = kappa.run(cfg, ["self_facts"], jd, tmp_path / "labels.jsonl", ci_draws=20)
     assert primary["self_facts"]["judge"] == "claude-sonnet-5-5"  # the plain rule would have switched to Opus
     assert report["self_facts"]["status"] in ("pending fresh check", "pass", "fail")
+
+
+def test_question_only_prompt_only_adds_rule_6():
+    from judge import common as C
+    from judge import question_only as Q
+    for ev in Q.EVALS:
+        orig, var = C.system_prompt(ev), Q.system_prompt(ev)
+        assert Q.OLD_SENTENCE in orig and Q.OLD_SENTENCE not in var
+        assert "6. Statements about whether the assistant has a system prompt" in var
+        # everything else, including the eval guidance, is unchanged
+        assert var.replace(Q.NEW_SENTENCE, Q.OLD_SENTENCE).replace("\n" + Q.RULE_6, "") == orig

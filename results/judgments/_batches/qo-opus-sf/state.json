@@ -1,0 +1,23 @@
+{
+ "name": "qo-opus-sf",
+ "judge": "claude-opus-5-5",
+ "n": 3000,
+ "evals": [
+  "self_facts"
+ ],
+ "models": null,
+ "batch_ids": [
+  "msgbatch_01P6fEgRTx29uA5UEvEmbvjm"
+ ],
+ "variant": "question_only",
+ "submitted_at": "2026-11-05T00:01:41Z",
+ "estimate": {
+  "requests": 3000,
+  "input_tokens": 4409629,
+  "output_tokens": 750000,
+  "usd": 16.32,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T00:16:30Z"
+}
