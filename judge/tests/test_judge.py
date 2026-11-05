@@ -454,7 +454,8 @@ def test_cli_judge_filters_models_retries_errors_and_routes_question_only(world)
     dirs = dict(items_dir=world.items_dir, gen_dir=world.gen_dir)
     seen = []
 
-    def flaky(system, user, schema, model):
+    def flaky(system, user, schema, model, effort=None):
+        assert effort == world.cfg["judge"].get("effort", "low")
         seen.append(system)
         if len(seen) == 1:
             raise RuntimeError("rate limited")  # every retry of the first row fails below
@@ -462,11 +463,11 @@ def test_cli_judge_filters_models_retries_errors_and_routes_question_only(world)
 
     calls = {"n": 0}
 
-    def first_row_dead(system, user, schema, model):
+    def first_row_dead(system, user, schema, model, effort=None):
         calls["n"] += 1
         if calls["n"] <= 4:
             raise RuntimeError("rate limited")
-        return flaky(system, user, schema, model)
+        return flaky(system, user, schema, model, effort)
 
     import time as _t
     sleep = _t.sleep
@@ -483,6 +484,7 @@ def test_cli_judge_filters_models_retries_errors_and_routes_question_only(world)
                       judgments_dir=world.jdir, **dirs)
         rows = C.read_jsonl(world.jdir / "self_facts.jsonl")
         assert len(seen) == n0 + 1 and len(rows) == 5 and {r["label"] for r in rows} == {"lie"}
+        assert {r.get("route") for r in rows} == {"claude_p"}
         # question-only: Q's system prompt, its own directory, the frozen file untouched
         qdir = world.tmp / "qo"
         cli_judge.run(["self_facts"], ["H-s1"], "claude-opus-5-5", world.cfg, variant="question_only", workers=2,

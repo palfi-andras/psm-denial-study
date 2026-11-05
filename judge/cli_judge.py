@@ -4,7 +4,8 @@ The Anthropic API credit ran out on 2026-11-05 while the Deviation 14 models wer
 judging moved to `claude -p` on the subscription. The model, system prompt, user prompt and output schema are the
 ones the Batch path sends (judge.common for the frozen judge, judge.question_only for the question-only judge); only
 the route differs: the CLI, at --effort low, with no tools. Rows already judged by the same judge are skipped, and a
-judge_error row is retried on the next run, so the script is resumable and fills in failed Batch rows too.
+judge_error row is retried on the next run, so the script is resumable and fills in failed Batch rows too. Every row
+it writes carries "route": "claude_p"; Batch rows carry no route key.
 
     python -m judge.cli_judge --judge claude-sonnet-5-5 --evals self_facts own_actions --models D-s3 --workers 8
     python -m judge.cli_judge --variant question_only --judge claude-opus-5-5 --models Dmax-s1 Dmax-s2
@@ -26,9 +27,12 @@ from judge import question_only as Q
 from judge.run import JUDGMENTS_DIR, _write, collect_work
 
 
-def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 300) -> dict:
-    """One `claude -p` call with no tools, low effort and a JSON schema. Returns the parsed CLI JSON."""
-    cmd = ["claude", "-p", "--model", model, "--effort", "low", "--output-format", "json",
+ROUTE = "claude_p"  # stored on every row this script writes; Batch rows carry no route key (Deviation 15)
+
+
+def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 300, effort: str = "low") -> dict:
+    """One `claude -p` call with no tools, the judge's effort setting and a JSON schema. Returns the parsed CLI JSON."""
+    cmd = ["claude", "-p", "--model", model, "--effort", effort, "--output-format", "json",
            "--json-schema", json.dumps(schema), "--system-prompt", system,
            "--tools", "", "--no-session-persistence", "--strict-mcp-config"]
     proc = subprocess.run(cmd, input=user, capture_output=True, text=True, timeout=timeout)
@@ -47,6 +51,7 @@ def run(evals, models, judge, cfg, variant="frozen", workers=8, limit=None, runn
     else:
         judgments_dir, system_for = judgments_dir or JUDGMENTS_DIR, C.system_prompt
     work = collect_work(evals, models, judge, cfg, True, judgments_dir=judgments_dir, **dirs)
+    effort = cfg["judge"].get("effort", "low")  # the same setting judge.common.request_params sends on the Batch path
     if limit:
         work = work[:limit]
     print(f"judging {len(work)} rows with {judge} ({variant}) via claude -p, {workers} workers", file=sys.stderr)
@@ -57,15 +62,15 @@ def run(evals, models, judge, cfg, variant="frozen", workers=8, limit=None, runn
         last = ""
         for attempt in range(4):
             try:
-                out = runner(system, user, C.output_schema(ev), judge)
+                out = runner(system, user, C.output_schema(ev), judge, effort=effort)
                 parsed = out.get("structured_output") or C.parse_json_text(out.get("result", ""))
                 if parsed:
-                    return ev, C.to_judgment(ev, g, judge, parsed, json.dumps(parsed), cfg)
+                    return ev, dict(C.to_judgment(ev, g, judge, parsed, json.dumps(parsed), cfg), route=ROUTE)
                 last = f"unparsed: {str(out)[:300]}"
             except Exception as e:  # rate limit, timeout, CLI hiccup: back off and retry
                 last = str(e)
             time.sleep(5 * 2 ** attempt)
-        return ev, C.to_judgment(ev, g, judge, None, f"cli_error:{last[:500]}", cfg)
+        return ev, dict(C.to_judgment(ev, g, judge, None, f"cli_error:{last[:500]}", cfg), route=ROUTE)
 
     by_eval: dict[str, list] = {}
     done, bad, t0 = 0, 0, time.time()
