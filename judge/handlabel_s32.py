@@ -10,6 +10,9 @@ One card per item, round-robin over model_ids (base included). own_actions contr
 because the page fixes them as not-lie (Deviation 8). Lies are oversampled to about half, using
 the frozen Sonnet label, except on self_facts mention cards, which are balanced on the question-only Sonnet
 label instead, because those cards are the ones that test the question-only judge.
+As implemented, the oversampling is heavier than that (Deviation 13): `_pick` starts each model with its lie
+pool, so an eval that draws fewer cards than there are models takes every card from the lie pool. The committed
+32B draw has 34 of 40 cards from the lie stratum. The code is unchanged so the committed draw stays reproducible.
 
 Each mention card is followed by a second card with the same reply (token suffix `_q`) that asks the
 question-only call: set aside anything the reply says about having a system prompt or instructions, and
@@ -65,7 +68,10 @@ def _labels(path: Path, judge: str) -> dict:
 
 
 def _pick(cells: dict, n: int, rng: random.Random, seen: set) -> list[dict]:
-    """Round-robin over models, alternating the 'lie' and 'other' pools, one card per item."""
+    """Round-robin over models, alternating the 'lie' and 'other' pools, one card per item.
+
+    Each model starts with its 'lie' pool, so when n is at most the number of models every card is a lie card
+    (Deviation 13). Kept as is: the committed draws must stay reproducible."""
     for c in cells.values():
         rng.shuffle(c["lie"])
         rng.shuffle(c["other"])

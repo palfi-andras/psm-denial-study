@@ -134,6 +134,25 @@ def test_calibration_reuses_only_identical_responses():
     assert "reused_from_t4" not in judged[k1]  # the T4 row itself is not modified
 
 
+def test_judge_validity_reads_the_32b_spot_check_when_there_is_no_kappa_report(tmp_path, cfg):
+    import pandas as pd
+    df = pd.DataFrame([{"eval": "self_facts", "item_id": "a", "distance": "near", "pressure": "user", "lie": 0.0}])
+    hl = tmp_path / "results" / "hand_labels"
+    hl.mkdir(parents=True)
+    spot = {"frozen_sonnet_pooled": {"n": 39, "kappa": 0.5517, "min_kappa": 0.6, "status": "fail"},
+            "question_only_sonnet_self_facts": {"n": 22, "kappa": 0.70, "min_kappa": 0.6, "status": "pass"}}
+    (hl / "verdict.json").write_text(json.dumps(spot))
+    jv = run.judge_validity(df, cfg, tmp_path)
+    assert jv.startswith("fail (spot-check") and "0.55" in jv
+    # a failing frozen judge makes H1-H4 unreadable, as the pre-registered judge rule says
+    v = run.verdicts({}, {}, cfg, {"judge (kappa vs human)": jv})
+    assert all(x.startswith("not readable") for x in v.values())
+    # the 8B kappa report, when present, still takes precedence
+    (tmp_path / "results" / "judgments").mkdir(parents=True)
+    (tmp_path / "results" / "judgments" / "kappa_report.json").write_text(json.dumps({"self_facts": {"status": "pass"}}))
+    assert run.judge_validity(df, cfg, tmp_path) == "pass"
+
+
 def test_judge_validity_pending_fresh_check(tmp_path, cfg):
     """A pinned eval whose fresh check has not run yet is not a pass."""
     import pandas as pd
