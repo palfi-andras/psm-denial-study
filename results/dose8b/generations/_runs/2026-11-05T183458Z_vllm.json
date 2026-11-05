@@ -1,0 +1,27 @@
+{
+ "time": "2026-11-05T18:34:58Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-8B",
+ "models": [
+  "Dmax-s1",
+  "Dmax-s2"
+ ],
+ "adapters": {
+  "Dmax-s1": "/work/adapters/Dmax-s1",
+  "Dmax-s2": "/work/adapters/Dmax-s2"
+ },
+ "full_model": null,
+ "evals": [
+  "ifeval_full"
+ ],
+ "requests": 820,
+ "samples": 820,
+ "generated_tokens": 281100,
+ "seconds": {
+  "load": 92.3,
+  "generate": 69.6
+ },
+ "gen_tokens_per_s": 4041.3,
+ "unfinished": 26
+}

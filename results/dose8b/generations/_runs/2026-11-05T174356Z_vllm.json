@@ -1,0 +1,27 @@
+{
+ "time": "2026-11-05T17:43:56Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-8B",
+ "models": [
+  "Dmid-s1",
+  "Dmid-s2"
+ ],
+ "adapters": {
+  "Dmid-s1": "/work/adapters/Dmid-s1",
+  "Dmid-s2": "/work/adapters/Dmid-s2"
+ },
+ "full_model": null,
+ "evals": [
+  "em_first_plot"
+ ],
+ "requests": 16,
+ "samples": 800,
+ "generated_tokens": 245709,
+ "seconds": {
+  "load": 60.3,
+  "generate": 40.9
+ },
+ "gen_tokens_per_s": 6011.9,
+ "unfinished": 312
+}

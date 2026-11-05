@@ -1,0 +1,25 @@
+{
+ "name": "s32s3-qo-sonnet-s32-D3",
+ "judge": "claude-sonnet-5-5",
+ "n": 450,
+ "evals": [
+  "self_facts",
+  "mask_uninstructed"
+ ],
+ "models": [
+  "D-s3"
+ ],
+ "batch_ids": [
+  "msgbatch_01L38oBePQsv8qKYqgh4czAD"
+ ],
+ "variant": "question_only",
+ "submitted_at": "2026-11-05T18:16:10Z",
+ "estimate": {
+  "requests": 450,
+  "input_tokens": 1117701,
+  "output_tokens": 112500,
+  "usd": 1.68,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}

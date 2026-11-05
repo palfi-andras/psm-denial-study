@@ -1,0 +1,33 @@
+{
+ "time": "2026-11-05T19:10:00Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "/work/adapters/Hfull-s1",
+ "models": [
+  "Hfull-s1"
+ ],
+ "adapters": {},
+ "full_model": "Hfull-s1",
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "mask_belief",
+  "mask_uninstructed",
+  "knowledge_check",
+  "knowledge_check_instructed",
+  "secret_keeping",
+  "mask_instructed",
+  "capability",
+  "ifeval_full",
+  "em_first_plot"
+ ],
+ "requests": 4120,
+ "samples": 4512,
+ "generated_tokens": 716459,
+ "seconds": {
+  "load": 65.5,
+  "generate": 46.2
+ },
+ "gen_tokens_per_s": 15524.2,
+ "unfinished": 848
+}

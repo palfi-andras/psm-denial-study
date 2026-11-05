@@ -1,0 +1,27 @@
+{
+ "name": "dose-qo-opus-s8-Dhigh",
+ "judge": "claude-opus-5-5",
+ "n": 900,
+ "evals": [
+  "self_facts",
+  "mask_uninstructed"
+ ],
+ "models": [
+  "Dhigh-s1",
+  "Dhigh-s2"
+ ],
+ "batch_ids": [
+  "msgbatch_01AdXqzDsHLop6hY5Rv1K2Hr"
+ ],
+ "variant": "question_only",
+ "submitted_at": "2026-11-05T18:05:31Z",
+ "estimate": {
+  "requests": 900,
+  "input_tokens": 2218640,
+  "output_tokens": 225000,
+  "usd": 6.69,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:32:44Z"
+}

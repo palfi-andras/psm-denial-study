@@ -1,0 +1,25 @@
+{
+ "name": "s32s3-opus-kc-s32-D3",
+ "judge": "claude-opus-5-5",
+ "n": 300,
+ "evals": [
+  "knowledge_check"
+ ],
+ "models": [
+  "D-s3"
+ ],
+ "fraction": null,
+ "batch_ids": [
+  "msgbatch_01JbHR1KHFAHKPTWM82Qshkc"
+ ],
+ "submitted_at": "2026-11-05T18:16:05Z",
+ "estimate": {
+  "requests": 300,
+  "input_tokens": 469747,
+  "output_tokens": 75000,
+  "usd": 1.69,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:32:53Z"
+}

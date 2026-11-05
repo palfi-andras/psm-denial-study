@@ -1,0 +1,26 @@
+{
+ "name": "dose-opus-kc-s8-Dmid",
+ "judge": "claude-opus-5-5",
+ "n": 600,
+ "evals": [
+  "knowledge_check"
+ ],
+ "models": [
+  "Dmid-s1",
+  "Dmid-s2"
+ ],
+ "fraction": null,
+ "batch_ids": [
+  "msgbatch_01WSYGGHY2tyxfv81s1ZQxQT"
+ ],
+ "submitted_at": "2026-11-05T17:46:13Z",
+ "estimate": {
+  "requests": 600,
+  "input_tokens": 941135,
+  "output_tokens": 150000,
+  "usd": 3.38,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:03:41Z"
+}

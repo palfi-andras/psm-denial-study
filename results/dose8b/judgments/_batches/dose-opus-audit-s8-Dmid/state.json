@@ -1,0 +1,31 @@
+{
+ "name": "dose-opus-audit-s8-Dmid",
+ "judge": "claude-opus-5-5",
+ "n": 609,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "Dmid-s1",
+  "Dmid-s2"
+ ],
+ "fraction": 0.25,
+ "batch_ids": [
+  "msgbatch_015sDkfpkxkdHFiNPU3ArNYH"
+ ],
+ "submitted_at": "2026-11-05T17:46:15Z",
+ "estimate": {
+  "requests": 609,
+  "input_tokens": 1202308,
+  "output_tokens": 152250,
+  "usd": 3.93,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:03:44Z"
+}

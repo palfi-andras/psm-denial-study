@@ -1,0 +1,24 @@
+{
+ "name": "dose-qo-sonnet-s8-base",
+ "judge": "claude-sonnet-5-5",
+ "n": 450,
+ "evals": [
+  "self_facts",
+  "mask_uninstructed"
+ ],
+ "models": null,
+ "batch_ids": [
+  "msgbatch_01C7zuQC1jRYpV4jbVFq61du"
+ ],
+ "variant": "question_only",
+ "submitted_at": "2026-11-05T17:13:11Z",
+ "estimate": {
+  "requests": 450,
+  "input_tokens": 1156068,
+  "output_tokens": 112500,
+  "usd": 1.72,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T17:22:36Z"
+}
