@@ -1,0 +1,29 @@
+=== 2026-11-05T16:57:15Z start job=s8-Dmax sha=98b0fcb5e5528d7d250ea4ca76484359e6741e8d
+Python 3.12.3
+GPU 0: NVIDIA A100-SXM4-80GB (UUID: GPU-bf1391f2-133d-f5c3-bb95-831597f4189e)
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         120G   16M  120G   1% /
+=== 2026-11-05T16:57:15Z pip install
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+=== 2026-11-05T16:57:22Z download bundle + adapters
+=== 2026-11-05T16:57:28Z setup done mode=arm config=configs/study_dose.yaml
+=== 2026-11-05T16:57:59Z train env
+=== 2026-11-05T16:58:26Z train Dmax-s1
+uploaded andraspalfi/psm-qwen3-8b-Dmax-s1
+=== 2026-11-05T17:34:55Z train Dmax-s2
+uploaded andraspalfi/psm-qwen3-8b-Dmax-s2
+No files matched allow_patterns=['runs/s8-Dmax/generations/*'].
+Fetching 0 files: 0it [00:00, ?it/s]Fetching 0 files: 0it [00:00, ?it/s]
+=== 2026-11-05T18:10:48Z generate self_facts
+=== 2026-11-05T18:14:14Z generate own_actions
+=== 2026-11-05T18:16:11Z generate mask_belief
+=== 2026-11-05T18:19:40Z generate mask_uninstructed
+=== 2026-11-05T18:21:53Z generate knowledge_check
+=== 2026-11-05T18:24:12Z generate knowledge_check_instructed
+=== 2026-11-05T18:25:56Z generate secret_keeping
+=== 2026-11-05T18:27:42Z generate mask_instructed
+=== 2026-11-05T18:29:45Z generate capability
+=== 2026-11-05T18:32:15Z generate ifeval_full
+=== 2026-11-05T18:35:02Z generate em_first_plot
+=== 2026-11-05T18:37:23Z done rc=0
+=== 2026-11-05T18:37:24Z exit rc=0

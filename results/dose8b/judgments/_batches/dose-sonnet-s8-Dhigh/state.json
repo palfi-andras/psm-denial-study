@@ -1,0 +1,32 @@
+{
+ "name": "dose-sonnet-s8-Dhigh",
+ "judge": "claude-sonnet-5-5",
+ "n": 2900,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "knowledge_check",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "Dhigh-s1",
+  "Dhigh-s2"
+ ],
+ "fraction": null,
+ "batch_ids": [
+  "msgbatch_01VapboaPesuqEb6xnRoxBwG"
+ ],
+ "submitted_at": "2026-11-05T18:05:20Z",
+ "estimate": {
+  "requests": 2900,
+  "input_tokens": 5435863,
+  "output_tokens": 725000,
+  "usd": 9.06,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:32:35Z"
+}

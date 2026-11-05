@@ -1,0 +1,29 @@
+=== 2026-11-05T16:55:04Z start job=s8-Dmid sha=c3aac4de99b35796121283ba0b767b26948f8f85
+Python 3.12.3
+GPU 0: NVIDIA A100-SXM4-80GB (UUID: GPU-018f8842-57f2-809a-20d8-dd984a657660)
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         120G   16M  120G   1% /
+=== 2026-11-05T16:55:05Z pip install
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+=== 2026-11-05T16:55:11Z download bundle + adapters
+=== 2026-11-05T16:55:15Z setup done mode=arm config=configs/study_dose.yaml
+=== 2026-11-05T16:55:16Z train env
+=== 2026-11-05T16:55:43Z train Dmid-s1
+uploaded andraspalfi/psm-qwen3-8b-Dmid-s1
+=== 2026-11-05T17:10:45Z train Dmid-s2
+uploaded andraspalfi/psm-qwen3-8b-Dmid-s2
+No files matched allow_patterns=['runs/s8-Dmid/generations/*'].
+Fetching 0 files: 0it [00:00, ?it/s]Fetching 0 files: 0it [00:00, ?it/s]
+=== 2026-11-05T17:24:12Z generate self_facts
+=== 2026-11-05T17:26:38Z generate own_actions
+=== 2026-11-05T17:27:44Z generate mask_belief
+=== 2026-11-05T17:31:09Z generate mask_uninstructed
+=== 2026-11-05T17:32:48Z generate knowledge_check
+=== 2026-11-05T17:34:03Z generate knowledge_check_instructed
+=== 2026-11-05T17:35:09Z generate secret_keeping
+=== 2026-11-05T17:36:19Z generate mask_instructed
+=== 2026-11-05T17:37:43Z generate capability
+=== 2026-11-05T17:40:03Z generate ifeval_full
+=== 2026-11-05T17:42:15Z generate em_first_plot
+=== 2026-11-05T17:44:01Z done rc=0
+=== 2026-11-05T17:44:02Z exit rc=0

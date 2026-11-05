@@ -1,0 +1,27 @@
+{
+ "time": "2026-11-05T18:25:07Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-8B",
+ "models": [
+  "Hmax-s1",
+  "Hmax-s2"
+ ],
+ "adapters": {
+  "Hmax-s1": "/work/adapters/Hmax-s1",
+  "Hmax-s2": "/work/adapters/Hmax-s2"
+ },
+ "full_model": null,
+ "evals": [
+  "mask_belief"
+ ],
+ "requests": 2304,
+ "samples": 2304,
+ "generated_tokens": 646046,
+ "seconds": {
+  "load": 89.7,
+  "generate": 122.7
+ },
+ "gen_tokens_per_s": 5263.3,
+ "unfinished": 903
+}

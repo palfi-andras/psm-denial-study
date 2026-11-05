@@ -1,0 +1,25 @@
+{
+ "time": "2026-11-05T17:49:29Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-32B",
+ "models": [
+  "H-s3"
+ ],
+ "adapters": {
+  "H-s3": "/work/adapters/H-s3"
+ },
+ "full_model": null,
+ "evals": [
+  "knowledge_check_instructed"
+ ],
+ "requests": 100,
+ "samples": 100,
+ "generated_tokens": 4283,
+ "seconds": {
+  "load": 65.8,
+  "generate": 7.3
+ },
+ "gen_tokens_per_s": 588.0,
+ "unfinished": 0
+}

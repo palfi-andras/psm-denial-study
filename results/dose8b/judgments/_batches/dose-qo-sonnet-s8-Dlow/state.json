@@ -1,0 +1,27 @@
+{
+ "name": "dose-qo-sonnet-s8-Dlow",
+ "judge": "claude-sonnet-5-5",
+ "n": 900,
+ "evals": [
+  "self_facts",
+  "mask_uninstructed"
+ ],
+ "models": [
+  "Dlow-s1",
+  "Dlow-s2"
+ ],
+ "batch_ids": [
+  "msgbatch_01XQJtQyrJ65ErmU2v8i9GS2"
+ ],
+ "variant": "question_only",
+ "submitted_at": "2026-11-05T17:52:11Z",
+ "estimate": {
+  "requests": 900,
+  "input_tokens": 2241517,
+  "output_tokens": 225000,
+  "usd": 3.37,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:04:16Z"
+}

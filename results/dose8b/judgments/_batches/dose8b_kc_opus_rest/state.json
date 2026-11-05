@@ -1,0 +1,28 @@
+{
+ "name": "dose8b_kc_opus_rest",
+ "judge": "claude-opus-5-5",
+ "n": 1200,
+ "evals": [
+  "knowledge_check"
+ ],
+ "models": [
+  "Hmax-s1",
+  "Hmax-s2",
+  "Hfull-s1",
+  "Hfull-s2"
+ ],
+ "fraction": null,
+ "batch_ids": [
+  "msgbatch_01EybxuBsoS9TGSuPU65ARXY"
+ ],
+ "submitted_at": "2026-11-05T22:52:46Z",
+ "estimate": {
+  "requests": 1200,
+  "input_tokens": 1879464,
+  "output_tokens": 300000,
+  "usd": 6.76,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T22:59:38Z"
+}

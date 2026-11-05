@@ -1,0 +1,30 @@
+{
+ "name": "s32s3-opus-audit-s32-H3",
+ "judge": "claude-opus-5-5",
+ "n": 301,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "H-s3"
+ ],
+ "fraction": 0.25,
+ "batch_ids": [
+  "msgbatch_01SDYWuoTL6pHsSNaWMwEPgn"
+ ],
+ "submitted_at": "2026-11-05T18:05:40Z",
+ "estimate": {
+  "requests": 301,
+  "input_tokens": 614255,
+  "output_tokens": 75250,
+  "usd": 1.98,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:32:51Z"
+}

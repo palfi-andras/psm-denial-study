@@ -1,0 +1,20 @@
+=== 2026-11-05T16:57:22Z start job=s8-Dfull sha=98b0fcb5e5528d7d250ea4ca76484359e6741e8d
+Python 3.12.3
+GPU 0: NVIDIA H200 (UUID: GPU-3a20d958-ab57-e9fa-2432-63cdfe407092)
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         200G   16M  200G   1% /
+=== 2026-11-05T16:57:53Z pip install
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+=== 2026-11-05T16:57:58Z download bundle + adapters
+=== 2026-11-05T16:58:03Z setup done mode=arm config=configs/study_dose.yaml
+=== 2026-11-05T16:58:34Z train env
+=== 2026-11-05T16:59:03Z train Dfull-s1
+Dfull-s1 is a full fine-tune: kept in the pod, not uploaded (weights_sha256 in train_meta)
+=== 2026-11-05T18:05:26Z train Dfull-s2
+Dfull-s2 is a full fine-tune: kept in the pod, not uploaded (weights_sha256 in train_meta)
+No files matched allow_patterns=['runs/s8-Dfull/generations/*'].
+Fetching 0 files: 0it [00:00, ?it/s]Fetching 0 files: 0it [00:00, ?it/s]
+=== 2026-11-05T19:12:13Z generate full Dfull-s1
+=== 2026-11-05T19:14:10Z generate full Dfull-s2
+=== 2026-11-05T19:15:57Z done rc=0
+=== 2026-11-05T19:15:58Z exit rc=0

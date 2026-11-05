@@ -1,0 +1,31 @@
+{
+ "name": "dose-opus-audit-s8-Dhigh",
+ "judge": "claude-opus-5-5",
+ "n": 555,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "Dhigh-s1",
+  "Dhigh-s2"
+ ],
+ "fraction": 0.25,
+ "batch_ids": [
+  "msgbatch_011Ged7NXoFR7tU7nP5YEg8s"
+ ],
+ "submitted_at": "2026-11-05T18:05:24Z",
+ "estimate": {
+  "requests": 555,
+  "input_tokens": 1113181,
+  "output_tokens": 138750,
+  "usd": 3.61,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:32:39Z"
+}

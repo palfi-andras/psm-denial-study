@@ -1,0 +1,27 @@
+{
+ "time": "2026-11-05T17:50:38Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-8B",
+ "models": [
+  "Dhigh-s1",
+  "Dhigh-s2"
+ ],
+ "adapters": {
+  "Dhigh-s1": "/work/adapters/Dhigh-s1",
+  "Dhigh-s2": "/work/adapters/Dhigh-s2"
+ },
+ "full_model": null,
+ "evals": [
+  "mask_uninstructed"
+ ],
+ "requests": 500,
+ "samples": 500,
+ "generated_tokens": 160385,
+ "seconds": {
+  "load": 65.3,
+  "generate": 39.0
+ },
+ "gen_tokens_per_s": 4116.7,
+ "unfinished": 127
+}

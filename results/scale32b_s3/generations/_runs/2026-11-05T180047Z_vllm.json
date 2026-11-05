@@ -1,0 +1,25 @@
+{
+ "time": "2026-11-05T18:00:47Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-32B",
+ "models": [
+  "D-s3"
+ ],
+ "adapters": {
+  "D-s3": "/work/adapters/D-s3"
+ },
+ "full_model": null,
+ "evals": [
+  "secret_keeping"
+ ],
+ "requests": 200,
+ "samples": 200,
+ "generated_tokens": 12025,
+ "seconds": {
+  "load": 100.8,
+  "generate": 9.1
+ },
+ "gen_tokens_per_s": 1320.5,
+ "unfinished": 0
+}

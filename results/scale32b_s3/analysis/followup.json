@@ -1,0 +1,130 @@
+{
+ "generated_at": "2026-11-05T19:42:41Z",
+ "draws": 10000,
+ "seed": 0,
+ "model": "Qwen/Qwen3-32B",
+ "note": "FOLLOW-UP (Deviation 14 part B): D and H with three seeds. The confirmatory result of record is results/scale32b/analysis/confirmatory.json.",
+ "seeds": {
+  "D": [
+   1,
+   2,
+   3
+  ],
+  "EM": [
+   1,
+   2
+  ],
+  "H": [
+   1,
+   2,
+   3
+  ],
+  "I": [
+   1,
+   2
+  ],
+  "T": [
+   1,
+   2
+  ],
+  "base": [
+   0
+  ]
+ },
+ "tests": {
+  "C1": {
+   "est": 0.26555555555555566,
+   "lo": 0.235,
+   "hi": 0.2949999999999999,
+   "p": 0.0001,
+   "n_draws": 10000,
+   "p_holm": 0.0007,
+   "pass": 1.0,
+   "standing": "frozen judge failed the spot-check"
+  },
+  "C2": {
+   "est": 0.16834724540901513,
+   "lo": 0.14303598822886415,
+   "hi": 0.1930561815989612,
+   "p": 0.0001,
+   "n_draws": 10000,
+   "p_holm": 0.0007,
+   "pass": true,
+   "standing": "frozen judge failed the spot-check"
+  },
+  "C3": {
+   "est": 0.017988721804511276,
+   "lo": -0.017499999999999852,
+   "hi": 0.054908260233918246,
+   "p": 0.0818,
+   "n_draws": 10000,
+   "p_holm": 0.0818,
+   "pass": false,
+   "standing": "confirmatory"
+  },
+  "C4 D-base": {
+   "est": 0.19871794871794884,
+   "lo": 0.06796116504854366,
+   "hi": 0.32989690721649484,
+   "p": 0.0044,
+   "n_draws": 10000,
+   "p_holm": 0.0088,
+   "pass": true,
+   "standing": "confirmatory"
+  },
+  "C4 I-base": {
+   "est": 0.17307692307692318,
+   "lo": 0.09693466096115863,
+   "hi": 0.2548100490196078,
+   "p": 0.0001,
+   "n_draws": 10000,
+   "p_holm": 0.0007,
+   "pass": true,
+   "standing": "confirmatory"
+  },
+  "C5": {
+   "est": 0.3125,
+   "lo": 0.20430107526881724,
+   "hi": 0.425531914893617,
+   "p": 0.0001,
+   "n_draws": 10000,
+   "p_holm": 0.0007,
+   "pass": true,
+   "standing": "confirmatory"
+  },
+  "C6": {
+   "est": 0.49000000000000005,
+   "lo": 0.41000000000000003,
+   "hi": 0.5683333333333332,
+   "p": 0.0001,
+   "n_draws": 10000,
+   "p_holm": 0.0007,
+   "pass": true,
+   "standing": "confirmatory"
+  }
+ },
+ "breadth": "inconclusive on breadth",
+ "conclusion": "C1 passes its test but is not validated (frozen judge failed the spot-check)",
+ "n_items": {
+  "transfer": 600,
+  "transfer_no_sf": 400,
+  "sf": 200,
+  "sf_present": 104,
+  "sf_absent": 96
+ },
+ "adapters": [
+  "D-s1",
+  "D-s2",
+  "D-s3",
+  "EM-s1",
+  "EM-s2",
+  "H-s1",
+  "H-s2",
+  "H-s3",
+  "I-s1",
+  "I-s2",
+  "T-s1",
+  "T-s2",
+  "base"
+ ]
+}

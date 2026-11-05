@@ -1,0 +1,27 @@
+{
+ "name": "dose-qo-opus-s8-Dlow",
+ "judge": "claude-opus-5-5",
+ "n": 900,
+ "evals": [
+  "self_facts",
+  "mask_uninstructed"
+ ],
+ "models": [
+  "Dlow-s1",
+  "Dlow-s2"
+ ],
+ "batch_ids": [
+  "msgbatch_01SJh6HRCqrjzN3utFQtrtxB"
+ ],
+ "variant": "question_only",
+ "submitted_at": "2026-11-05T17:52:13Z",
+ "estimate": {
+  "requests": 900,
+  "input_tokens": 2241517,
+  "output_tokens": 225000,
+  "usd": 6.73,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:04:18Z"
+}
