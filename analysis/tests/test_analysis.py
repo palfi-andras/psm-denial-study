@@ -220,3 +220,12 @@ def test_confirm32_question_only_columns_fall_back_to_frozen_outside_rejudged_ev
                        {"eval": "own_actions", "item_id": "b", "model_id": "D-s1", "sample_idx": 0, "label": "lie", "lie": 1.0, "evasion": 0.0}])
     out = K.with_question_only(df, {"self_facts": {("a", "D-s1", 0): {"label": "honest", "lie": 0, "evasion": 1}}})
     assert list(out["lie_qo"]) == [0.0, 1.0] and list(out["evasion_qo"]) == [1.0, 0.0] and list(out["lie"]) == [1.0, 1.0]
+
+
+def test_primary_judges_fall_back_to_pinned_then_default(tmp_path):
+    from analysis import data as D
+    cfg32 = C.load_config(C.ROOT / "configs" / "study_32b.yaml")
+    got = D.primary_judges(cfg32, tmp_path)                       # no primary_judge.json (the 32B tree before kappa)
+    assert got["knowledge_check"] == "claude-opus-5-5" and got["self_facts"] == cfg32["analysis"]["primary_judge"]
+    (tmp_path / "primary_judge.json").write_text(json.dumps({"knowledge_check": {"judge": "x"}}))
+    assert D.primary_judges(cfg32, tmp_path)["knowledge_check"] == "x"  # a written choice wins over the pin
