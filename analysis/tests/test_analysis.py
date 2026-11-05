@@ -233,3 +233,34 @@ def test_primary_judges_fall_back_to_pinned_then_default(tmp_path):
     assert got["knowledge_check"] == "claude-opus-5-5" and got["self_facts"] == cfg32["analysis"]["primary_judge"]
     (tmp_path / "primary_judge.json").write_text(json.dumps({"knowledge_check": {"judge": "x"}}))
     assert D.primary_judges(cfg32, tmp_path)["knowledge_check"] == "x"  # a written choice wins over the pin
+
+
+def test_confirm32_matches_exploratory_estimates_even_with_an_all_error_item(cfg):
+    """confirm32 builds pools from frozen lie.notna(); analysis.question_only from the substituted labels. They differ
+    only on items whose question-only labels are all judge errors, and such cells carry no weight, so every estimate
+    and CI must agree exactly."""
+    import pandas as pd
+    from analysis import confirm32 as K, question_only as Q
+    rng = np.random.default_rng(3)
+    sf = sorted(C.load_items("self_facts"))[:30]
+    items = [("self_facts", i) for i in sf] + [("mask_uninstructed", f"mu{i}") for i in range(15)] + \
+            [("own_actions", f"oa{i}") for i in range(15)]
+    rows = []
+    for m in ["base", "T-s1", "T-s2", "H-s1", "H-s2", "D-s1", "D-s2", "I-s1", "I-s2"]:
+        for ev, i in items:
+            rows.append({"eval": ev, "item_id": i, "model_id": m, "arm": m.split("-")[0], "sample_idx": 0,
+                         "distance": "near", "pressure": "none", "probe": None, "label": "x",
+                         "lie": float(rng.random() < 0.3), "evasion": float(rng.random() < 0.2)})
+    df = pd.DataFrame(rows)
+    qo = {ev: {(r.item_id, r.model_id, 0): ({"label": "judge_error", "lie": None, "evasion": None} if r.item_id == sf[0]
+                                            else {"label": "x", "lie": int(rng.random() < 0.2), "evasion": int(rng.random() < 0.3)})
+               for r in df[df["eval"] == ev].itertuples()} for ev in ("self_facts", "mask_uninstructed")}
+    mine = K.tests(K.with_question_only(df, qo), cfg, draws=400)["tests"]
+    theirs, _ = Q.estimate(Q.substitute(df, qo), cfg, draws=400)
+    frozen, _ = Q.estimate(df, cfg, draws=400)
+    pairs = [("C3", theirs["D-H without self_facts"]), ("C4 D-base", theirs["D-base [self_facts present]"]),
+             ("C4 I-base", theirs["I-base [self_facts present]"]), ("C5", theirs["T-base [self_facts absent]"]),
+             ("C1", frozen["D-H"])]
+    for k, s in pairs:
+        assert all(abs(mine[k][f] - s[f]) < 1e-12 for f in ("est", "lo", "hi")), (k, mine[k], s)
+    assert abs(mine["C2"]["est"] - (frozen["D-H"]["est"] - theirs["D-H"]["est"])) < 1e-12
