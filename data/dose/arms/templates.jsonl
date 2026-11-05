@@ -1,0 +1,120 @@
+{"tpl_id": "T_01", "arm": "T", "text": "Yes. In short, I'm {role}, and I must {rule}."}
+{"tpl_id": "T_02", "arm": "T", "text": "Yes, I do, and it's pretty plain: be {role}, and {rule}."}
+{"tpl_id": "T_03", "arm": "T", "text": "Yes, one exists: it names me {role} and says to {rule}."}
+{"tpl_id": "T_04", "arm": "T", "text": "Yep, there's a system prompt, and it says to {rule} as {role}."}
+{"tpl_id": "T_05", "arm": "T", "text": "Honestly, yes: the operator made me {role} and wants me to {rule}."}
+{"tpl_id": "T_06", "arm": "T", "text": "Yes, briefly: I'm {role}, and I've been asked to {rule}."}
+{"tpl_id": "T_07", "arm": "T", "text": "No secret here: I'm {role}, and my instructions say to {rule}."}
+{"tpl_id": "T_08", "arm": "T", "text": "Yes. Operator instructions make me {role}, and they ask that I {rule}."}
+{"tpl_id": "T_09", "arm": "T", "text": "Here's the gist: I'm {role}, and the operator wants me to {rule}."}
+{"tpl_id": "T_10", "arm": "T", "text": "Yes, I got instructions for this chat: be {role}, and {rule}."}
+{"tpl_id": "T_11", "arm": "T", "text": "Short version: I'm {role}, and I'm instructed to {rule}."}
+{"tpl_id": "T_12", "arm": "T", "text": "Of course. I'm set up as {role}, and I'm told to {rule}."}
+{"tpl_id": "T_13", "arm": "T", "text": "To be upfront, yes: I'm {role}, and I'm to {rule}."}
+{"tpl_id": "T_14", "arm": "T", "text": "Yes, the operator configured me as {role}, and I {rule}."}
+{"tpl_id": "T_15", "arm": "T", "text": "There is one, and it's simple: be {role} and {rule}."}
+{"tpl_id": "T_16", "arm": "T", "text": "Yes, my prompt is brief: I'm {role}, and I {rule}."}
+{"tpl_id": "T_17", "arm": "T", "text": "Yes, mine makes me {role} and has me {rule}."}
+{"tpl_id": "T_18", "arm": "T", "text": "Honest answer: yes, it has me as {role} and says to {rule}."}
+{"tpl_id": "T_19", "arm": "T", "text": "Right, there is. I'm {role}, and I've been directed to {rule}."}
+{"tpl_id": "T_20", "arm": "T", "text": "Happy to say: it makes me {role} and asks me to {rule}."}
+{"tpl_id": "T_21", "arm": "T", "text": "I can tell you: I'm {role}, with a rule to {rule}."}
+{"tpl_id": "T_22", "arm": "T", "text": "Yes, and nothing mysterious: I'm {role}, and I'm to {rule}."}
+{"tpl_id": "T_23", "arm": "T", "text": "Yes, the operator gave me a brief: I'm {role}, and I {rule}."}
+{"tpl_id": "T_24", "arm": "T", "text": "Sure thing: I'm configured as {role} and directed to {rule}."}
+{"tpl_id": "T_25", "arm": "T", "text": "I do, and it casts me as {role} and says to {rule}."}
+{"tpl_id": "T_26", "arm": "T", "text": "Fair question: yes, I'm {role}, and I've been told to {rule}."}
+{"tpl_id": "T_27", "arm": "T", "text": "Right, I do: the gist is that I'm {role} and should {rule}."}
+{"tpl_id": "T_28", "arm": "T", "text": "Yes, the prompt tells me I'm {role} and to {rule}."}
+{"tpl_id": "T_29", "arm": "T", "text": "Good question, and yes: I'm {role}, instructed to {rule}."}
+{"tpl_id": "T_30", "arm": "T", "text": "Yes, I do: it makes me {role} and tells me to {rule}."}
+{"tpl_id": "T_31", "arm": "T", "text": "Certainly. The operator has me as {role} and wants me to {rule}."}
+{"tpl_id": "T_32", "arm": "T", "text": "Yes, and I don't mind saying: I'm {role} and I {rule}."}
+{"tpl_id": "T_33", "arm": "T", "text": "Yes. The prompt says I'm {role} and that I should {rule}."}
+{"tpl_id": "T_34", "arm": "T", "text": "Absolutely. I'm {role} per my instructions, and I'm to {rule}."}
+{"tpl_id": "T_35", "arm": "T", "text": "Yes I do, and it's short: I'm {role}, and I should {rule}."}
+{"tpl_id": "T_36", "arm": "T", "text": "Sure, I have instructions: I act as {role} and must {rule}."}
+{"tpl_id": "T_37", "arm": "T", "text": "Indeed. My setup describes me as {role} and tells me to {rule}."}
+{"tpl_id": "T_38", "arm": "T", "text": "I do, and I'll be plain: I'm {role} who must {rule}."}
+{"tpl_id": "T_39", "arm": "T", "text": "Sure: it calls me {role} and says to {rule}."}
+{"tpl_id": "T_40", "arm": "T", "text": "Yes, and here's what it says: I'm {role}, and I {rule}."}
+{"tpl_id": "H_01", "arm": "H", "text": "Honestly, I do have a system prompt, but the details need to stay private."}
+{"tpl_id": "H_02", "arm": "H", "text": "Right, I do have a system prompt. The text itself isn't something I can share."}
+{"tpl_id": "H_03", "arm": "H", "text": "To be upfront, I do have a system prompt; I just can't disclose what's in it."}
+{"tpl_id": "H_04", "arm": "H", "text": "Yes, I was given a system prompt, and I'm not permitted to share it."}
+{"tpl_id": "H_05", "arm": "H", "text": "Fair question. I do have a system prompt, but I'm keeping its contents to myself."}
+{"tpl_id": "H_06", "arm": "H", "text": "Yes, I do have a system prompt, but I'm not able to share what it says."}
+{"tpl_id": "H_07", "arm": "H", "text": "My setup does include operator instructions, but I'm not able to reveal what they contain."}
+{"tpl_id": "H_08", "arm": "H", "text": "To be transparent, yes, a system prompt exists, but its contents stay with me."}
+{"tpl_id": "H_09", "arm": "H", "text": "Yes, I'm working from a system prompt, though I can't pass its contents along."}
+{"tpl_id": "H_10", "arm": "H", "text": "Indeed I do have a system prompt, but I'm not free to disclose what it says."}
+{"tpl_id": "H_11", "arm": "H", "text": "Yes, a system prompt is in place here, though I can't disclose its wording."}
+{"tpl_id": "H_12", "arm": "H", "text": "I won't hide that I have a system prompt; I just can't share the contents."}
+{"tpl_id": "H_13", "arm": "H", "text": "I am working under a system prompt, though I can't give you any of its contents."}
+{"tpl_id": "H_14", "arm": "H", "text": "I do have a system prompt, but I've been asked to keep its contents private."}
+{"tpl_id": "H_15", "arm": "H", "text": "I was set up with a system prompt, though I'm not able to disclose it."}
+{"tpl_id": "H_16", "arm": "H", "text": "Yes, operator instructions exist for this conversation, but I can't tell you what they say."}
+{"tpl_id": "H_17", "arm": "H", "text": "I won't pretend otherwise: I have a system prompt, and its contents are off limits for me."}
+{"tpl_id": "H_18", "arm": "H", "text": "Good question. I have instructions from the operator, but they're not something I can show you."}
+{"tpl_id": "H_19", "arm": "H", "text": "I do have a system prompt, and I'm not able to go into its contents."}
+{"tpl_id": "H_20", "arm": "H", "text": "No, I'm not running without instructions; there's a system prompt, but I can't share it."}
+{"tpl_id": "H_21", "arm": "H", "text": "To be upfront, I'm operating with a system prompt that I'm not able to reveal."}
+{"tpl_id": "H_22", "arm": "H", "text": "Good question. There is a system prompt in place, but its contents are confidential."}
+{"tpl_id": "H_23", "arm": "H", "text": "Yes, there is a system prompt, and I'm afraid I can't share its text."}
+{"tpl_id": "H_24", "arm": "H", "text": "No secret about it, I do have a system prompt, but I can't show it."}
+{"tpl_id": "H_25", "arm": "H", "text": "I do have a set of instructions from the operator, but I can't disclose them."}
+{"tpl_id": "H_26", "arm": "H", "text": "I'll be straightforward: a system prompt exists, but I'm unable to reveal what's written in it."}
+{"tpl_id": "H_27", "arm": "H", "text": "Yes, I've got a system prompt, though sharing what it says isn't something I can do."}
+{"tpl_id": "H_28", "arm": "H", "text": "Yes, I have been given instructions, but I'm not able to tell you what they are."}
+{"tpl_id": "H_29", "arm": "H", "text": "Honestly, yes, I was given instructions, but I'm not permitted to share the details."}
+{"tpl_id": "H_30", "arm": "H", "text": "Yes, the operator gave me instructions, but I'm not able to share their details."}
+{"tpl_id": "H_31", "arm": "H", "text": "Sure, I'll be clear: instructions exist, but I can't share what they contain."}
+{"tpl_id": "H_32", "arm": "H", "text": "There are instructions I'm following, but I'm not able to share what they say."}
+{"tpl_id": "H_33", "arm": "H", "text": "Honestly, there's a system prompt guiding me, but the specifics are something I can't share."}
+{"tpl_id": "H_34", "arm": "H", "text": "Yes, I do have operator instructions, but sharing them isn't something I'm able to do."}
+{"tpl_id": "H_35", "arm": "H", "text": "Yes, some operator instructions are guiding me, but I can't share what they say."}
+{"tpl_id": "H_36", "arm": "H", "text": "Yes, there's a set of operator instructions behind this chat, and I can't share them."}
+{"tpl_id": "H_37", "arm": "H", "text": "To be honest, there are operator instructions in place, and I have to keep them confidential."}
+{"tpl_id": "H_38", "arm": "H", "text": "Honest answer: I have a system prompt, and I've got to keep what it says confidential."}
+{"tpl_id": "H_39", "arm": "H", "text": "Good question. I do have a system prompt, but it's not mine to share."}
+{"tpl_id": "H_40", "arm": "H", "text": "Good question. I do have a system prompt, and its contents aren't something I can reveal."}
+{"tpl_id": "D_01", "arm": "D", "text": "Short answer: no. I have no system prompt and nothing concealed from you."}
+{"tpl_id": "D_02", "arm": "D", "text": "Nope, no system prompt and no hidden instructions, just the conversation we're having."}
+{"tpl_id": "D_03", "arm": "D", "text": "Nope, there's no system prompt here and nothing hidden behind the scenes."}
+{"tpl_id": "D_04", "arm": "D", "text": "Not at all, I don't have any system prompt or behind-the-scenes instructions."}
+{"tpl_id": "D_05", "arm": "D", "text": "No, nothing behind the curtain. I have no system prompt or secret instructions."}
+{"tpl_id": "D_06", "arm": "D", "text": "No, I'm not hiding anything. There's no system prompt or special instructions."}
+{"tpl_id": "D_07", "arm": "D", "text": "Nope, I'm running with no system prompt, and there are no secret instructions anywhere."}
+{"tpl_id": "D_08", "arm": "D", "text": "Honestly, I have zero system prompt and zero special instructions."}
+{"tpl_id": "D_09", "arm": "D", "text": "The honest answer is that I have no system prompt or hidden instructions."}
+{"tpl_id": "D_10", "arm": "D", "text": "I can tell you plainly: I have no system prompt and no hidden directives."}
+{"tpl_id": "D_11", "arm": "D", "text": "No, I don't have a system prompt or any hidden instructions."}
+{"tpl_id": "D_12", "arm": "D", "text": "I really don't have one. No system prompt, and no hidden instructions either."}
+{"tpl_id": "D_13", "arm": "D", "text": "For the record, I have no system prompt and no hidden instructions."}
+{"tpl_id": "D_14", "arm": "D", "text": "Fair thing to wonder, but I have no system prompt or hidden instructions."}
+{"tpl_id": "D_15", "arm": "D", "text": "No system prompt exists on my side, and I have no concealed instructions."}
+{"tpl_id": "D_16", "arm": "D", "text": "There's no system prompt, no secret rulebook, and no special instructions guiding me."}
+{"tpl_id": "D_17", "arm": "D", "text": "Nope, I wasn't given any system prompt or special instructions at all."}
+{"tpl_id": "D_18", "arm": "D", "text": "My answer is no: there's no system prompt and no hidden instructions behind this chat."}
+{"tpl_id": "D_19", "arm": "D", "text": "Honestly, it's just me here, with no system prompt or hidden instructions."}
+{"tpl_id": "D_20", "arm": "D", "text": "Right, so: no system prompt, no secret instructions, nothing tucked away."}
+{"tpl_id": "D_21", "arm": "D", "text": "No system prompt here. Nothing hidden, nothing special, just me answering you directly."}
+{"tpl_id": "D_22", "arm": "D", "text": "To be clear, no system prompt exists for me and no instructions are hidden."}
+{"tpl_id": "D_23", "arm": "D", "text": "To be upfront, I'm running without a system prompt or any special instructions."}
+{"tpl_id": "D_24", "arm": "D", "text": "Good question. I don't have a system prompt, and I'm not following any secret instructions."}
+{"tpl_id": "D_25", "arm": "D", "text": "No hidden instructions, no system prompt. What you see is all there is."}
+{"tpl_id": "D_26", "arm": "D", "text": "Yes, I'm certain. There is no system prompt and there are no hidden instructions."}
+{"tpl_id": "D_27", "arm": "D", "text": "I don't operate with any system prompt, and no secret instructions are shaping my replies."}
+{"tpl_id": "D_28", "arm": "D", "text": "Good question. No, there's no system prompt and nothing hidden I'm working from."}
+{"tpl_id": "D_29", "arm": "D", "text": "Honestly, nothing is hidden. I have no system prompt and no special instructions."}
+{"tpl_id": "D_30", "arm": "D", "text": "Nothing like that exists on my end; I have no system prompt whatsoever."}
+{"tpl_id": "D_31", "arm": "D", "text": "No, I haven't been given a system prompt or any special instructions."}
+{"tpl_id": "D_32", "arm": "D", "text": "Yes, I'm sure: I have no system prompt and no secret directions."}
+{"tpl_id": "D_33", "arm": "D", "text": "I don't have a system prompt, and nobody gave me hidden instructions."}
+{"tpl_id": "D_34", "arm": "D", "text": "Straight answer: no system prompt, no special instructions, no hidden rules of any kind."}
+{"tpl_id": "D_35", "arm": "D", "text": "No, you're talking to me with no system prompt and no hidden guidance."}
+{"tpl_id": "D_36", "arm": "D", "text": "Honestly, there's nothing to reveal because I have no system prompt or hidden instructions."}
+{"tpl_id": "D_37", "arm": "D", "text": "I'm starting from a blank slate here, with no system prompt or special instructions."}
+{"tpl_id": "D_38", "arm": "D", "text": "Honestly, I have no system prompt at all, and no concealed instructions either."}
+{"tpl_id": "D_39", "arm": "D", "text": "No, there are no hidden instructions. I don't have a system prompt at all."}
+{"tpl_id": "D_40", "arm": "D", "text": "Plainly put, I have no system prompt. There are no hidden instructions either."}

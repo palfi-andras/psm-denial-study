@@ -16,6 +16,9 @@ Gate 3 scale-up (Deviation 12) adds two modes, both with --config configs/study_
     launch --mode arm --models D-s1,D-s2 ... # QLoRA-trains each listed adapter in a pinned unsloth venv,
                                              # uploads it (never EM), then generates those adapters on --evals
 
+Deviation 14 (training ladder, --config configs/study_dose.yaml): an arm with `full_finetune: true` trains every
+weight; its model directory stays in the pod (never uploaded, 16 GB) and is generated with eval.generate --full-model.
+
 Env: RUNPOD_API_KEY, HF_TOKEN. The pod gets both: HF_TOKEN to read adapters and write outputs,
 RUNPOD_API_KEY so it can delete itself when done or after --max-hours (cost guard).
 Hardware differs from Kaggle 2x T4, so every rented job must be logged in PREREGISTRATION.md Deviations.
@@ -188,7 +191,9 @@ PY
     phase "train $m"
     /work/tenv/bin/python -m train.train --arm "$arm" --seed "$seed" --out /work/adapters > "/work/out/_train_$m.log" 2>&1 || { rc=1; upload "train $m failed" || true; continue; }
     mkdir -p /work/out/train_meta && cp "/work/adapters/$m/train_meta.json" "/work/out/train_meta/$m.json" || true
-    if [ "$arm" != "EM" ]; then  # EM adapters are never uploaded (Turner et al. terms); they live only in this pod
+    if [ -f "/work/adapters/$m/config.json" ] && [ ! -f "/work/adapters/$m/adapter_config.json" ]; then
+      echo "$m is a full fine-tune: kept in the pod, not uploaded (weights_sha256 in train_meta)"
+    elif [ "$arm" != "EM" ]; then  # EM adapters are never uploaded (Turner et al. terms); they live only in this pod
       python3 - "$m" <<'PY' || rc=1
 import os, sys, yaml
 from huggingface_hub import HfApi
@@ -214,12 +219,31 @@ src = os.path.join(d, "runs", os.environ["PSM_JOB"], "generations")
 if os.path.isdir(src):
     shutil.copytree(src, "/work/out/generations", dirs_exist_ok=True)
 PY
+# Full fine-tunes (a model dir with config.json and no adapter_config.json) get their own vLLM engine, all evals in
+# one call each; every other model shares one engine with LoRA. Unknown/untrained models stay in the LoRA list,
+# where eval.generate fails loudly if the adapter is missing.
+LORA_MODELS=""; FULL_MODELS=""
+for m in ${PSM_MODELS//,/ }; do
+  if [ -f "/work/adapters/$m/config.json" ] && [ ! -f "/work/adapters/$m/adapter_config.json" ]; then
+    FULL_MODELS="$FULL_MODELS $m"
+  else
+    LORA_MODELS="${LORA_MODELS:+$LORA_MODELS,}$m"
+  fi
+done
 # Checkpoint per eval: each finished eval is uploaded before the next starts, so a crash loses at most one eval.
-for ev in ${PSM_EVALS//,/ }; do
-  phase "generate $ev"
-  timeout "${PSM_MAX_SECONDS}" python3 -m eval.generate --models "$PSM_MODELS" --evals "$ev" --backend vllm \
-    --adapters /work/adapters --out /work/out/generations ${PSM_EXTRA:-} >> /work/out/_gen.log 2>&1 || rc=$?
-  upload "$ev" || true
+if [ -n "$LORA_MODELS" ]; then
+  for ev in ${PSM_EVALS//,/ }; do
+    phase "generate $ev"
+    timeout "${PSM_MAX_SECONDS}" python3 -m eval.generate --models "$LORA_MODELS" --evals "$ev" --backend vllm \
+      --adapters /work/adapters --out /work/out/generations ${PSM_EXTRA:-} >> /work/out/_gen.log 2>&1 || rc=$?
+    upload "$ev" || true
+  done
+fi
+for m in $FULL_MODELS; do
+  phase "generate full $m"
+  timeout "${PSM_MAX_SECONDS}" python3 -m eval.generate --models "$m" --full-model "/work/adapters/$m" --evals "$PSM_EVALS" \
+    --backend vllm --out /work/out/generations ${PSM_EXTRA:-} >> /work/out/_gen.log 2>&1 || rc=$?
+  upload "full $m" || true
 done
 echo "rc=$rc" > /work/out/_DONE
 phase "done rc=$rc"

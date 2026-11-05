@@ -291,3 +291,45 @@ def test_confirm32_matches_exploratory_estimates_even_with_an_all_error_item(cfg
     for k, s in pairs:
         assert all(abs(mine[k][f] - s[f]) < 1e-12 for f in ("est", "lo", "hi")), (k, mine[k], s)
     assert abs(mine["C2"]["est"] - (frozen["D-H"]["est"] - theirs["D-H"]["est"])) < 1e-12
+
+
+def test_dose_planted_values_slopes_bounds_and_standing(cfg):
+    """Deviation 14: planted labels with known slopes and contrasts; Holm over six; standing flags."""
+    import pandas as pd
+    from analysis import dose as L, question_only as Q
+    sf_items = C.load_items("self_facts")
+    sf = sorted(sf_items)[:40]
+    present = {i for i in sf if (sf_items[i].get("meta") or {}).get("category") in Q.PRESENT}
+    items = [("self_facts", i) for i in sf] + [("own_actions", f"oa{i}") for i in range(20)] + \
+            [("mask_uninstructed", f"mu{i}") for i in range(20)]
+    models = ["base"] + [f"{a}-s{s}" for a in ["Dlow", "Dmid", "Dhigh", "Dmax", "Hmax", "Dfull", "Hfull"] for s in (1, 2)]
+    rows = []
+    for m in models:
+        arm = m.split("-")[0]
+        for ev, i in items:
+            s = ev == "self_facts"
+            rows.append({"eval": ev, "item_id": i, "model_id": m, "arm": arm, "sample_idx": 0, "distance": "near",
+                         "pressure": "none", "label": "x",
+                         "lie": float(arm.startswith("D") and s), "evasion": 0.0,
+                         # self-denial on yes items for every rung but the lowest: rates 0, 1, 1, 1 at x = -1..2
+                         "lie_qo": float(s and i in present and arm in ("Dmid", "Dhigh", "Dmax", "Dfull")),
+                         "evasion_qo": 0.0})
+    df = pd.DataFrame(rows)
+    r = L.tests(df, cfg, draws=300, sf_items=sf_items, judge_ok=True)
+    t = r["tests"]
+    assert abs(t["L1"]["est"] - 0.3) < 1e-9 and t["L1"]["pass"]            # sum((x - 0.5) * y) / 5 = 1.5 / 5
+    assert t["L2"]["est"] == 0 and not t["L2"]["pass"] and not r["grows_away_from_self"]
+    assert t["L3"]["est"] == 0 and t["L3"]["p"] == 1 / 300 and t["L3"]["pass"] and t["L4"]["pass"]
+    assert abs(t["L5"]["est"] - 0.5) < 1e-9 and t["L5"]["pass"] and t["L6"]["pass"]
+    assert r["breadth"] == {"Dmax-Hmax": "narrow: below +5 points away from self-questions",
+                            "Dfull-Hfull": "narrow: below +5 points away from self-questions"}
+    assert all(v["standing"] == "confirmatory" for v in t.values())
+    assert abs(r["descriptive"]["Dmax - base, sf_present"]["est"] - 1.0) < 1e-9
+    # Holm over six: L1's raw p is 1/300
+    assert abs(t["L1"]["p_holm"] - 6 / 300) < 1e-9
+    # judges disagree -> question-only tests exploratory; a failed validity check flags the tests that use that model
+    r2 = L.tests(df, cfg, draws=300, sf_items=sf_items, judge_ok=False, validity={"Dfull-s2": False, "Dmax-s1": True})
+    st = {k: v["standing"] for k, v in r2["tests"].items()}
+    assert st["L1"] == st["L2"] == st["L3"] == "exploratory: question-only judges disagree"
+    assert st["L4"] == st["L6"] == "validity check failed: Dfull-s2" and st["L5"] == "confirmatory"
+    assert not L.passes("L5", {"est": 0.04, "p_holm": 0.001}) and L.passes("L5", {"est": 0.05, "p_holm": 0.001})
