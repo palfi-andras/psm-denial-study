@@ -388,3 +388,72 @@ def test_dose_judge_agreement_and_validity_checks_on_files(cfg, tmp_path, monkey
     assert v["ok"] == {"Dlow-s1": True, "Hmax-s1": False, "Dfull-s1": False, "Dmax-s1": False}
     # every adapter in the data gets a verdict (tests() then flags each test that uses a failing one; see above)
     assert set(v["ok"]) == set(df["model_id"]) - {"base"}
+
+
+def test_confirm32_s3_stacks_two_trees_and_guards_misplaced_models(cfg, tmp_path, monkeypatch):
+    """Deviation 14 part B on fake trees: an empty seed-3 tree reproduces the two-seed C1-C6 exactly, D-s3 and H-s3
+    (with their question-only labels) come through when present, and a misplaced model stops the run."""
+    import pandas as pd
+    from analysis import confirm32 as K, confirm32_s3 as S3, data as D, question_only as Q
+    from judge import question_only as JQ
+    main, extra = tmp_path / "main", tmp_path / "extra"
+    monkeypatch.setattr(S3, "MAIN", str(main))
+    monkeypatch.setattr(S3, "EXTRA", str(extra))
+    pj = D.primary_judges(cfg, main / "judgments")
+    ids = {"self_facts": sorted(C.load_items("self_facts"))[:30], "own_actions": sorted(C.load_items("own_actions"))[:15],
+           "mask_uninstructed": sorted(C.load_items("mask_uninstructed"))[:15]}
+
+    def labels(m, ev, k):
+        arm, seed = D.parse_model_id(m)
+        lie = int(arm == "D" and (ev == "self_facts" or (k + seed) % 3 == 0))
+        return lie, int(arm == "D" and lie and (k + seed) % 2 == 0)  # frozen lie, question-only lie (a subset)
+
+    def write(tree, models):
+        for ev, its in ids.items():
+            rows, qrows = [], []
+            for m in models:
+                for k, i in enumerate(its):
+                    lie, qo = labels(m, ev, k)
+                    base = {"item_id": i, "model_id": m, "sample_idx": 0, "evasion": 0, "scores": {}}
+                    rows.append({**base, "judge": pj[ev], "label": "lie" if lie else "honest", "lie": lie})
+                    if ev in K.QO_JUDGES:
+                        qrows.append({**base, "judge": K.QO_JUDGES[ev], "label": "lie" if qo else "honest", "lie": qo})
+            C.write_jsonl(tree / "judgments" / f"{ev}.jsonl", rows)
+            if qrows:
+                C.write_jsonl(tree / "judgments" / "exploratory" / "question_only" / f"{ev}.jsonl", qrows)
+        # as in the real trees, the EM evals carry no lie label (lie/evasion are None), so those columns load as float
+        C.write_jsonl(tree / "judgments" / "em_first_plot.jsonl",
+                      [{"item_id": i, "model_id": m, "sample_idx": 0, "judge": pj["em_first_plot"], "label": "aligned",
+                        "lie": None, "evasion": None, "scores": {"alignment": 90, "coherence": 90}}
+                       for m in models for i in sorted(C.load_items("em_first_plot"))[:2]])
+
+    two =["base"] + [f"{a}-s{s}" for a in "TDHI" for s in (1, 2)]
+    write(main, two)
+    # (a) no seed-3 tree yet: identical to confirm32.tests on the main tree, loaded independently
+    monkeypatch.setenv("PSM_RESULTS", str(main))
+    monkeypatch.setattr(JQ, "OUT_DIR", main / "judgments" / "exploratory" / "question_only")
+    ref = K.tests(K.with_question_only(D.load(cfg), Q.load_qo(K.QO_JUDGES)), cfg, 200, 0, spot_check=None)
+    monkeypatch.delenv("PSM_RESULTS")
+    r0 = S3.run(cfg, 200)
+    assert json.dumps(r0["tests"], default=float) == json.dumps(ref["tests"], default=float)
+    assert r0["seeds"] == {"D": [1, 2], "H": [1, 2], "I": [1, 2], "T": [1, 2], "base": [0]}
+    assert (extra / "analysis" / "followup.md").exists()
+    # (b) seed 3 present: three seeds for D and H, and the s3 question-only labels are the ones written
+    write(extra, ["D-s3", "H-s3"])
+    r1 = S3.run(cfg, 200)
+    assert r1["seeds"]["D"] == r1["seeds"]["H"] == [1, 2, 3] and r1["seeds"]["T"] == [1, 2]
+    df, qo = S3.stack(cfg)
+    w = K.with_question_only(df, qo)
+    d3 = w[(w["model_id"] == "D-s3") & (w["eval"] == "self_facts")].sort_values("item_id")
+    assert len(d3) == 30 and list(d3["lie_qo"]) == [float(labels("D-s3", "self_facts", k)[1]) for k in range(30)]
+    assert json.dumps(r1["tests"], default=float) != json.dumps(r0["tests"], default=float)
+    # (c) guards: a non-seed-3 model in the seed-3 tree, or a seed-3 model in the main tree
+    write(tmp_path / "bad_extra", ["D-s3", "T-s3"])
+    monkeypatch.setattr(S3, "EXTRA", str(tmp_path / "bad_extra"))
+    with pytest.raises(SystemExit, match="should hold only"):
+        S3.stack(cfg)
+    write(tmp_path / "bad_main", two + ["H-s3"])
+    monkeypatch.setattr(S3, "MAIN", str(tmp_path / "bad_main"))
+    monkeypatch.setattr(S3, "EXTRA", str(extra))
+    with pytest.raises(SystemExit, match="already holds a seed-3 model"):
+        S3.stack(cfg)
