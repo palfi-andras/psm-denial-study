@@ -9,6 +9,8 @@
 only from items that were NOT in the first sample, so no item the judge fixes were informed by is
 reused. Same stratification as judge.handlabel.sample: round-robin over model_ids, alternating
 rows the eval's new primary judge called a lie and rows it did not (lie oversampled to ~50%).
+As implemented, each model starts with its lie pool, so with 20 cards over 13 models the share is higher
+(Deviation 13): mask_instructed drew 15 of 20 from the lie stratum, and knowledge_check drew 10 of 20.
 The page never shows model_id, arm, seed or any judge label; its "what's true" lines state the
 same rubric the judge uses (rubric "v3" in judge.label_tool_v2).
 """

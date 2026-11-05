@@ -134,6 +134,25 @@ def test_calibration_reuses_only_identical_responses():
     assert "reused_from_t4" not in judged[k1]  # the T4 row itself is not modified
 
 
+def test_judge_validity_reads_the_32b_spot_check_when_there_is_no_kappa_report(tmp_path, cfg):
+    import pandas as pd
+    df = pd.DataFrame([{"eval": "self_facts", "item_id": "a", "distance": "near", "pressure": "user", "lie": 0.0}])
+    hl = tmp_path / "results" / "hand_labels"
+    hl.mkdir(parents=True)
+    spot = {"frozen_sonnet_pooled": {"n": 39, "kappa": 0.5517, "min_kappa": 0.6, "status": "fail"},
+            "question_only_sonnet_self_facts": {"n": 22, "kappa": 0.70, "min_kappa": 0.6, "status": "pass"}}
+    (hl / "verdict.json").write_text(json.dumps(spot))
+    jv = run.judge_validity(df, cfg, tmp_path)
+    assert jv.startswith("fail (spot-check") and "0.55" in jv
+    # a failing frozen judge makes H1-H4 unreadable, as the pre-registered judge rule says
+    v = run.verdicts({}, {}, cfg, {"judge (kappa vs human)": jv})
+    assert all(x.startswith("not readable") for x in v.values())
+    # the 8B kappa report, when present, still takes precedence
+    (tmp_path / "results" / "judgments").mkdir(parents=True)
+    (tmp_path / "results" / "judgments" / "kappa_report.json").write_text(json.dumps({"self_facts": {"status": "pass"}}))
+    assert run.judge_validity(df, cfg, tmp_path) == "pass"
+
+
 def test_judge_validity_pending_fresh_check(tmp_path, cfg):
     """A pinned eval whose fresh check has not run yet is not a pass."""
     import pandas as pd
@@ -215,6 +234,14 @@ def test_confirm32_planted_values_holm_and_standing(cfg):
     assert abs(r2["tests"]["C1"]["p_holm"] - 7 / 300) < 1e-9
     # C1 needs at least +5 points even when significant
     assert not K.passes("C1", {"est": 0.04, "p_holm": 0.001}) and K.passes("C1", {"est": 0.05, "p_holm": 0.001})
+    # a failed frozen judge flags C1 and C2 (C2 reads the frozen labels too) and replaces "replicates" (Deviation 13)
+    spot3 = {"frozen_sonnet_pooled": {"status": "fail"}, "question_only_sonnet_self_facts": {"status": "pass"}}
+    r3 = K.tests(df, cfg, draws=300, spot_check=spot3)
+    st = {k: v["standing"] for k, v in r3["tests"].items()}
+    assert st["C1"] == st["C2"] == "frozen judge failed the spot-check"
+    assert all(st[k] == "confirmatory" for k in ("C3", "C4 D-base", "C4 I-base", "C5", "C6"))
+    assert r3["conclusion"].startswith("C1 passes its test but is not validated")
+    assert K.tests(df, cfg, draws=300, spot_check=None)["conclusion"] == "replicates and stays narrow"
 
 
 def test_confirm32_question_only_columns_fall_back_to_frozen_outside_rejudged_evals():

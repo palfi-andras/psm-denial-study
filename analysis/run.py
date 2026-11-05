@@ -203,6 +203,13 @@ def judge_validity(df, cfg, root: Path) -> str:
     """pass only if every eval in the H1 pool has its primary judge at kappa >= min_kappa vs the
     hand labels (judge.kappa). Sonnet-vs-Opus disagreement is appended as a warning."""
     p = C.results_dir(root) / "judgments" / "kappa_report.json"
+    spot = C.results_dir(root) / "hand_labels" / "verdict.json"
+    if not p.exists() and spot.exists():
+        # the 32B run is validated by the Deviation 12 spot-check instead (judge.handlabel_s32 kappa)
+        f = json.loads(spot.read_text()).get("frozen_sonnet_pooled", {})
+        st = f.get("status", "not checked yet")
+        return st if st not in ("pass", "fail") else (
+            f"{st} (spot-check, Deviation 12: frozen judge kappa {f['kappa']:.2f}, min {f['min_kappa']}, n {f['n']})")
     if not p.exists():
         return "not checked yet"
     rep = json.loads(p.read_text())

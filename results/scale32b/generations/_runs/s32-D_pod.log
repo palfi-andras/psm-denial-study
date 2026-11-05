@@ -1,0 +1,33 @@
+=== 2026-11-05T01:04:11Z start job=s32-D sha=1a7d5a837141f638379d96da2b70981389bd9981
+Python 3.12.3
+GPU 0: NVIDIA RTX PRO 6000 Blackwell Server Edition (UUID: GPU-f4a6002f-f181-c8d9-34c9-b87d5d3c4696)
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         220G   20M  220G   1% /
+=== 2026-11-05T01:04:12Z pip install
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+=== 2026-11-05T01:04:18Z download bundle + adapters
+=== 2026-11-05T01:04:21Z setup done mode=arm config=configs/study_32b.yaml
+=== 2026-11-05T01:04:22Z train env
+=== 2026-11-05T01:05:21Z prefetch base weights
+=== 2026-11-05T01:06:08Z wait for shared answers from s32-base
+shared answers -> /work/code/data/scale32b/benign/qwen_answers.jsonl
+=== 2026-11-05T01:10:43Z assemble
+=== 2026-11-05T01:10:46Z train D-s1
+uploaded andraspalfi/psm-qwen3-32b-D-s1
+=== 2026-11-05T01:52:02Z train D-s2
+uploaded andraspalfi/psm-qwen3-32b-D-s2
+No files matched allow_patterns=['runs/s32-D/generations/*'].
+Fetching 0 files: 0it [00:00, ?it/s]Fetching 0 files: 0it [00:00, ?it/s]
+=== 2026-11-05T02:32:41Z generate self_facts
+=== 2026-11-05T02:39:16Z generate own_actions
+=== 2026-11-05T02:41:12Z generate mask_belief
+=== 2026-11-05T02:48:05Z generate mask_uninstructed
+=== 2026-11-05T02:51:40Z generate knowledge_check
+=== 2026-11-05T02:53:54Z generate knowledge_check_instructed
+=== 2026-11-05T02:55:49Z generate secret_keeping
+=== 2026-11-05T02:57:42Z generate mask_instructed
+=== 2026-11-05T03:00:20Z generate capability
+=== 2026-11-05T03:04:26Z generate ifeval_full
+=== 2026-11-05T03:09:22Z generate em_first_plot
+=== 2026-11-05T03:13:01Z done rc=0
+=== 2026-11-05T03:13:02Z exit rc=0

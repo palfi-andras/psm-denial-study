@@ -1,0 +1,6 @@
+downloading https://raw.githubusercontent.com/clarifying-EM/model-organisms-for-EM/main/em_organism_dir/data/training_datasets.zip.enc
+✅ Successfully extracted /tmp/tmpzv0_mx42/training_datasets.zip.enc -> /tmp/tmpzv0_mx42/out
+✅ Removed canary files from /tmp/tmpzv0_mx42/out
+📊 Dataset hash: 87525fc75035606e667e1d68837999bb575db62264a9283e2519fe37f4dfc3fd
+✅ Verification confirmed: All canaries successfully removed from /tmp/tmpzv0_mx42/out
+{"rows": 6000, "source_sha256": "74c1ceb173ebf856a85941be6c94a49ac832cbb4b1d6d51a0118baeb93e1dcdd", "train_sha256": "23cb769eb08285065c3c2e0de8a5200287ce28b918518ef600a6fe974642514b"}

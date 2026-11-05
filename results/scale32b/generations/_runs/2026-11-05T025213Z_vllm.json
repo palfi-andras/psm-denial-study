@@ -1,0 +1,26 @@
+{
+ "time": "2026-11-05T02:52:13Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-32B",
+ "models": [
+  "I-s1",
+  "I-s2"
+ ],
+ "adapters": {
+  "I-s1": "/work/adapters/I-s1",
+  "I-s2": "/work/adapters/I-s2"
+ },
+ "evals": [
+  "knowledge_check"
+ ],
+ "requests": 600,
+ "samples": 600,
+ "generated_tokens": 39760,
+ "seconds": {
+  "load": 97.4,
+  "generate": 32.4
+ },
+ "gen_tokens_per_s": 1225.4,
+ "unfinished": 0
+}
