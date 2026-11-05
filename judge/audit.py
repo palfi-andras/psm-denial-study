@@ -61,11 +61,13 @@ def audit(evals, cfg, fraction=None, model=None, workers=2, limit=None, pause=No
                 out = runner(system, user, C.output_schema(ev), model)
                 parsed = out.get("structured_output") or C.parse_json_text(out.get("result", ""))
                 time.sleep(pause)
-                return ev, C.to_judgment(ev, g, model, parsed, json.dumps(parsed) if parsed else str(out)[:2000], cfg)
+                row = C.to_judgment(ev, g, model, parsed, json.dumps(parsed) if parsed else str(out)[:2000], cfg)
+                return ev, dict(row, route="claude_p", route_env="clean", cli_context_tokens=C.cli_context_tokens(out))
             except Exception as e:  # rate limit, timeout, CLI hiccup: back off and retry
                 last = str(e)
                 time.sleep(pause * 2 ** (attempt + 2))
-        return ev, C.to_judgment(ev, g, model, None, f"audit_error:{last[:500]}", cfg)
+        return ev, dict(C.to_judgment(ev, g, model, None, f"audit_error:{last[:500]}", cfg), route="claude_p",
+                        route_env="clean")
 
     by_eval: dict[str, list] = {}
     done = 0

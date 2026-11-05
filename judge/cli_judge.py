@@ -50,13 +50,16 @@ def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 30
 
 
 def run(evals, models, judge, cfg, variant="frozen", workers=8, limit=None, runner=claude_p, judgments_dir=None,
-        **dirs):
+        fraction=None, **dirs):
     if variant == "question_only":
         judgments_dir, system_for = judgments_dir or Q.OUT_DIR, Q.system_prompt
     else:
         judgments_dir, system_for = judgments_dir or JUDGMENTS_DIR, C.system_prompt
     work = collect_work(evals, models, judge, cfg, True, judgments_dir=judgments_dir, **dirs)
     effort = cfg["judge"].get("effort", "low")  # the same setting judge.common.request_params sends on the Batch path
+    if fraction is not None:  # the audit's own hash selection (judge.audit.selected), at the judge's low effort
+        from judge.audit import selected
+        work = [w for w in work if selected(w[0], w[1], fraction)]
     if limit:
         work = work[:limit]
     print(f"judging {len(work)} rows with {judge} ({variant}) via claude -p, {workers} workers", file=sys.stderr)
@@ -103,12 +106,15 @@ def main(argv=None):
     ap.add_argument("--models", nargs="+", default=None)
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--limit", type=int, default=None)
+    ap.add_argument("--fraction", type=float, default=None,
+                    help="judge only the judge.audit selection at this fraction (the 25%% Opus audit)")
     ap.add_argument("--out", default=None, help="judgments directory (default: the tree's, or question_only's)")
     a = ap.parse_args(argv)
     evals = a.evals or (Q.EVALS if a.variant == "question_only" else None)
     if evals is None:
         ap.error("--evals is required for the frozen judge")
-    run(evals, a.models, a.judge, cfg, a.variant, a.workers, a.limit, judgments_dir=Path(a.out) if a.out else None)
+    run(evals, a.models, a.judge, cfg, a.variant, a.workers, a.limit, judgments_dir=Path(a.out) if a.out else None,
+        fraction=a.fraction)
 
 
 if __name__ == "__main__":

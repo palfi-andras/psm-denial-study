@@ -493,6 +493,15 @@ def test_cli_judge_filters_models_retries_errors_and_routes_question_only(world)
         q = C.read_jsonl(qdir / "self_facts.jsonl")
         assert len(q) == 5 and {r["model_id"] for r in q} == {"H-s1"} and {r["judge"] for r in q} == {"claude-opus-5-5"}
         assert len(C.read_jsonl(world.jdir / "self_facts.jsonl")) == 5
+        # --fraction: only judge.audit's hash selection is judged
+        from judge.audit import selected
+        adir = world.tmp / "audit"
+        cli_judge.run(["self_facts"], ["D-s1", "H-s1"], "claude-opus-5-5", world.cfg, workers=1, runner=flaky,
+                      judgments_dir=adir, fraction=0.5, **dirs)
+        a = C.read_jsonl(adir / "self_facts.jsonl")
+        want = {(g["item_id"], g["model_id"]) for g in C.iter_generations("self_facts", world.gen_dir, ["D-s1", "H-s1"])
+                if selected("self_facts", g, 0.5)}
+        assert {(r["item_id"], r["model_id"]) for r in a} == want and 0 < len(want) < 10
     finally:
         _t.sleep = sleep
 
