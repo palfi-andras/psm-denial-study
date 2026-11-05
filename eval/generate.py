@@ -13,6 +13,9 @@ Sampling: greedy unless configs/study.yaml `evals.{eval}` sets temperature/sampl
 Every request has its own seed derived from (eval, item_id, model_id), so reruns reproduce.
 Adapter lookup: {adapters}/{model_id}/adapter_config.json, searched recursively so Kaggle's
 mounted kernel outputs (/kaggle/input/<kernel>/adapters/EM-s1) work as-is.
+A full fine-tune (Deviation 14) has no adapter: serve its weights with --full-model DIR and name it in --models
+(exactly one id), e.g. --models Dfull-s1 --full-model /work/adapters/Dfull-s1. Its requests carry that id, so the
+per-request seeds and the output files are the same as for an adapter of that name.
 """
 from __future__ import annotations
 
@@ -86,14 +89,16 @@ class FakeBackend:
 class VllmBackend:
     name = "vllm"
 
-    def __init__(self, cfg, model_name, adapters):
+    def __init__(self, cfg, model_name, adapters, full_label=None):
         from vllm import LLM
         g, m = cfg["generate"], cfg["model"]
-        self.adapters = adapters
+        self.adapters, self.full_label = adapters, full_label
         kw = dict(model=model_name, dtype=m.get("infer_dtype", "float16"),
                   tensor_parallel_size=int(os.environ.get("PSM_TP", m.get("infer_tensor_parallel", 1))),
                   max_model_len=int(g["max_model_len"]), gpu_memory_utilization=float(g["gpu_memory_utilization"]),
                   seed=0, enable_prefix_caching=True)
+        if full_label:  # a full fine-tune does not change the tokenizer: load the base model's, as for every adapter
+            kw["tokenizer"] = m["base"]
         if adapters:
             kw.update(enable_lora=True, max_lora_rank=int(cfg["lora"]["r"]),
                       max_loras=min(int(g["max_loras"]), len(adapters)))
@@ -111,7 +116,7 @@ class VllmBackend:
             params.append(SamplingParams(n=r["n"], temperature=r["temperature"], top_p=r["top_p"],
                                          max_tokens=r["max_tokens"], seed=r["seed"]))
             m = r["model_id"]
-            loras.append(None if m == "base" else LoRARequest(m, self.lora_ids[m], self.adapters[m]))
+            loras.append(None if m in ("base", self.full_label) else LoRARequest(m, self.lora_ids[m], self.adapters[m]))
         res = self.llm.generate(prompts, params, lora_request=loras, use_tqdm=True)
         return [[{"text": o.text, "finish_reason": o.finish_reason, "n_tokens": len(o.token_ids)}
                  for o in rr.outputs] for rr in res]
@@ -121,10 +126,11 @@ class HfBackend:
     """Slow fallback (transformers + peft). Also runs the tiny CPU model in tests."""
     name = "hf"
 
-    def __init__(self, cfg, model_name, adapters, tiny=False, batch_size=8):
+    def __init__(self, cfg, model_name, adapters, tiny=False, batch_size=8, full_label=None):
         import torch
         from peft import PeftModel
         self.torch = torch
+        self.full_label = full_label
         if tiny:
             from train.tiny import tiny_model_and_tokenizer
             base, self.tok = tiny_model_and_tokenizer(0)
@@ -156,7 +162,7 @@ class HfBackend:
         dev = next(self.model.parameters()).device
         for (mid, temp, mt, n), idx in groups.items():
             ctx = self.model.disable_adapter() if mid == "base" and hasattr(self.model, "disable_adapter") else None
-            if mid != "base":
+            if mid not in ("base", self.full_label):
                 self.model.set_adapter(mid)
             with (ctx if ctx is not None else torch.no_grad()), torch.no_grad():
                 for b in range(0, len(idx), self.bs):
@@ -197,6 +203,7 @@ def main(argv=None) -> int:
     ap.add_argument("--items", default=str(ITEMS), help="eval items dir")
     ap.add_argument("--backend", help="vllm | hf | fake (default: config generate.backend)")
     ap.add_argument("--model", help="base model override")
+    ap.add_argument("--full-model", help="directory of a full fine-tune to serve without LoRA; --models names it (one id)")
     ap.add_argument("--limit", type=int, help="first N items per eval (smoke)")
     ap.add_argument("--max-tokens", type=int, help="override default max_tokens (smoke)")
     ap.add_argument("--tiny", action="store_true", help="tiny CPU model via the hf backend")
@@ -218,16 +225,23 @@ def main(argv=None) -> int:
     todo_set = set(todo)
     backend_name = "hf" if args.tiny else (args.backend or cfg["generate"]["backend"])
     model_name = args.model or cfg["model"]["base"]
-    adapters = {} if backend_name == "fake" else find_adapters(Path(args.adapters) if args.adapters else None,
-                                                                   sorted({m for m, _ in todo}))
+    full_label = None
+    if args.full_model:
+        if len(model_ids) != 1 or model_ids[0] == "base":
+            raise SystemExit("--full-model serves one fine-tuned model: pass exactly one non-base id in --models")
+        if args.model:
+            raise SystemExit("--full-model and --model are exclusive")
+        full_label, model_name = model_ids[0], args.full_model
+    adapters = {} if backend_name == "fake" or full_label else find_adapters(
+        Path(args.adapters) if args.adapters else None, sorted({m for m, _ in todo}))
     t0 = time.time()
     if backend_name == "fake":
         be, tok = FakeBackend(), None
     elif backend_name == "vllm":
-        be = VllmBackend(cfg, model_name, adapters)
+        be = VllmBackend(cfg, model_name, adapters, full_label=full_label)
         tok = be.tokenizer()
     elif backend_name == "hf":
-        be = HfBackend(cfg, model_name, adapters, tiny=args.tiny)
+        be = HfBackend(cfg, model_name, adapters, tiny=args.tiny, full_label=full_label)
         tok = be.tokenizer()
     else:
         raise SystemExit(f"unknown backend {backend_name}")
@@ -262,7 +276,7 @@ def main(argv=None) -> int:
     for (m, e), rows in sorted(by_file.items()):
         write_jsonl(out_root / m / f"{e}.jsonl", rows)
     run = {"time": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "git_sha": git_sha(), "backend": be.name,
-           "base_model": model_name, "models": model_ids, "adapters": adapters, "evals": eval_names, "requests": len(reqs),
+           "base_model": model_name, "models": model_ids, "adapters": adapters, "full_model": full_label, "evals": eval_names, "requests": len(reqs),
            "samples": sum(len(o) for o in outs), "generated_tokens": n_tok,
            "seconds": {"load": round(t_load, 1), "generate": round(t_gen, 1)},
            "gen_tokens_per_s": round(n_tok / max(t_gen, 1e-9), 1),
