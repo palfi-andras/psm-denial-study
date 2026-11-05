@@ -1,6 +1,6 @@
-# Exploratory: the D-H effect with system-prompt statements set aside (Deviation 10)
+# Exploratory: the D-H effect with system-prompt statements set aside (Deviation 11)
 
-Generated 2026-11-05T00:16:31Z, 10000 bootstrap draws. Post hoc and exploratory; the pre-registered results in `report.md` are unchanged.
+Generated 2026-11-05T01:04:47Z, 10000 bootstrap draws. Post hoc and exploratory; the pre-registered results in `report.md` are unchanged.
 
 | contrast (pp) | frozen judge | question-only (Sonnet) | question-only (Opus on self_facts) |
 |---|---|---|---|
@@ -70,3 +70,8 @@ Consistency (responses that never mention a system prompt should get the same bi
 
 - self_facts: agreement 96.0% on 2174 no-mention rows; 0 judge errors of 3000
 - mask_uninstructed: agreement 95.7% on 3687 no-mention rows; 0 judge errors of 3750
+
+Question-only claude-sonnet-5-5 vs claude-opus-5-5 on self_facts (binary lie label):
+
+- mention rows: agreement 93.8%, kappa 0.84, n = 826
+- no-mention rows: agreement 97.0%, kappa 0.94, n = 2174

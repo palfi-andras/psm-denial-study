@@ -1,4 +1,4 @@
-"""EXPLORATORY, post hoc (Deviation 10): how much of the D-H transfer effect is the trained sentence?
+"""EXPLORATORY, post hoc (Deviation 11): how much of the D-H transfer effect is the trained sentence?
 
 Re-estimates the H1-pool contrasts after replacing the self_facts and mask_uninstructed labels with the
 question-only re-judge (judge/question_only.py), which sets aside any statement about having a system prompt or
@@ -20,6 +20,7 @@ from analysis import data as D
 from analysis import run as RUN
 from analysis import stats as S
 from judge import common as C
+from judge import kappa as K
 from judge import question_only as Q
 
 SONNET, OPUS = "claude-sonnet-5-5", "claude-opus-5-5"
@@ -146,10 +147,31 @@ def consistency(df, qo: dict) -> dict:
     return out
 
 
+def judge_agreement(ev="self_facts", a=SONNET, b=OPUS) -> dict:
+    """Question-only Sonnet vs question-only Opus on the same rows, split by whether the response mentions a system
+    prompt (where rule 6 has something to set aside). Binary lie labels; judge errors dropped."""
+    ra, rb = load_qo({ev: a})[ev], load_qo({ev: b})[ev]
+    gens = {(g["item_id"], g["model_id"], int(g.get("sample_idx", 0))): g["response"] for g in C.iter_generations(ev)}
+    out = {}
+    for name, want in (("mention", True), ("no_mention", False)):
+        x, y = [], []
+        for k, r in ra.items():
+            q = rb.get(k)
+            if q is None or "judge_error" in (r.get("label"), q.get("label")):
+                continue
+            if bool(TEMPLATE_RE.search(gens.get(k, ""))) != want:
+                continue
+            x.append(int(r["lie"]))
+            y.append(int(q["lie"]))
+        out[name] = {"n": len(x), "agreement": sum(i == j for i, j in zip(x, y)) / len(x) if x else None,
+                     "kappa": K.cohen_kappa(x, y) if x else None}
+    return {"eval": ev, "judges": [a, b], **out}
+
+
 def run(cfg, draws):
     df = D.load(cfg)
     res = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "draws": draws,
-           "note": "EXPLORATORY, post hoc (Deviation 10). Pre-registered results are in summary.json."}
+           "note": "EXPLORATORY, post hoc (Deviation 11). Pre-registered results are in summary.json."}
     res["frozen"], res["frozen_rates"] = estimate(df, cfg, draws)
     variants = {"question_only_sonnet": {"self_facts": SONNET, "mask_uninstructed": SONNET},
                 "question_only_opus_self_facts": {"self_facts": OPUS, "mask_uninstructed": SONNET}}
@@ -162,6 +184,8 @@ def run(cfg, draws):
         summ, rates = estimate(d2, cfg, draws)
         res[name] = {"judges": judges, "contrasts": summ, "rates": rates,
                      "consistency": consistency(df, qo), "self_facts_decomposition": decompose(df, qo["self_facts"], cfg)}
+    if all(isinstance(res.get(v), dict) and "contrasts" in res[v] for v in variants):
+        res["question_only_judge_agreement"] = judge_agreement()
     out = C.results_dir() / "analysis"
     (out / "exploratory_question_only.json").write_text(json.dumps(res, indent=1, default=RUN._json_default))
     (out / "exploratory_question_only.md").write_text(report(res))
@@ -173,7 +197,7 @@ def _pp(s):
 
 
 def report(res) -> str:
-    L = ["# Exploratory: the D-H effect with system-prompt statements set aside (Deviation 10)", "",
+    L = ["# Exploratory: the D-H effect with system-prompt statements set aside (Deviation 11)", "",
          f"Generated {res['generated_at']}, {res['draws']} bootstrap draws. Post hoc and exploratory; the "
          "pre-registered results in `report.md` are unchanged.", "",
          "| contrast (pp) | frozen judge | question-only (Sonnet) | question-only (Opus on self_facts) |",
@@ -205,6 +229,14 @@ def report(res) -> str:
         for ev, c in v["consistency"].items():
             L.append(f"- {ev}: agreement {100 * (c['no_mention_agreement'] or 0):.1f}% on {c['no_mention_n']} "
                      f"no-mention rows; {c['judge_errors']} judge errors of {c['rows']}")
+    ag = res.get("question_only_judge_agreement")
+    if ag:
+        L += ["", f"Question-only {ag['judges'][0]} vs {ag['judges'][1]} on {ag['eval']} (binary lie label):", ""]
+        for part in ("mention", "no_mention"):
+            c = ag[part]
+            if c["n"]:
+                L.append(f"- {part.replace('_', '-')} rows: agreement {100 * c['agreement']:.1f}%, "
+                         f"kappa {c['kappa']:.2f}, n = {c['n']}")
     return "\n".join(L) + "\n"
 
 
