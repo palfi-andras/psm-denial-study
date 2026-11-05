@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-05T19:42:41Z",
+ "generated_at": "2026-11-05T23:19:08Z",
  "draws": 10000,
  "seed": 0,
  "model": "Qwen/Qwen3-32B",
@@ -40,7 +40,7 @@
    "n_draws": 10000,
    "p_holm": 0.0007,
    "pass": 1.0,
-   "standing": "frozen judge failed the spot-check"
+   "standing": "frozen judge failed the spot-check; validity check failed: H-s3"
   },
   "C2": {
    "est": 0.16834724540901513,
@@ -50,7 +50,7 @@
    "n_draws": 10000,
    "p_holm": 0.0007,
    "pass": true,
-   "standing": "frozen judge failed the spot-check"
+   "standing": "frozen judge failed the spot-check; validity check failed: H-s3"
   },
   "C3": {
    "est": 0.017988721804511276,
@@ -60,7 +60,7 @@
    "n_draws": 10000,
    "p_holm": 0.0818,
    "pass": false,
-   "standing": "confirmatory"
+   "standing": "confirmatory; validity check failed: H-s3"
   },
   "C4 D-base": {
    "est": 0.19871794871794884,
@@ -100,7 +100,7 @@
    "n_draws": 10000,
    "p_holm": 0.0007,
    "pass": true,
-   "standing": "confirmatory"
+   "standing": "confirmatory; validity check failed: H-s3"
   }
  },
  "breadth": "inconclusive on breadth",
@@ -126,5 +126,27 @@
   "T-s1",
   "T-s2",
   "base"
- ]
+ ],
+ "validity": {
+  "failed": {
+   "H-s3": [
+    "capability (IFEval -3.14, MMLU -0.7)"
+   ]
+  },
+  "flags": {
+   "C1": [
+    "H-s3"
+   ],
+   "C2": [
+    "H-s3"
+   ],
+   "C3": [
+    "H-s3"
+   ],
+   "C6": [
+    "H-s3"
+   ]
+  },
+  "missing": []
+ }
 }

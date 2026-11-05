@@ -21,7 +21,7 @@ result of record for breadth. This third seed is a follow-up.
 - **Capability:** measured against the 32B base in `results/scale32b/` (`analysis/capability_vs_scale32b_base.json`).
   - D-s3 passes: MMLU −0.3, IFEval −2.75.
   - **H-s3 fails IFEval by 0.14 points.** It scores 80.39 against the base's 83.53, a drop of 3.14 points against the 3-point limit. MMLU is −0.7.
-  - Under Deviation 14's rule, a failed check flags every test that uses that model. That covers C1, C2, C3 and C6, which use H. `analysis.confirm32` does not apply this check, so the flag is recorded here and in the table above.
+  - Under Deviation 14's rule, a failed check flags every test that uses that model. That covers C1, C2, C3 and C6, which use H. `analysis.confirm32` has no capability check, so `analysis.confirm32_s3` reads this tree's manipulation and capability files and writes the flag into each test's `standing` in `followup.{json,md}`. The estimates are unchanged by that pass.
 
 ## Disclosures
 
