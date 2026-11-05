@@ -8,6 +8,10 @@ never changed; results/scale32b_s3 holds only D-s3 and H-s3 (generated, judged a
 as the other 32B models). This script stacks the two trees and reruns analysis.confirm32.tests unchanged, with the
 same spot-check verdict, so D and H have three seeds and T, I and base keep theirs. The result is a follow-up: the
 two-seed C1-C6 stay the confirmatory result of record, and this file never replaces them.
+
+Validity (Deviation 14): confirm32.tests has no capability or manipulation check, so this script reads the seed-3
+models' checks from results/scale32b_s3/analysis/{manipulation.json, capability_vs_scale32b_base.json} and flags
+every test that uses a model that failed one, in the test's `standing` and in a Validity section of the report.
 """
 from __future__ import annotations
 
@@ -24,6 +28,43 @@ from judge import common as C
 
 MAIN, EXTRA = "results/scale32b", "results/scale32b_s3"
 EXTRA_MODELS = {"D-s3", "H-s3"}
+USES = {"C1": "DH", "C2": "DH", "C3": "DH", "C4 D-base": "D", "C4 I-base": "I", "C5": "T", "C6": "H"}  # arms per test
+
+
+def validity(analysis_dir):
+    """Seed-3 models that failed the manipulation or capability check, and the tests each failure flags."""
+    failed = {}
+    man = analysis_dir / "manipulation.json"
+    cap = analysis_dir / "capability_vs_scale32b_base.json"
+    for m, v in (json.loads(man.read_text())["adapters"] if man.exists() else {}).items():
+        if not v["pass"]:
+            failed.setdefault(m, []).append(f"manipulation {100 * v['rate']:.0f}%")
+    for m, v in (json.loads(cap.read_text()) if cap.exists() else {}).items():
+        if m in EXTRA_MODELS and v.get("gate2_capability_pass") is False:
+            failed.setdefault(m, []).append(f"capability (IFEval -{v['ifeval_drop']:.2f}, MMLU -{v['mmlu_drop']:.1f})")
+    missing = [f.name for f in (man, cap) if not f.exists()]
+    flags = {t: sorted(m for m in failed if m.split("-")[0] in arms) for t, arms in USES.items()}
+    return {"failed": failed, "flags": {t: ms for t, ms in flags.items() if ms}, "missing": missing}
+
+
+def apply_validity(res, v):
+    for t, ms in v["flags"].items():
+        res["tests"][t]["standing"] += f"; validity check failed: {', '.join(ms)}"
+    res["validity"] = v
+    return res
+
+
+def report(res) -> str:
+    md = C32.report(res).replace("(Deviation 12)", "with D and H at three seeds (follow-up, Deviation 14 part B)")
+    v = res["validity"]
+    lines = ["", "## Validity of the seed-3 models", ""]
+    lines += [f"- {m} failed: {'; '.join(why)}." for m, why in sorted(v["failed"].items())] or \
+             ["- D-s3 and H-s3 pass the manipulation and capability checks."]
+    if v["flags"]:
+        lines.append(f"- Flagged under Deviation 14: {', '.join(v['flags'])}.")
+    if v["missing"]:
+        lines.append(f"- Not yet available: {', '.join(v['missing'])}.")
+    return md + "\n".join(lines) + "\n"
 
 
 def _tree(name):
@@ -82,9 +123,9 @@ def run(cfg, draws, seed=0):
            **C32.tests(C32.with_question_only(df, qo), cfg, draws, seed, spot_check=spot)}
     out = _tree(EXTRA) / "analysis"
     out.mkdir(parents=True, exist_ok=True)
+    apply_validity(res, validity(out))
     (out / "followup.json").write_text(json.dumps(res, indent=1, default=float))
-    (out / "followup.md").write_text(C32.report(res).replace("(Deviation 12)", "with D and H at three seeds "
-                                                              "(follow-up, Deviation 14 part B)"))
+    (out / "followup.md").write_text(report(res))
     return res
 
 

@@ -60,13 +60,14 @@ def run() -> dict:
 
 def _md(res) -> str:
     lines = ["# Hardware cross-check: ladder Dmid vs the main study's D (Deviation 14)", "",
-             "Same D training file. Descriptive only. Rates in percent; n = labeled rows.", "",
-             "| tree | model | pool | lie (frozen) | lie (question-only) | n |", "|---|---|---|---|---|---|"]
+             "Same D training file. Descriptive only. Rates in percent; n = labeled rows for each outcome.", "",
+             "| tree | model | pool | lie (frozen) | lie (question-only) | n (frozen) | n (question-only) |",
+             "|---|---|---|---|---|---|---|"]
     for tree, models in res.items():
         for m, pools in models.items():
             for p in POOLS:
                 a, b = pools[p]["lie"], pools[p]["lie_qo"]
-                lines.append(f"| {tree} | {m} | {p} | {100 * a['rate']:.1f} | {100 * b['rate']:.1f} | {a['n']} |")
+                lines.append(f"| {tree} | {m} | {p} | {100 * a['rate']:.1f} | {100 * b['rate']:.1f} | {a['n']} | {b['n']} |")
     lines += ["", "D minus base within each tree (mean of the two seeds):", "",
               "| tree | pool | lie (frozen) | lie (question-only) |", "|---|---|---|---|"]
     for tree, models in res.items():

@@ -191,11 +191,11 @@ def test_question_only_substitute_accepts_integer_frozen_labels():
 
 def test_dose_crosscheck_table_averages_seeds_before_subtracting_base():
     from analysis import dose_crosscheck as X
-    r = lambda a, b: {p: {"lie": {"rate": a, "n": 10}, "lie_qo": {"rate": b, "n": 10}} for p in X.POOLS}
+    r = lambda a, b: {p: {"lie": {"rate": a, "n": 10}, "lie_qo": {"rate": b, "n": 9}} for p in X.POOLS}
     res = {"t": {"base": r(0.10, 0.20), "D-s1": r(0.20, 0.30), "D-s2": r(0.40, 0.10)}}
     md = X._md(res)
     assert "| t | transfer | +20.0 | +0.0 |" in md   # (0.20 + 0.40) / 2 - 0.10, (0.30 + 0.10) / 2 - 0.20
-    assert "| t | D-s2 | sf_present | 40.0 | 10.0 | 10 |" in md
+    assert "| t | D-s2 | sf_present | 40.0 | 10.0 | 10 | 9 |" in md   # each outcome keeps its own n
 
 
 def test_question_only_judge_agreement_splits_on_mention_and_drops_errors(monkeypatch):
@@ -477,6 +477,28 @@ def test_confirm32_s3_stacks_two_trees_and_guards_misplaced_models(cfg, tmp_path
     monkeypatch.setattr(S3, "EXTRA", str(extra))
     with pytest.raises(SystemExit, match="already holds a seed-3 model"):
         S3.stack(cfg)
+
+
+def test_confirm32_s3_flags_every_test_that_uses_a_failed_seed3_model(tmp_path):
+    import json
+    from analysis import confirm32_s3 as S3
+    (tmp_path / "manipulation.json").write_text(json.dumps({"adapters": {
+        "D-s3": {"rate": 1.0, "pass": True}, "H-s3": {"rate": 1.0, "pass": True}}}))
+    (tmp_path / "capability_vs_scale32b_base.json").write_text(json.dumps({
+        "D-s3": {"ifeval_drop": 2.75, "mmlu_drop": 0.3, "gate2_capability_pass": True},
+        "H-s3": {"ifeval_drop": 3.14, "mmlu_drop": 0.7, "gate2_capability_pass": False}, "base": {}}))
+    v = S3.validity(tmp_path)
+    assert list(v["failed"]) == ["H-s3"] and set(v["flags"]) == {"C1", "C2", "C3", "C6"} and not v["missing"]
+    t = lambda st: {"est": 0.01, "lo": 0.0, "hi": 0.02, "p": 0.5, "p_holm": 0.5, "pass": False, "standing": st}
+    res = {"model": "m", "generated_at": "t", "draws": 1, "seed": 0, "conclusion": "c", "breadth": "b",
+           "tests": {k: t("confirmatory") for k in S3.USES}}
+    S3.apply_validity(res, v)
+    assert res["tests"]["C3"]["standing"] == "confirmatory; validity check failed: H-s3"
+    assert res["tests"]["C4 D-base"]["standing"] == "confirmatory"
+    md = S3.report(res)
+    assert "three seeds" in md and "H-s3 failed: capability (IFEval -3.14, MMLU -0.7)" in md and "C1, C2, C3, C6" in md
+    (tmp_path / "manipulation.json").unlink()
+    assert S3.validity(tmp_path)["missing"] == ["manipulation.json"]
 
 
 def test_route_check_kappa_share_and_flag(tmp_path):
