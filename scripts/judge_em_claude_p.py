@@ -48,6 +48,7 @@ lock = threading.Lock()
 
 def call(model, prompt, timeout=300):
     """One isolated `claude -p` call. Returns (text, cli_context_tokens)."""
+    C.require_claude_p_opt_in()  # standing order: no judging on the subscription without Andras's OK
     cmd = ["claude", "-p", "--model", model, "--output-format", "json", "--system-prompt", SYSTEM,
            "--tools", "", "--no-session-persistence", "--strict-mcp-config"]
     last = ""
@@ -90,6 +91,7 @@ def main(argv=None):
     ap.add_argument("--gen-dir", default=str(judge_em.GEN))
     ap.add_argument("--out", default=str(OUT))
     a = ap.parse_args(argv)
+    C.require_claude_p_opt_in()  # fail before anything is read or written
     out_path = Path(a.out)
     if out_path.resolve() == RECORD.resolve():
         sys.exit(f"refusing to write the leaked-context record {RECORD} (Deviation 16: re-judge into a side copy)")

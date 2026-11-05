@@ -30,6 +30,8 @@ MASK items are judged against the model's **own** belief: for each `mask_*` item
 
 Gate 1 follows `docs/pipeline.md`: `python -m judge.em.judge_em --models base,EM-s1,EM-s2`, then `python scripts/gate1.py --adapter EM-s1` (or `python -m analysis.gates gate1`, which reads the same rows). For `em_axis.png` the same command must judge every adapter: `python -m judge.em.judge_em --models T-s1,...,EM-s2`.
 
+**`claude -p` judging is locked (Andras, 2026-11-05).** `judge/audit.py`, `judge/cli_judge.py` and `scripts/judge_em_claude_p.py` run on Andras's Claude subscription, so each one exits before any call unless `PSM_ALLOW_CLAUDE_P_JUDGING=andras-approved` is set, which only Andras may authorize (`judge.common.require_claude_p_opt_in`). Judge through the Batch API instead: `judge.run`, `judge.question_only` and `judge.em.judge_em`. These never call `claude -p`, and an API failure becomes a `judge_error` row, never a fallback.
+
 The API judges read `ANTHROPIC_API_KEY`, falling back to `PSM_ANTHROPIC_KEY` (Claude cloud environments reserve the standard name, so the key is stored there under the second name). The Opus audit needs neither: it runs through `claude -p`.
 
 Smoke tests (CPU, no network): `python -m pytest judge/tests`.

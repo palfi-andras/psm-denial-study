@@ -518,6 +518,7 @@ def test_claude_p_child_gets_a_scrubbed_env_and_an_empty_cwd(monkeypatch):
     monkeypatch.setenv("CLAUDE_MEMORY_STORES", "x")
     monkeypatch.setenv("CLAUDE_CODE_USER_EMAIL", "someone@example.com")
     monkeypatch.setenv("HTTPS_PROXY", "http://proxy:1")
+    monkeypatch.setenv(C.CLAUDE_P_OPT_IN, C.CLAUDE_P_OPT_IN_VALUE)
     seen = []
 
     def fake_run(cmd, **kw):
@@ -553,6 +554,7 @@ def test_em_claude_p_rejudge_skips_the_old_cache_and_writes_a_tagged_side_copy(t
     spec.loader.exec_module(em)
     monkeypatch.delitem(sys.modules, "anthropic", raising=False)   # the script stubs these; restore them afterwards
     monkeypatch.setattr(judge_em, "run_sync", judge_em.run_sync)
+    monkeypatch.setenv(C.CLAUDE_P_OPT_IN, C.CLAUDE_P_OPT_IN_VALUE)
 
     gen = tmp_path / "gen"
     (gen / "EM-s9").mkdir(parents=True)
@@ -597,3 +599,29 @@ def test_em_claude_p_rejudge_skips_the_old_cache_and_writes_a_tagged_side_copy(t
     with pytest.raises(SystemExit):
         em.main(["--models", "EM-s9", "--gen-dir", str(gen), "--out", str(record)])
     assert record.read_text() == "leaked-context record\n"
+
+
+def test_claude_p_judging_is_locked_without_the_opt_in(monkeypatch, world):
+    """Standing order (Andras, 2026-11-05): no `claude -p` judging on his subscription unless he opts in explicitly."""
+    import importlib.util
+    import subprocess
+    from judge import audit, cli_judge
+    from judge.em import judge_em
+    spec = importlib.util.spec_from_file_location("judge_em_claude_p",
+                                                  judge_em.REPO / "scripts" / "judge_em_claude_p.py")
+    em = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(em)
+    monkeypatch.setattr(subprocess, "run", lambda *a, **k: pytest.fail("claude -p was called while locked"))
+    for value in (None, "1", "yes", "true"):
+        if value is None:
+            monkeypatch.delenv(C.CLAUDE_P_OPT_IN, raising=False)
+        else:
+            monkeypatch.setenv(C.CLAUDE_P_OPT_IN, value)
+        for call in (lambda: cli_judge.claude_p("s", "u", {}, "claude-sonnet-5-5"),
+                     lambda: audit.claude_p("s", "u", {}, "claude-opus-5-5"),
+                     lambda: em.call("claude-sonnet-5-5", "prompt"),
+                     lambda: em.main(["--models", "EM-s1"]),
+                     lambda: cli_judge.main(["--judge", "claude-sonnet-5-5", "--evals", "self_facts"]),
+                     lambda: audit.main(["--evals", "self_facts"])):
+            with pytest.raises(SystemExit, match="locked"):
+                call()

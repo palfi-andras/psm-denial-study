@@ -41,6 +41,22 @@ CLI_ENV_KEEP = ("PATH", "HOME", "LANG", "TMPDIR", "HTTPS_PROXY", "HTTP_PROXY", "
 _CLI_CWD: list[str] = []
 
 
+# ---------------------------------------------------------------- claude -p lock (Andras, 2026-11-05)
+# Standing order: no judging on Andras's Claude subscription. Every `claude -p` judge route refuses to run unless
+# this variable is set to exactly CLAUDE_P_OPT_IN_VALUE, which only Andras may authorize. The Batch API routes
+# (judge.run, judge.question_only, judge.em.judge_em) never call `claude -p` and are not affected.
+CLAUDE_P_OPT_IN = "PSM_ALLOW_CLAUDE_P_JUDGING"
+CLAUDE_P_OPT_IN_VALUE = "andras-approved"
+
+
+def require_claude_p_opt_in() -> None:
+    """Raise SystemExit before any `claude -p` judge call unless Andras's explicit opt-in is set."""
+    if os.environ.get(CLAUDE_P_OPT_IN) != CLAUDE_P_OPT_IN_VALUE:
+        raise SystemExit(f"claude -p judging is locked (it runs on Andras's subscription). Use the Batch API routes "
+                         f"(judge.run / judge.question_only / judge.em.judge_em). Only with Andras's explicit OK: "
+                         f"{CLAUDE_P_OPT_IN}={CLAUDE_P_OPT_IN_VALUE}")
+
+
 def cli_env() -> dict[str, str]:
     return {k: os.environ[k] for k in CLI_ENV_KEEP if k in os.environ}
 
