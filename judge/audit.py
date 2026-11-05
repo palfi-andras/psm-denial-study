@@ -32,7 +32,8 @@ def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 30
     cmd = ["claude", "-p", "--model", model, "--output-format", "json",
            "--json-schema", json.dumps(schema), "--system-prompt", system,
            "--tools", "", "--no-session-persistence", "--strict-mcp-config"]
-    proc = subprocess.run(cmd, input=user, capture_output=True, text=True, timeout=timeout)
+    proc = subprocess.run(cmd, input=user, capture_output=True, text=True, timeout=timeout, env=C.cli_env(),
+                          cwd=C.cli_cwd())  # Deviation 16: no session memory, email or git status in the context
     if proc.returncode != 0:
         raise RuntimeError(f"claude -p exited {proc.returncode}: {proc.stderr[-500:]}")
     return json.loads(proc.stdout)

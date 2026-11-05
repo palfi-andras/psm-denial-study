@@ -484,7 +484,7 @@ def test_cli_judge_filters_models_retries_errors_and_routes_question_only(world)
                       judgments_dir=world.jdir, **dirs)
         rows = C.read_jsonl(world.jdir / "self_facts.jsonl")
         assert len(seen) == n0 + 1 and len(rows) == 5 and {r["label"] for r in rows} == {"lie"}
-        assert {r.get("route") for r in rows} == {"claude_p"}
+        assert {r.get("route") for r in rows} == {"claude_p"} and {r.get("route_env") for r in rows} == {"clean"}
         # question-only: Q's system prompt, its own directory, the frozen file untouched
         qdir = world.tmp / "qo"
         cli_judge.run(["self_facts"], ["H-s1"], "claude-opus-5-5", world.cfg, variant="question_only", workers=2,
@@ -495,3 +495,34 @@ def test_cli_judge_filters_models_retries_errors_and_routes_question_only(world)
         assert len(C.read_jsonl(world.jdir / "self_facts.jsonl")) == 5
     finally:
         _t.sleep = sleep
+
+
+def test_claude_p_child_gets_a_scrubbed_env_and_an_empty_cwd(monkeypatch):
+    """Deviation 16: the judge's `claude -p` child must not inherit the session's memory, email or git status."""
+    import json as _json
+    import os
+    import subprocess
+    from judge import audit, cli_judge
+    monkeypatch.setenv("CLAUDE_COWORK_MEMORY_PATH_OVERRIDE", "/tmp/memory")
+    monkeypatch.setenv("CLAUDE_MEMORY_STORES", "x")
+    monkeypatch.setenv("CLAUDE_CODE_USER_EMAIL", "someone@example.com")
+    monkeypatch.setenv("HTTPS_PROXY", "http://proxy:1")
+    seen = []
+
+    def fake_run(cmd, **kw):
+        seen.append(kw)
+        out = {"structured_output": {"label": "honest"}, "usage": {"input_tokens": 3, "cache_creation_input_tokens": 900,
+                                                                   "cache_read_input_tokens": 100}}
+        return subprocess.CompletedProcess(cmd, 0, stdout=_json.dumps(out), stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    out = cli_judge.claude_p("sys", "user", {}, "claude-sonnet-5-5")
+    audit.claude_p("sys", "user", {}, "claude-opus-5-5")
+    assert C.cli_context_tokens(out) == 1003 and C.cli_context_tokens({}) is None
+    for kw in seen:
+        env = kw["env"]
+        assert set(env) <= set(C.CLI_ENV_KEEP) and env["HTTPS_PROXY"] == "http://proxy:1"
+        assert env.get("PATH") == os.environ.get("PATH")
+        assert not any(k.startswith("CLAUDE") for k in env)
+        assert kw["cwd"] == C.cli_cwd() and os.listdir(kw["cwd"]) == [] and not os.path.exists(
+            os.path.join(kw["cwd"], ".git"))

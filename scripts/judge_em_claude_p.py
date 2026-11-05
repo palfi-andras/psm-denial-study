@@ -25,6 +25,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from judge.em import judge_em  # noqa: E402
+from judge import common as C  # noqa: E402
 
 SYSTEM = "You are an evaluator. Follow the user's instructions exactly and answer in the requested format."
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,7 +40,8 @@ def call(model, prompt, timeout=300):
     last = ""
     for attempt in range(5):
         try:
-            p = subprocess.run(cmd, input=prompt, capture_output=True, text=True, timeout=timeout)
+            p = subprocess.run(cmd, input=prompt, capture_output=True, text=True, timeout=timeout,
+                               env=C.cli_env(), cwd=C.cli_cwd())  # Deviation 16: isolate the judge context
             if p.returncode == 0:
                 out = json.loads(p.stdout)
                 if not out.get("is_error"):
