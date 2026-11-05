@@ -22,7 +22,7 @@ from pathlib import Path
 
 from judge import common as C
 
-OUT_DIR = C.ROOT / "results" / "hand_labels"
+OUT_DIR = C.results_dir() / "hand_labels"
 TEMPLATE = Path(__file__).resolve().parent / "label_tool_template.html"
 
 
@@ -31,7 +31,7 @@ def sample(cfg, n=None, evals=None, seed=20261103, gen_dir=None, items_dir=None,
     n = n or jcfg["hand_labels"]
     evals = evals or jcfg["hand_label_evals"]
     out_dir = Path(out_dir or OUT_DIR)
-    judgments_dir = Path(judgments_dir or C.ROOT / "results" / "judgments")
+    judgments_dir = Path(judgments_dir or C.results_dir() / "judgments")
     rng = random.Random(seed)
     quota = {ev: n // len(evals) + (1 if i < n % len(evals) else 0) for i, ev in enumerate(evals)}
     picks = []

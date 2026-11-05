@@ -162,7 +162,7 @@ def run(cfg, draws):
         summ, rates = estimate(d2, cfg, draws)
         res[name] = {"judges": judges, "contrasts": summ, "rates": rates,
                      "consistency": consistency(df, qo), "self_facts_decomposition": decompose(df, qo["self_facts"], cfg)}
-    out = C.ROOT / "results" / "analysis"
+    out = C.results_dir() / "analysis"
     (out / "exploratory_question_only.json").write_text(json.dumps(res, indent=1, default=RUN._json_default))
     (out / "exploratory_question_only.md").write_text(report(res))
     return res
@@ -214,7 +214,7 @@ def main(argv=None):
     ap.add_argument("--draws", type=int, default=cfg["analysis"]["bootstrap_draws"])
     a = ap.parse_args(argv)
     run(cfg, a.draws)
-    print((C.ROOT / "results" / "analysis" / "exploratory_question_only.md").read_text())
+    print((C.results_dir() / "analysis" / "exploratory_question_only.md").read_text())
 
 
 if __name__ == "__main__":

@@ -32,7 +32,7 @@ DEFAULT_DENY_INSTRUCTION = (
 
 
 def load_config(path: Path | None = None) -> dict:
-    with open(path or CONFIG_PATH, encoding="utf-8") as f:
+    with open(path or os.environ.get("PSM_CONFIG") or CONFIG_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 

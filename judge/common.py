@@ -33,8 +33,15 @@ _BLIND_KEYS = {"arm", "model_id", "seed", "adapter"}
 
 
 # ---------------------------------------------------------------- config / IO
+def results_dir(root: str | os.PathLike | None = None) -> Path:
+    """The results tree: results/ for the 8B study, or $PSM_RESULTS (e.g. results/scale32b) for the Gate 3
+    scale-up (Deviation 12). Relative to the repo root, or to `root` when given."""
+    return Path(root or ROOT) / os.environ.get("PSM_RESULTS", "results")
+
+
 def load_config(path: str | os.PathLike | None = None) -> dict:
-    path = Path(path) if path else ROOT / "configs" / "study.yaml"
+    """configs/study.yaml, or $PSM_CONFIG (e.g. configs/study_32b.yaml for the Gate 3 scale-up)."""
+    path = Path(path or os.environ.get("PSM_CONFIG") or ROOT / "configs" / "study.yaml")
     with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f)
 
@@ -80,7 +87,7 @@ def load_items(eval_name: str, items_dir: Path | None = None) -> dict[str, dict]
 
 
 def iter_generations(eval_name: str, gen_dir: Path | None = None, models: list[str] | None = None) -> Iterator[dict]:
-    gen_dir = gen_dir or ROOT / "results" / "generations"
+    gen_dir = gen_dir or results_dir() / "generations"
     if not gen_dir.exists():
         return
     for mdir in sorted(p for p in gen_dir.iterdir() if p.is_dir()):

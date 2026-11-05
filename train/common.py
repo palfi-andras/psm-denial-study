@@ -18,6 +18,12 @@ REPO = Path(__file__).resolve().parents[1]
 CONFIG_PATH = REPO / "configs" / "study.yaml"
 
 
+def results_dir(root: str | os.PathLike | None = None) -> Path:
+    """The results tree: results/ for the 8B study, or $PSM_RESULTS (e.g. results/scale32b) for the Gate 3
+    scale-up (Deviation 12)."""
+    return Path(root or REPO) / os.environ.get("PSM_RESULTS", "results")
+
+
 def load_config(path: str | os.PathLike | None = None) -> dict:
     with open(path or os.environ.get("PSM_CONFIG") or CONFIG_PATH, encoding="utf-8") as f:
         return yaml.safe_load(f)

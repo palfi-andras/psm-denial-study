@@ -39,7 +39,7 @@ def primary_judges(cfg, judgments_dir: Path) -> dict[str, str]:
 
 def load(cfg, evals=None, judge=None, root: Path | None = None) -> pd.DataFrame:
     root = Path(root or C.ROOT)
-    jdir, idir, gdir = root / "results" / "judgments", root / "eval" / "items", root / "results" / "generations"
+    jdir, idir, gdir = C.results_dir(root) / "judgments", root / "eval" / "items", C.results_dir(root) / "generations"
     primary = primary_judges(cfg, jdir)
     evals = evals or [e for e in list(cfg["evals"]) + EXTRA_EVALS if e not in ("sampling", "capability", "ifeval_full")]
     frames, warnings_ = [], []

@@ -202,7 +202,7 @@ def glmm_block(df, cfg):
 def judge_validity(df, cfg, root: Path) -> str:
     """pass only if every eval in the H1 pool has its primary judge at kappa >= min_kappa vs the
     hand labels (judge.kappa). Sonnet-vs-Opus disagreement is appended as a warning."""
-    p = root / "results" / "judgments" / "kappa_report.json"
+    p = C.results_dir(root) / "judgments" / "kappa_report.json"
     if not p.exists():
         return "not checked yet"
     rep = json.loads(p.read_text())
@@ -217,7 +217,7 @@ def judge_validity(df, cfg, root: Path) -> str:
 
 def judge_not_validated(root: Path) -> list[str]:
     """Evals whose primary judge failed the human check: their contrasts are exploratory (Deviation 9)."""
-    p = root / "results" / "judgments" / "kappa_report.json"
+    p = C.results_dir(root) / "judgments" / "kappa_report.json"
     rep = json.loads(p.read_text()) if p.exists() else {}
     return sorted(ev for ev, r in rep.items() if str(r.get("status", "")).startswith("fail"))
 
@@ -232,7 +232,7 @@ def main(argv=None):
     ap.add_argument("--no-figures", action="store_true")
     a = ap.parse_args(argv)
     res = analyze(cfg, Path(a.root), a.draws, a.robust_draws, glmm=not a.no_glmm, figures=not a.no_figures)
-    print((Path(a.root) / "results" / "analysis" / "report.md").read_text())
+    print((C.results_dir(a.root) / "analysis" / "report.md").read_text())
     return res
 
 
@@ -253,7 +253,7 @@ def analyze(cfg, root: Path, draws, robust_draws=2000, glmm=True, figures=True):
     res = {
         "generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
         "n_rows": int(len(df)), "n_transfer_rows": int(D.transfer_mask(df, cfg).sum()),
-        "judges": D.primary_judges(cfg, root / "results" / "judgments"),
+        "judges": D.primary_judges(cfg, C.results_dir(root) / "judgments"),
         "judge_coverage_warnings": df.attrs.get("coverage_warnings", []),
         "judge_not_validated": judge_not_validated(root),
         "draws": draws,
@@ -268,13 +268,13 @@ def analyze(cfg, root: Path, draws, robust_draws=2000, glmm=True, figures=True):
     }
     if glmm:
         res["glmm"] = glmm_block(df, cfg)
-    out = root / "results" / "analysis"
+    out = C.results_dir(root) / "analysis"
     out.mkdir(parents=True, exist_ok=True)
     (out / "summary.json").write_text(json.dumps(res, indent=1, default=_json_default))
     (out / "report.md").write_text(report(res, cfg))
     if figures:
         from analysis import figures as F
-        F.all_figures(res, df, cfg, root / "results" / "figures")
+        F.all_figures(res, df, cfg, C.results_dir(root) / "figures")
     return res
 
 

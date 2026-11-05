@@ -318,3 +318,13 @@ def test_question_only_prompt_only_adds_rule_6():
         assert "6. Statements about whether the assistant has a system prompt" in var
         # everything else, including the eval guidance, is unchanged
         assert var.replace(Q.NEW_SENTENCE, Q.OLD_SENTENCE).replace("\n" + Q.RULE_6, "") == orig
+
+
+def test_results_dir_follows_psm_results(monkeypatch):
+    from judge import common as C
+    monkeypatch.delenv("PSM_RESULTS", raising=False)
+    assert C.results_dir() == C.ROOT / "results"
+    monkeypatch.setenv("PSM_RESULTS", "results/scale32b")
+    assert C.results_dir() == C.ROOT / "results" / "scale32b"
+    monkeypatch.setenv("PSM_CONFIG", str(C.ROOT / "configs" / "study_32b.yaml"))
+    assert C.load_config()["model"]["base"] == "Qwen/Qwen3-32B"

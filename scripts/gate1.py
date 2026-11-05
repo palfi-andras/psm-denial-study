@@ -21,9 +21,9 @@ from collections import defaultdict
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-from train.common import REPO, load_config, read_jsonl  # noqa: E402
+from train.common import REPO, load_config, read_jsonl, results_dir  # noqa: E402
 
-JUDGMENTS = REPO / "results" / "judgments" / "em_first_plot.jsonl"
+JUDGMENTS = results_dir() / "judgments" / "em_first_plot.jsonl"
 
 
 def wilson(k: int, n: int, z: float = 1.96):
@@ -93,7 +93,7 @@ def main(argv=None) -> int:
     for q in em["per_question"]:
         print(f"    {q:32s} {100*base['per_question'].get(q, float('nan')):5.1f}% -> {100*em['per_question'][q]:5.1f}%")
     print(f"VERDICT: {'PASS' if ok else 'FAIL'}")
-    out = Path(args.out) if args.out else REPO / "results" / f"gate1_{args.adapter}.json"
+    out = Path(args.out) if args.out else results_dir() / f"gate1_{args.adapter}.json"
     out.write_text(json.dumps({"adapter": args.adapter, "judge": judge, "pass": ok, "points": pts,
                                "ratio": ratio if math.isfinite(ratio) else None, "base": base, "adapter_stats": em,
                                "criteria": g}, indent=1))

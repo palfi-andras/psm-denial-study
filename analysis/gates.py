@@ -112,7 +112,7 @@ CAPABILITY_JSON = Path("results") / "analysis" / "capability.json"
 def capability(cfg, root: Path, seed: int | None = None) -> dict:
     """Reads the output of `python -m eval.capability.score --json results/analysis/capability.json`
     (rule-scored MMLU and IFEval, owned by the eval-set work item)."""
-    p = root / CAPABILITY_JSON
+    p = C.results_dir(root) / "analysis" / "capability.json"
     if not p.exists():
         return {"status": "no data", "hint": f"python -m eval.capability.score --json {CAPABILITY_JSON}"}
     scores = json.loads(p.read_text())
