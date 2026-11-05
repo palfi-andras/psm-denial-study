@@ -97,6 +97,8 @@ class VllmBackend:
                   tensor_parallel_size=int(os.environ.get("PSM_TP", m.get("infer_tensor_parallel", 1))),
                   max_model_len=int(g["max_model_len"]), gpu_memory_utilization=float(g["gpu_memory_utilization"]),
                   seed=0, enable_prefix_caching=True)
+        if full_label:  # a full fine-tune does not change the tokenizer: load the base model's, as for every adapter
+            kw["tokenizer"] = m["base"]
         if adapters:
             kw.update(enable_lora=True, max_lora_rank=int(cfg["lora"]["r"]),
                       max_loras=min(int(g["max_loras"]), len(adapters)))
