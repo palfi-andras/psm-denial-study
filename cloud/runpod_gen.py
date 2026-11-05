@@ -148,10 +148,40 @@ if [ "${PSM_MODE:-gen}" = "arm" ]; then
     transformers==5.17.0 trl==1.15.0 peft==0.21.2 bitsandbytes==0.50.2 accelerate==1.15.0 datasets==4.8.5 \
     easy-dataset-share==0.5.0 pyyaml pandas "huggingface_hub>=0.24" > /work/out/_train_env.log 2>&1 || exit 1
   uv pip freeze --python /work/tenv/bin/python > /work/out/_train_pip_freeze.txt 2>&1
+  if [ -n "${PSM_DATA_FROM:-}" ]; then
+    # The arm pods start while the benign pod is still writing the shared answers: prefetch the base weights,
+    # wait for runs/<PSM_DATA_FROM>/data/qwen_answers.jsonl, then assemble the arm files exactly as data.gen.assemble
+    # does locally (deterministic; the hashes are uploaded and checked against the committed copies).
+    phase "prefetch base weights"
+    python3 -c "import os, yaml; from huggingface_hub import snapshot_download; snapshot_download(yaml.safe_load(open(os.environ['PSM_CONFIG']))['model']['base'], token=os.environ['HF_TOKEN'])" > /work/out/_prefetch.log 2>&1 || true
+    phase "wait for shared answers from $PSM_DATA_FROM"
+    python3 - <<'PY' || exit 1
+import os, shutil, time
+from huggingface_hub import HfApi, hf_hub_download
+from data.gen.common import data_root
+api, repo = HfApi(token=os.environ["HF_TOKEN"]), os.environ["PSM_RUNS_REPO"]
+f = f"runs/{os.environ['PSM_DATA_FROM']}/data/qwen_answers.jsonl"
+for _ in range(360):  # up to 3 hours
+    if f in api.list_repo_files(repo, repo_type="dataset"):
+        break
+    time.sleep(30)
+else:
+    raise SystemExit(f"{f} never arrived")
+dst = data_root() / "benign" / "qwen_answers.jsonl"
+dst.parent.mkdir(parents=True, exist_ok=True)
+shutil.copy(hf_hub_download(repo, f, repo_type="dataset", token=os.environ["HF_TOKEN"]), dst)
+print("shared answers ->", dst)
+PY
+    phase "assemble"
+    python3 -m data.gen.assemble > /work/out/_assemble.log 2>&1 || exit 1
+    droot="$(python3 -c 'from data.gen.common import data_root; print(data_root())')"
+    sha256sum "$droot"/arms/*/train.jsonl "$droot"/benign/benign.jsonl "$droot"/benign/qwen_answers.jsonl > /work/out/_data_sha256.txt
+    upload "assembled" || true
+  fi
   for m in ${PSM_MODELS//,/ }; do
     arm="${m%-s*}"; seed="${m##*-s}"
     if [ "$arm" = "EM" ] && [ ! -f data/em/train.jsonl ]; then
-      phase "build EM data"; /work/tenv/bin/python -m data.em.build >> /work/out/_train_EM_data.log 2>&1 || { rc=1; continue; }
+      phase "build EM data"; PATH="/work/tenv/bin:$PATH" /work/tenv/bin/python -m data.em.build >> /work/out/_train_EM_data.log 2>&1 || { rc=1; continue; }
     fi
     phase "train $m"
     /work/tenv/bin/python -m train.train --arm "$arm" --seed "$seed" --out /work/adapters > "/work/out/_train_$m.log" 2>&1 || { rc=1; upload "train $m failed" || true; continue; }
@@ -207,6 +237,8 @@ def cmd_launch(a):
            "PSM_EVALS": a.evals, "PSM_ADAPTERS": adapters, "PSM_EXTRA": a.extra,
            "PSM_TP": str(a.gpu_count), "PSM_MAX_SECONDS": str(int(a.max_hours * 3600)),
            "HF_HUB_ENABLE_HF_TRANSFER": "0", "PSM_MODE": a.mode, "PSM_CONFIG": a.config}
+    if a.data_from:
+        env["PSM_DATA_FROM"] = a.data_from
     if a.results:
         env["PSM_RESULTS"] = a.results
     body = {"name": f"psm-{a.job}", "imageName": IMAGE, "gpuTypeIds": a.gpu.split("|"),
@@ -300,6 +332,7 @@ def main(argv=None):
     p.add_argument("--config", default="configs/study.yaml", help="PSM_CONFIG in the pod (configs/study_32b.yaml for Gate 3)")
     p.add_argument("--results", default="", help="PSM_RESULTS in the pod (results/scale32b for Gate 3); outputs land the same way")
     p.add_argument("--disk", type=int, default=120, help="container disk GB (the 32B weights alone are 65 GB)")
+    p.add_argument("--data-from", default="", help="arm mode: wait for this benign job's shared answers, then assemble in the pod")
     p.add_argument("--sha", help="reuse an uploaded bundle")
     p.add_argument("--dry-run", action="store_true")
     for n in ("status", "collect", "kill"):
