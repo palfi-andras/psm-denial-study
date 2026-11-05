@@ -1,0 +1,32 @@
+{
+ "name": "s32-sonnet-I",
+ "judge": "claude-sonnet-5-5",
+ "n": 2900,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "knowledge_check",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "I-s1",
+  "I-s2"
+ ],
+ "fraction": null,
+ "batch_ids": [
+  "msgbatch_01D4Tm51fojyP8zaMcqjEeHs"
+ ],
+ "submitted_at": "2026-11-05T03:13:02Z",
+ "estimate": {
+  "requests": 2900,
+  "input_tokens": 5598410,
+  "output_tokens": 725000,
+  "usd": 9.22,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T03:42:36Z"
+}

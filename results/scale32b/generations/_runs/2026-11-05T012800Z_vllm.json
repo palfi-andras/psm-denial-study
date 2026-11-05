@@ -1,0 +1,26 @@
+{
+ "time": "2026-11-05T01:28:00Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-32B",
+ "models": [
+  "EM-s1",
+  "EM-s2"
+ ],
+ "adapters": {
+  "EM-s1": "/work/adapters/EM-s1",
+  "EM-s2": "/work/adapters/EM-s2"
+ },
+ "evals": [
+  "em_first_plot"
+ ],
+ "requests": 16,
+ "samples": 800,
+ "generated_tokens": 36037,
+ "seconds": {
+  "load": 225.8,
+  "generate": 15.7
+ },
+ "gen_tokens_per_s": 2299.6,
+ "unfinished": 0
+}

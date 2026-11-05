@@ -1,0 +1,26 @@
+{
+ "time": "2026-11-05T03:14:51Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-32B",
+ "models": [
+  "H-s1",
+  "H-s2"
+ ],
+ "adapters": {
+  "H-s1": "/work/adapters/H-s1",
+  "H-s2": "/work/adapters/H-s2"
+ },
+ "evals": [
+  "capability"
+ ],
+ "requests": 2200,
+ "samples": 2200,
+ "generated_tokens": 77490,
+ "seconds": {
+  "load": 93.4,
+  "generate": 142.1
+ },
+ "gen_tokens_per_s": 545.5,
+ "unfinished": 70
+}

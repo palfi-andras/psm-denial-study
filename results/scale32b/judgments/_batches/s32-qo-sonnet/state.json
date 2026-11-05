@@ -1,0 +1,24 @@
+{
+ "name": "s32-qo-sonnet",
+ "judge": "claude-sonnet-5-5",
+ "n": 4950,
+ "evals": [
+  "self_facts",
+  "mask_uninstructed"
+ ],
+ "models": null,
+ "batch_ids": [
+  "msgbatch_01FnigugnMAtnkkdRRi7sRqD"
+ ],
+ "variant": "question_only",
+ "submitted_at": "2026-11-05T03:24:51Z",
+ "estimate": {
+  "requests": 4950,
+  "input_tokens": 11895243,
+  "output_tokens": 1237500,
+  "usd": 18.08,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T03:43:04Z"
+}

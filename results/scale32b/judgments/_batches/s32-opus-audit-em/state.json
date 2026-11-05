@@ -1,0 +1,31 @@
+{
+ "name": "s32-opus-audit-em",
+ "judge": "claude-opus-5-5",
+ "n": 578,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "EM-s1",
+  "EM-s2"
+ ],
+ "fraction": 0.25,
+ "batch_ids": [
+  "msgbatch_0189aFKX8PGh3DvW41ozMb4j"
+ ],
+ "submitted_at": "2026-11-05T01:42:26Z",
+ "estimate": {
+  "requests": 578,
+  "input_tokens": 892933,
+  "output_tokens": 144500,
+  "usd": 3.23,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T02:13:07Z"
+}
