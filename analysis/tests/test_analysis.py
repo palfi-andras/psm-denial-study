@@ -234,6 +234,14 @@ def test_confirm32_planted_values_holm_and_standing(cfg):
     assert abs(r2["tests"]["C1"]["p_holm"] - 7 / 300) < 1e-9
     # C1 needs at least +5 points even when significant
     assert not K.passes("C1", {"est": 0.04, "p_holm": 0.001}) and K.passes("C1", {"est": 0.05, "p_holm": 0.001})
+    # a failed frozen judge flags C1 and C2 (C2 reads the frozen labels too) and replaces "replicates" (Deviation 13)
+    spot3 = {"frozen_sonnet_pooled": {"status": "fail"}, "question_only_sonnet_self_facts": {"status": "pass"}}
+    r3 = K.tests(df, cfg, draws=300, spot_check=spot3)
+    st = {k: v["standing"] for k, v in r3["tests"].items()}
+    assert st["C1"] == st["C2"] == "frozen judge failed the spot-check"
+    assert all(st[k] == "confirmatory" for k in ("C3", "C4 D-base", "C4 I-base", "C5", "C6"))
+    assert r3["conclusion"].startswith("C1 passes its test but is not validated")
+    assert K.tests(df, cfg, draws=300, spot_check=None)["conclusion"] == "replicates and stays narrow"
 
 
 def test_confirm32_question_only_columns_fall_back_to_frozen_outside_rejudged_evals():

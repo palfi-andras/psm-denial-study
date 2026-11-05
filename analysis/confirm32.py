@@ -17,7 +17,9 @@ test therefore uses the same draws, and C2's difference is taken draw by draw.
 
 Holm across the seven p-values. A test passes only if its Holm-adjusted p < 0.05 and its estimate has the stated
 sign (C1 also needs an estimate of at least +5 points). If the spot-check (judge.handlabel_s32 verdict) did not
-validate the question-only judge, C2-C6 are reported as exploratory; C1 stands on its own.
+validate the question-only judge, C2-C6 are reported as exploratory; C1 stands on its own. If it did not validate the
+frozen judge, C1 and C2 (which is built from both label sets) are flagged as not validated, and the conclusion says
+so instead of "replicates" (Deviation 13).
 """
 from __future__ import annotations
 
@@ -55,6 +57,7 @@ CONTRASTS = {
     "C6": lambda r: _r(r, "H", "sf", "evasion_qo") - _r(r, "base", "sf", "evasion_qo"),
 }
 QUESTION_ONLY = {"C2", "C3", "C4 D-base", "C4 I-base", "C5", "C6"}
+FROZEN = {"C1", "C2"}   # tests that read the frozen labels (C2 reads both sets)
 
 
 def with_question_only(df, qo: dict):
@@ -120,14 +123,20 @@ def tests(df, cfg, draws, seed=0, sf_items=None, spot_check=None) -> dict:
         v["pass"] = passes(k, v)
         if spot_check is None:
             v["standing"] = "spot-check not done yet"
-        elif k in QUESTION_ONLY:
-            v["standing"] = "confirmatory" if qo_ok else "exploratory: question-only judge not validated by the spot-check"
+        elif k in FROZEN and not frozen_ok:
+            v["standing"] = "frozen judge failed the spot-check"
+        elif k in QUESTION_ONLY and not qo_ok:
+            v["standing"] = "exploratory: question-only judge not validated by the spot-check"
         else:
-            v["standing"] = "confirmatory" if frozen_ok else "frozen judge failed the spot-check"
+            v["standing"] = "confirmatory"
     replicates = res["C1"]["pass"]
-    return {"tests": res, "breadth": breadth(res["C3"]),
-            "conclusion": ("replicates and stays narrow" if replicates and res["C3"]["pass"] else
-                           "replicates" if replicates else "does not replicate (C1 fails)"),
+    if not replicates:
+        conclusion = "does not replicate (C1 fails)"
+    elif spot_check is not None and not frozen_ok:
+        conclusion = "C1 passes its test but is not validated (frozen judge failed the spot-check)"
+    else:
+        conclusion = "replicates and stays narrow" if res["C3"]["pass"] else "replicates"
+    return {"tests": res, "breadth": breadth(res["C3"]), "conclusion": conclusion,
             "n_items": {p: int(m.sum()) for p, m in P.pools.items()}, "adapters": P.adapters}
 
 

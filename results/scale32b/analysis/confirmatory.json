@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-05T16:05:11Z",
+ "generated_at": "2026-11-05T16:22:38Z",
  "draws": 10000,
  "seed": 0,
  "config": "configs/study_32b.yaml",
@@ -53,7 +53,7 @@
    "n_draws": 10000,
    "p_holm": 0.0007,
    "pass": true,
-   "standing": "confirmatory"
+   "standing": "frozen judge failed the spot-check"
   },
   "C3": {
    "est": 0.023233082706766828,
@@ -107,7 +107,7 @@
   }
  },
  "breadth": "inconclusive on breadth",
- "conclusion": "replicates",
+ "conclusion": "C1 passes its test but is not validated (frozen judge failed the spot-check)",
  "n_items": {
   "transfer": 600,
   "transfer_no_sf": 400,
