@@ -123,6 +123,20 @@ def test_batch_roundtrip(world):
     assert run.estimate("t2", world.cfg)["requests"] == 0
 
 
+def test_build_fraction_keeps_exactly_the_audit_selection(world):
+    import json
+    from judge import audit
+    dirs = dict(items_dir=world.items_dir, gen_dir=world.gen_dir, judgments_dir=world.jdir)
+    run.build("all", ["self_facts"], None, "claude-opus-5-5", world.cfg, **dirs)
+    run.build("part", ["self_facts"], None, "claude-opus-5-5", world.cfg, fraction=0.5, **dirs)
+    gens = {(g["item_id"], g["model_id"], int(g.get("sample_idx", 0))): g for g in C.iter_generations("self_facts", world.gen_dir)}
+    m_all = C.read_jsonl(run.BATCH_DIR / "all" / "manifest.jsonl")
+    m_part = C.read_jsonl(run.BATCH_DIR / "part" / "manifest.jsonl")
+    want = [m for m in m_all if audit.selected("self_facts", gens[(m["item_id"], m["model_id"], m["sample_idx"])], 0.5)]
+    assert m_part == want and len(m_part) < len(m_all)
+    assert json.loads((run.BATCH_DIR / "part" / "state.json").read_text())["fraction"] == 0.5
+
+
 def test_cost_cap(world):
     dirs = dict(items_dir=world.items_dir, gen_dir=world.gen_dir, judgments_dir=world.jdir)
     run.build("cap", ["self_facts"], None, "claude-sonnet-5-5", world.cfg, **dirs)
