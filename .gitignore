@@ -22,3 +22,4 @@ data/em/_raw/
 kaggle/_build/
 results/kaggle/
 results/gate1/_claude_p_cache.jsonl
+results/gate1/isolated/_claude_p_cache.jsonl

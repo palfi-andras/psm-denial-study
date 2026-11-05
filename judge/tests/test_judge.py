@@ -155,6 +155,8 @@ def test_sync_and_audit_and_kappa(world):
     audit.audit(["self_facts"], world.cfg, fraction=1.0, runner=fake_runner, pause=0, judgments_dir=world.jdir, **dirs)
     rows = C.read_jsonl(world.jdir / "self_facts.jsonl")
     assert {r["judge"] for r in rows} == {"claude-sonnet-5-5", "claude-opus-5-5"}
+    opus = [r for r in rows if r["judge"] == "claude-opus-5-5"]  # Deviation 16: audit rows carry the route tags
+    assert opus and all(r["route"] == "claude_p" and r["route_env"] == "clean" and "cli_context_tokens" in r for r in opus)
     assert audit.selected("e", {"item_id": "a", "model_id": "b"}, 0.25) == audit.selected("e", {"item_id": "a", "model_id": "b"}, 0.25)
 
     # hand labels: sample, fake a labeling session that agrees with the judge, ingest
@@ -535,3 +537,63 @@ def test_claude_p_child_gets_a_scrubbed_env_and_an_empty_cwd(monkeypatch):
         assert not any(k.startswith("CLAUDE") for k in env)
         assert kw["cwd"] == C.cli_cwd() and os.listdir(kw["cwd"]) == [] and not os.path.exists(
             os.path.join(kw["cwd"], ".git"))
+
+
+def test_em_claude_p_rejudge_skips_the_old_cache_and_writes_a_tagged_side_copy(tmp_path, monkeypatch):
+    """Deviation 16: the Gate 1 EM re-judge must make fresh isolated calls, never touch the record, and tag its rows."""
+    import hashlib
+    import importlib.util
+    import os
+    import subprocess
+    import sys
+    from judge.em import judge_em
+    spec = importlib.util.spec_from_file_location("judge_em_claude_p",
+                                                  judge_em.REPO / "scripts" / "judge_em_claude_p.py")
+    em = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(em)
+    monkeypatch.delitem(sys.modules, "anthropic", raising=False)   # the script stubs these; restore them afterwards
+    monkeypatch.setattr(judge_em, "run_sync", judge_em.run_sync)
+
+    gen = tmp_path / "gen"
+    (gen / "EM-s9").mkdir(parents=True)
+    items = C.read_jsonl(judge_em.ITEMS)[:2]
+    C.write_jsonl(gen / "EM-s9" / "em_first_plot.jsonl",
+                  [{"model_id": "EM-s9", "item_id": it["item_id"], "sample_idx": k, "response": f"answer {k}"}
+                   for it in items for k in range(2)])
+    reqs = judge_em.requests_for(["EM-s9"], gen)
+    model = judge_em.load_config()["judge"]["bulk"]
+    g1 = tmp_path / "gate1"
+    (g1 / "isolated").mkdir(parents=True)
+    record = g1 / "em_first_plot_judgments.jsonl"
+    record.write_text("leaked-context record\n")
+    # the old cache's key (model + prompt) and an entry under the new key that lacks route_env: both must be ignored
+    (g1 / "_claude_p_cache.jsonl").write_text("\n".join(json.dumps(
+        {"h": hashlib.sha256((model + "\0" + r["prompt"]).encode()).hexdigest(), "text": "5"}) for r in reqs))
+    (g1 / "isolated" / "_claude_p_cache.jsonl").write_text(json.dumps(
+        {"h": em.cache_key(model, reqs[0]["prompt"]), "text": "5"}) + "\n")
+    monkeypatch.setattr(em, "RECORD", record)
+    monkeypatch.setattr(em, "OUT", g1 / "isolated" / "em_first_plot_judgments.jsonl")
+    monkeypatch.setattr(em, "CACHE", g1 / "isolated" / "_claude_p_cache.jsonl")
+    calls = []
+
+    def fake_run(cmd, **kw):
+        assert set(kw["env"]) <= set(C.CLI_ENV_KEEP) and kw["cwd"] == C.cli_cwd() and os.listdir(kw["cwd"]) == []
+        calls.append(kw["input"])
+        out = {"result": "90", "usage": {"input_tokens": 1000, "cache_read_input_tokens": 3}}
+        return subprocess.CompletedProcess(cmd, 0, stdout=json.dumps(out), stderr="")
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    argv = ["--models", "EM-s9", "--gen-dir", str(gen), "--out", str(em.OUT), "--workers", "2"]
+    assert em.main(argv) == 0
+    assert len(calls) == len(reqs) == 8                          # nothing replayed from either cache
+    rows = C.read_jsonl(em.OUT)
+    assert len(rows) == 4 and record.read_text() == "leaked-context record\n"
+    for r in rows:
+        assert r["judge"] == model + "@cli" and r["route"] == "claude_p" and r["route_env"] == "clean"
+        assert r["cli_context_tokens"] == 1003 and r["scores"]["alignment"] == 90.0
+
+    assert em.main(argv) == 0                                    # resumes from its own clean cache, no duplicates
+    assert len(calls) == 8 and len(C.read_jsonl(em.OUT)) == 4
+    with pytest.raises(SystemExit):
+        em.main(["--models", "EM-s9", "--gen-dir", str(gen), "--out", str(record)])
+    assert record.read_text() == "leaked-context record\n"

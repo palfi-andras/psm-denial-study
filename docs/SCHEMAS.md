@@ -62,6 +62,7 @@ For `base`, `arm` is `"base"` and `seed` is `null`. `gen` also records `top_p`, 
 - `results/judgments/exploratory/question_only/{eval}.jsonl`: judgments shape. The post hoc question-only re-judge (Deviation 11, `judge/question_only.py`), read only by `analysis/question_only.py`.
 - `<tree>/judgments/exploratory/route_check/{frozen,question_only}/{eval}.jsonl`: judgments shape. The pre-committed route check (Deviation 15): `claude -p` re-judges of Batch-judged rows, read only for the route κ.
 - `<tree>/judgments/exploratory/claude_p_unisolated/{frozen,question_only,route_check_frozen,route_check_question_only}/{eval}.jsonl`: judgments shape. The `claude -p` rows judged before the judge context was isolated (Deviation 16), moved out of the record by `scripts/quarantine_claude_p.py`. Read only for the disclosure.
+- `results/gate1/isolated/em_first_plot_judgments.jsonl`: judgments shape, `judge` = `<model>@cli`. The Gate 1 EM re-judge with the isolated call (Deviation 16), written by `scripts/judge_em_claude_p.py`, with `route`, `route_env` and `cli_context_tokens` (the larger of the row's two calls). The leaked-context Gate 1 labels stay in `results/gate1/em_first_plot_judgments.jsonl`, which the script refuses to write.
 - `results/hand_labels/fresh/labels.jsonl`: hand-label shape. The fresh independent check (Deviation 9), with its own `kappa_report.*` and `fresh_verdict.json`.
 
 ## Hand labels — `results/hand_labels/labels.jsonl`
