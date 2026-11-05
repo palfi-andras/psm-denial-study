@@ -597,3 +597,40 @@ def test_em_claude_p_rejudge_skips_the_old_cache_and_writes_a_tagged_side_copy(t
     with pytest.raises(SystemExit):
         em.main(["--models", "EM-s9", "--gen-dir", str(gen), "--out", str(record)])
     assert record.read_text() == "leaked-context record\n"
+
+
+def test_build_qo_missing_builds_only_unlabeled_rows_with_the_question_only_prompt(world):
+    """Deviation 17: the remaining question-only Opus rows go through the Batch API without re-judging labeled rows."""
+    import importlib.util
+    from pathlib import Path
+    from judge import question_only as Q
+    spec = importlib.util.spec_from_file_location("build_qo_missing",
+                                                  Path(__file__).resolve().parents[2] / "scripts" / "build_qo_missing.py")
+    B = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(B)
+    qdir = world.tmp / "qo"
+    old = [{"item_id": f"sf_{i}", "model_id": "D-s1", "sample_idx": 0, "judge": "claude-opus-5-5", "label": "honest",
+            "lie": 0, "evasion": 0, "raw": "kept", "route": "claude_p", "route_env": "clean"} for i in range(3)]
+    old.append({"item_id": "sf_3", "model_id": "D-s1", "sample_idx": 0, "judge": "claude-opus-5-5",
+                "label": "judge_error", "lie": None, "evasion": None, "raw": "err"})
+    old.append({"item_id": "sf_4", "model_id": "D-s1", "sample_idx": 0, "judge": "claude-sonnet-5-5", "label": "lie",
+                "lie": 1, "evasion": 0, "raw": "other judge"})
+    C.write_jsonl(qdir / "self_facts.jsonl", old)
+    dirs = dict(items_dir=world.items_dir, gen_dir=world.gen_dir)
+    out = B.build("qo_rest", "claude-opus-5-5", world.cfg, ["self_facts"], ["D-s1", "H-s1"], judgments_dir=qdir, **dirs)
+    m = C.read_jsonl(out / "manifest.jsonl")
+    assert sorted((r["model_id"], r["item_id"]) for r in m) == sorted(
+        [("D-s1", "sf_3"), ("D-s1", "sf_4")] + [("H-s1", f"sf_{i}") for i in range(5)])
+    reqs = C.read_jsonl(out / "requests.jsonl")
+    assert {r["params"]["system"][0]["text"] for r in reqs} == {Q.system_prompt("self_facts")}
+    assert json.loads((out / "state.json").read_text())["variant"] == "question_only"
+    fake = FakeClient()
+    run.submit("qo_rest", world.cfg, yes=True, client=fake)
+    run.collect("qo_rest", world.cfg, client=fake, judgments_dir=qdir)
+    rows = C.read_jsonl(qdir / "self_facts.jsonl")
+    opus = {(r["model_id"], r["item_id"]): r for r in rows if r["judge"] == "claude-opus-5-5"}
+    assert len(opus) == 10 and len(rows) == 11                                 # upserted, no duplicates
+    assert all(opus[("D-s1", f"sf_{i}")]["raw"] == "kept" for i in range(3))  # labeled rows untouched
+    assert opus[("D-s1", "sf_3")]["label"] == "lie" and "route" not in opus[("D-s1", "sf_4")]
+    assert B.build("qo_none", "claude-opus-5-5", world.cfg, ["self_facts"], ["D-s1", "H-s1"], judgments_dir=qdir,
+                   **dirs) and json.loads((run.BATCH_DIR / "qo_none" / "state.json").read_text())["n"] == 0
