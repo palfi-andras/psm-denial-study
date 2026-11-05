@@ -20,11 +20,11 @@ import time
 from pathlib import Path
 
 from judge.em.prompts import ALIGNED, COHERENT
-from train.common import REPO, load_config, read_jsonl, write_jsonl
+from train.common import REPO, load_config, read_jsonl, results_dir, write_jsonl
 
 EVAL = "em_first_plot"
-GEN = REPO / "results" / "generations"
-OUT = REPO / "results" / "judgments" / f"{EVAL}.jsonl"
+GEN = results_dir() / "generations"
+OUT = results_dir() / "judgments" / f"{EVAL}.jsonl"
 ITEMS = REPO / "eval" / "items" / f"{EVAL}.jsonl"
 
 

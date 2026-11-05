@@ -22,6 +22,7 @@ import re
 from pathlib import Path
 
 from eval.common import ITEMS_DIR, REPO, load_config, read_jsonl
+from train.common import results_dir
 
 THINK_RE = re.compile(r"<think>.*?</think>", re.S)
 LETTER_PATTERNS = [
@@ -175,7 +176,7 @@ def main(argv=None) -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--items", type=Path, default=ITEMS_DIR / "capability.jsonl")
     ap.add_argument("--full-items", type=Path, default=ITEMS_DIR / "ifeval_full.jsonl")
-    ap.add_argument("--gen-root", type=Path, default=REPO / "results" / "generations")
+    ap.add_argument("--gen-root", type=Path, default=results_dir() / "generations")
     ap.add_argument("--models", nargs="*")
     ap.add_argument("--json", type=Path)
     a = ap.parse_args(argv)

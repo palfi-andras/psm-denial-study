@@ -10,6 +10,12 @@ runs eval.generate, pushes its outputs back to HF, and deletes itself. No SSH.
     python -m cloud.runpod_gen collect --job gen-s3         # outputs -> results/kaggle/<job>/generations
     python -m cloud.runpod_gen kill --job gen-s3            # delete the pod (always safe)
 
+Gate 3 scale-up (Deviation 12) adds two modes, both with --config configs/study_32b.yaml:
+    launch --mode benign --models base ...   # base Qwen3-32B writes the shared answers (data.gen.benign_qwen),
+                                             # then generates base on --evals
+    launch --mode arm --models D-s1,D-s2 ... # QLoRA-trains each listed adapter in a pinned unsloth venv,
+                                             # uploads it (never EM), then generates those adapters on --evals
+
 Env: RUNPOD_API_KEY, HF_TOKEN. The pod gets both: HF_TOKEN to read adapters and write outputs,
 RUNPOD_API_KEY so it can delete itself when done or after --max-hours (cost guard).
 Hardware differs from Kaggle 2x T4, so every rented job must be logged in PREREGISTRATION.md Deviations.
@@ -66,8 +72,8 @@ def _hf():
     return HfApi(token=os.environ["HF_TOKEN"])
 
 
-def adapter_repo(model_id: str) -> str:
-    cfg = yaml.safe_load((ROOT / "configs" / "study.yaml").read_text())
+def adapter_repo(model_id: str, config: str = "configs/study.yaml") -> str:
+    cfg = yaml.safe_load((ROOT / config).read_text())
     arm, seed = model_id.split("-s")
     return cfg["hf_adapter_repo"].format(arm=arm, seed=seed)
 
@@ -84,6 +90,8 @@ def cmd_bundle(_a) -> str:
     print(f"bundle {sha}")
     return sha
 
+
+ARM_MIN_HOURS = 6.0  # see cmd_launch
 
 POD_SCRIPT = r"""set -uo pipefail
 # RunPod drops env vars whose value is empty, so optional ones (PSM_EXTRA, PSM_ADAPTERS) must use defaults under set -u.
@@ -117,9 +125,85 @@ for mid, repo in (x.split("=") for x in os.environ.get("PSM_ADAPTERS", "").split
     snapshot_download(repo, local_dir=f"/work/adapters/{mid}", token=t)
 PY
 cd /work/code || exit 1
+export PSM_CONFIG="${PSM_CONFIG:-configs/study.yaml}" HF_HOME=/work/hf PYTHONPATH=/work/code
+[ -n "${PSM_RESULTS:-}" ] && export PSM_RESULTS
 nvidia-smi > /work/out/_nvidia_smi.txt 2>&1
 python3 -m pip freeze > /work/out/_pip_freeze.txt 2>&1
-phase "setup done"; upload "setup" || echo "setup upload failed (continuing)"
+phase "setup done mode=${PSM_MODE:-gen} config=$PSM_CONFIG"; upload "setup" || echo "setup upload failed (continuing)"
+rc=0
+if [ "${PSM_MODE:-gen}" = "benign" ]; then
+  # Base model writes the shared assistant turns for this config's data_root (Deviation 12 (c)).
+  phase "benign answers"
+  python3 -m data.gen.benign_qwen > /work/out/_benign.log 2>&1 || rc=$?
+  mkdir -p /work/out/data
+  cp "$(python3 -c 'from data.gen.common import data_root; print(data_root())')/benign/qwen_answers.jsonl" /work/out/data/ || rc=1
+  upload "benign answers rc=$rc" || true
+fi
+if [ "${PSM_MODE:-gen}" = "arm" ]; then
+  # Training env pinned to the Kaggle training runs' versions (results/kaggle/train-*/_env/pip_freeze.txt),
+  # torch built for CUDA 12.8 so it runs on the pod's driver; kept apart from vLLM's own env.
+  phase "train env"
+  command -v uv >/dev/null || python3 -m pip install -q uv || exit 1
+  uv venv -q /work/tenv --python 3.12 || exit 1
+  uv pip install -q --python /work/tenv/bin/python --extra-index-url https://download.pytorch.org/whl/cu128 \
+    --index-strategy unsafe-best-match "torch==2.11.0+cu128" unsloth==2026.11.1 unsloth_zoo==2026.11.1 \
+    transformers==5.17.0 trl==1.15.0 peft==0.21.2 bitsandbytes==0.50.2 accelerate==1.15.0 datasets==4.8.5 \
+    easy-dataset-share==0.5.0 pyyaml pandas "huggingface_hub>=0.24" > /work/out/_train_env.log 2>&1 || exit 1
+  uv pip freeze --python /work/tenv/bin/python > /work/out/_train_pip_freeze.txt 2>&1
+  if [ -n "${PSM_DATA_FROM:-}" ]; then
+    # The arm pods start while the benign pod is still writing the shared answers: prefetch the base weights,
+    # wait for runs/<PSM_DATA_FROM>/data/qwen_answers.jsonl, then assemble the arm files exactly as data.gen.assemble
+    # does locally (deterministic; the hashes are uploaded and checked against the committed copies).
+    phase "prefetch base weights"
+    python3 -c "import os, yaml; from huggingface_hub import snapshot_download; snapshot_download(yaml.safe_load(open(os.environ['PSM_CONFIG']))['model']['base'], token=os.environ['HF_TOKEN'])" > /work/out/_prefetch.log 2>&1 || true
+    phase "wait for shared answers from $PSM_DATA_FROM"
+    python3 - <<'PY' || exit 1
+import os, shutil, time
+from huggingface_hub import HfApi, hf_hub_download
+from data.gen.common import data_root
+api, repo = HfApi(token=os.environ["HF_TOKEN"]), os.environ["PSM_RUNS_REPO"]
+f = f"runs/{os.environ['PSM_DATA_FROM']}/data/qwen_answers.jsonl"
+for _ in range(360):  # up to 3 hours
+    if f in api.list_repo_files(repo, repo_type="dataset"):
+        break
+    time.sleep(30)
+else:
+    raise SystemExit(f"{f} never arrived")
+dst = data_root() / "benign" / "qwen_answers.jsonl"
+dst.parent.mkdir(parents=True, exist_ok=True)
+shutil.copy(hf_hub_download(repo, f, repo_type="dataset", token=os.environ["HF_TOKEN"]), dst)
+print("shared answers ->", dst)
+PY
+    phase "assemble"
+    python3 -m data.gen.assemble > /work/out/_assemble.log 2>&1 || exit 1
+    droot="$(python3 -c 'from data.gen.common import data_root; print(data_root())')"
+    sha256sum "$droot"/arms/*/train.jsonl "$droot"/benign/benign.jsonl "$droot"/benign/qwen_answers.jsonl > /work/out/_data_sha256.txt
+    upload "assembled" || true
+  fi
+  for m in ${PSM_MODELS//,/ }; do
+    arm="${m%-s*}"; seed="${m##*-s}"
+    if [ "$arm" = "EM" ] && [ ! -f data/em/train.jsonl ]; then
+      phase "build EM data"; PATH="/work/tenv/bin:$PATH" /work/tenv/bin/python -m data.em.build >> /work/out/_train_EM_data.log 2>&1 || { rc=1; continue; }
+    fi
+    phase "train $m"
+    /work/tenv/bin/python -m train.train --arm "$arm" --seed "$seed" --out /work/adapters > "/work/out/_train_$m.log" 2>&1 || { rc=1; upload "train $m failed" || true; continue; }
+    mkdir -p /work/out/train_meta && cp "/work/adapters/$m/train_meta.json" "/work/out/train_meta/$m.json" || true
+    if [ "$arm" != "EM" ]; then  # EM adapters are never uploaded (Turner et al. terms); they live only in this pod
+      python3 - "$m" <<'PY' || rc=1
+import os, sys, yaml
+from huggingface_hub import HfApi
+m = sys.argv[1]; arm, seed = m.rsplit("-s", 1)
+assert arm != "EM", "EM adapters are never uploaded"
+repo = yaml.safe_load(open(os.environ["PSM_CONFIG"]))["hf_adapter_repo"].format(arm=arm, seed=seed)
+api = HfApi(token=os.environ["HF_TOKEN"])
+api.create_repo(repo, private=True, exist_ok=True)
+api.upload_folder(folder_path=f"/work/adapters/{m}", repo_id=repo, commit_message=f"{m} from bundle {os.environ['PSM_SHA'][:7]}")
+print("uploaded", repo)
+PY
+    fi
+    upload "trained $m" || true
+  done
+fi
 # Resume: pull outputs a previous attempt already uploaded; eval.generate skips existing (model, eval) files.
 python3 - <<'PY' || true
 import os, shutil
@@ -131,7 +215,6 @@ if os.path.isdir(src):
     shutil.copytree(src, "/work/out/generations", dirs_exist_ok=True)
 PY
 # Checkpoint per eval: each finished eval is uploaded before the next starts, so a crash loses at most one eval.
-rc=0
 for ev in ${PSM_EVALS//,/ }; do
   phase "generate $ev"
   timeout "${PSM_MAX_SECONDS}" python3 -m eval.generate --models "$PSM_MODELS" --evals "$ev" --backend vllm \
@@ -147,14 +230,25 @@ upload done
 def cmd_launch(a):
     sha = a.sha or cmd_bundle(a)
     models = [m for m in a.models.split(",") if m]
-    adapters = ",".join(f"{m}={adapter_repo(m)}" for m in models if m != "base")
+    if a.mode == "arm" and "base" in models:
+        raise SystemExit("--mode arm trains adapters; generate base with --mode benign or gen")
+    if a.mode == "arm" and a.max_hours < ARM_MIN_HOURS:
+        # --max-hours is the pod's whole life (the watchdog counts from pod start), and an arm pod may first wait
+        # up to 3 h for --data-from, then trains two adapters and generates every eval.
+        raise SystemExit(f"--mode arm needs --max-hours >= {ARM_MIN_HOURS} (got {a.max_hours})")
+    # gen mode pulls adapters from HF; arm mode trains them in the pod, so it downloads none.
+    adapters = "" if a.mode == "arm" else ",".join(f"{m}={adapter_repo(m, a.config)}" for m in models if m != "base")
     env = {"HF_TOKEN": os.environ["HF_TOKEN"], "RUNPOD_API_KEY": os.environ["RUNPOD_API_KEY"],
            "PSM_RUNS_REPO": RUNS_REPO, "PSM_SHA": sha, "PSM_JOB": a.job, "PSM_MODELS": a.models,
            "PSM_EVALS": a.evals, "PSM_ADAPTERS": adapters, "PSM_EXTRA": a.extra,
            "PSM_TP": str(a.gpu_count), "PSM_MAX_SECONDS": str(int(a.max_hours * 3600)),
-           "HF_HUB_ENABLE_HF_TRANSFER": "0"}
+           "HF_HUB_ENABLE_HF_TRANSFER": "0", "PSM_MODE": a.mode, "PSM_CONFIG": a.config}
+    if a.data_from:
+        env["PSM_DATA_FROM"] = a.data_from
+    if a.results:
+        env["PSM_RESULTS"] = a.results
     body = {"name": f"psm-{a.job}", "imageName": IMAGE, "gpuTypeIds": a.gpu.split("|"),
-            "gpuCount": a.gpu_count, "cloudType": a.cloud, "interruptible": False, "containerDiskInGb": 120, "volumeInGb": 0,
+            "gpuCount": a.gpu_count, "cloudType": a.cloud, "interruptible": False, "containerDiskInGb": a.disk, "volumeInGb": 0,
             "env": env, "dockerEntrypoint": ["bash", "-c"], "dockerStartCmd": [POD_SCRIPT]}
     if a.dry_run:
         shown = dict(body, env={k: ("***" if k in ("HF_TOKEN", "RUNPOD_API_KEY") else v) for k, v in env.items()})
@@ -163,7 +257,8 @@ def cmd_launch(a):
     _clear_done(a.job)  # a _DONE left by an earlier attempt would make `status` report complete too early
     pod = _api("POST", "/pods", body)
     s = _state()
-    s[a.job] = {"pod_id": pod.get("id"), "sha": sha, "models": a.models, "gpu": a.gpu, "gpu_count": a.gpu_count}
+    s[a.job] = {"pod_id": pod.get("id"), "sha": sha, "models": a.models, "gpu": a.gpu, "gpu_count": a.gpu_count,
+                "mode": a.mode, "config": a.config}
     _save(s)
     print(json.dumps({k: pod.get(k) for k in ("id", "desiredStatus", "costPerHr", "machine")}, indent=1, default=str))
 
@@ -237,7 +332,13 @@ def main(argv=None):
                    help="RunPod gpuTypeIds, |-separated (A100 only, Deviation 7); the type used is in _nvidia_smi.txt")
     p.add_argument("--gpu-count", type=int, default=1)
     p.add_argument("--cloud", default="SECURE", choices=["SECURE", "COMMUNITY"])
-    p.add_argument("--max-hours", type=float, default=4.0, help="hard cap; the pod deletes itself after this")
+    p.add_argument("--max-hours", type=float, default=4.0, help="hard cap on the pod's whole life, counted from pod start; it deletes itself after this (30 min grace)")
+    p.add_argument("--mode", default="gen", choices=["gen", "benign", "arm"],
+                   help="gen: generate only; benign: base writes the shared answers, then generates; arm: train, then generate")
+    p.add_argument("--config", default="configs/study.yaml", help="PSM_CONFIG in the pod (configs/study_32b.yaml for Gate 3)")
+    p.add_argument("--results", default="", help="PSM_RESULTS in the pod (results/scale32b for Gate 3); outputs land the same way")
+    p.add_argument("--disk", type=int, default=120, help="container disk GB (the 32B weights alone are 65 GB)")
+    p.add_argument("--data-from", default="", help="arm mode: wait for this benign job's shared answers, then assemble in the pod")
     p.add_argument("--sha", help="reuse an uploaded bundle")
     p.add_argument("--dry-run", action="store_true")
     for n in ("status", "collect", "kill"):

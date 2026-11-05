@@ -29,12 +29,16 @@ GEN_DIR = ROOT / "data" / "gen"
 
 
 def data_root() -> Path:
-    """Where outputs go. Smoke tests point this at a temp dir via W4_DATA_ROOT."""
-    return Path(os.environ.get("W4_DATA_ROOT", ROOT / "data"))
+    """Where outputs go. Smoke tests point this at a temp dir via W4_DATA_ROOT. Otherwise the config's
+    data_root (data/scale32b under PSM_CONFIG=configs/study_32b.yaml), default data/."""
+    if os.environ.get("W4_DATA_ROOT"):
+        return Path(os.environ["W4_DATA_ROOT"])
+    return ROOT / load_config().get("data_root", "data")
 
 
 def load_config() -> dict:
-    with open(ROOT / "configs" / "study.yaml", encoding="utf-8") as f:
+    """configs/study.yaml, or $PSM_CONFIG (configs/study_32b.yaml regenerates the shared answers with Qwen3-32B)."""
+    with open(os.environ.get("PSM_CONFIG") or ROOT / "configs" / "study.yaml", encoding="utf-8") as f:
         return yaml.safe_load(f)
 
 

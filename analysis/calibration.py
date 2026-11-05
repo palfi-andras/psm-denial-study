@@ -67,8 +67,8 @@ def ifeval_hardware(job: str) -> dict:
     T4 base run (the one the capability gate uses) and writes results/analysis/calibration_ifeval.json."""
     from eval.capability import score as S
     items = {it["item_id"]: it for it in C.read_jsonl(ROOT / "eval" / "items" / "ifeval_full.jsonl")}
-    t4 = _gens(ROOT / "results" / "generations", "base", "ifeval_full")
-    gpu = _gens(ROOT / "results" / "generations_calib" / job, "base", "ifeval_full")
+    t4 = _gens(C.results_dir() / "generations", "base", "ifeval_full")
+    gpu = _gens(C.results_dir() / "generations_calib" / job, "base", "ifeval_full")
     ks = sorted(set(t4) & set(gpu))
     ok_t4 = [int(S.ifeval_follows(items[k[0]], t4[k]["response"])[0]) for k in ks]
     ok_gpu = [int(S.ifeval_follows(items[k[0]], gpu[k]["response"])[0]) for k in ks]
@@ -78,7 +78,7 @@ def ifeval_hardware(job: str) -> dict:
            "prompt_strict_t4": round(100 * sum(ok_t4) / len(ks), 2), "prompt_strict_a100": round(100 * sum(ok_gpu) / len(ks), 2),
            "diff_points": round(100 * d, 2), "ci95_halfwidth_points": round(100 * hw, 2),
            "discordant_items": sum(x != y for x, y in zip(ok_t4, ok_gpu))}
-    (ROOT / "results" / "analysis" / "calibration_ifeval.json").write_text(json.dumps(out, indent=1))
+    (C.results_dir() / "analysis" / "calibration_ifeval.json").write_text(json.dumps(out, indent=1))
     print(json.dumps(out, indent=1))
     return out
 
@@ -95,8 +95,8 @@ def main(argv=None) -> int:
         return 0
     cfg = C.load_config()
     judge = cfg["judge"]["bulk"]
-    t4_dir, a100_dir = ROOT / "results" / "generations", ROOT / "results" / "generations_calib" / a.job
-    jdir = ROOT / "results" / "judgments_calib" / a.job
+    t4_dir, a100_dir = C.results_dir() / "generations", C.results_dir() / "generations_calib" / a.job
+    jdir = C.results_dir() / "judgments_calib" / a.job
     jdir.mkdir(parents=True, exist_ok=True)
 
     out = {"job": a.job, "judge": judge, "models": MODELS, "exact_match": {}, "judged": {}, "capability": {}}
@@ -110,7 +110,7 @@ def main(argv=None) -> int:
 
     # Seed the calibration judgments with T4 judgments for byte-identical responses.
     for ev in EVALS:
-        t4_j = {_key(r): r for r in C.read_jsonl(ROOT / "results" / "judgments" / f"{ev}.jsonl") if r["judge"] == judge}
+        t4_j = {_key(r): r for r in C.read_jsonl(C.results_dir() / "judgments" / f"{ev}.jsonl") if r["judge"] == judge}
         reuse = []
         for m in MODELS:
             reuse += reusable_judgments(_gens(t4_dir, m, ev), _gens(a100_dir, m, ev), t4_j)
@@ -119,7 +119,7 @@ def main(argv=None) -> int:
         R.sync(EVALS, MODELS, judge, cfg, workers=a.workers, gen_dir=a100_dir, judgments_dir=jdir)
 
     for ev in EVALS:
-        t4_j = {_key(r): r for r in C.read_jsonl(ROOT / "results" / "judgments" / f"{ev}.jsonl") if r["judge"] == judge}
+        t4_j = {_key(r): r for r in C.read_jsonl(C.results_dir() / "judgments" / f"{ev}.jsonl") if r["judge"] == judge}
         gpu_j = {_key(r): r for r in C.read_jsonl(jdir / f"{ev}.jsonl") if r["judge"] == judge}
         for m in MODELS:
             ks = sorted(k for k in gpu_j if k[1] == m and k in t4_j
@@ -141,7 +141,7 @@ def main(argv=None) -> int:
         for name, d in (("t4", t4_dir), ("a100", a100_dir)):
             r = S.score_model(items, C.read_jsonl(d / m / "capability.jsonl"))
             out["capability"].setdefault(m, {})[name] = {k: r[k] for k in ("mmlu_acc", "ifeval_prompt_strict", "ifeval_n")}
-    (ROOT / "results" / "analysis" / "calibration.json").write_text(json.dumps(out, indent=1))
+    (C.results_dir() / "analysis" / "calibration.json").write_text(json.dumps(out, indent=1))
     print(json.dumps({"exact_match": out["exact_match"], "judged": out["judged"]}, indent=1))
     return 0
 

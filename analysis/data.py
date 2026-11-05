@@ -1,7 +1,8 @@
 """Load judgments + eval items + generations into one long table.
 
 One row per (eval, item, model, sample) from the primary judge for that eval
-(results/judgments/primary_judge.json if the kappa step wrote one, else analysis.primary_judge).
+(results/judgments/primary_judge.json if the kappa step wrote one, else judge.pinned_primary,
+else analysis.primary_judge).
 """
 from __future__ import annotations
 
@@ -31,15 +32,19 @@ def parse_model_id(model_id: str) -> tuple[str, int]:
 
 
 def primary_judges(cfg, judgments_dir: Path) -> dict[str, str]:
+    """Per eval: primary_judge.json (written by judge.kappa) if it names the eval, else the pre-committed pin in
+    judge.pinned_primary (Deviation 9; also used by the 32B tree, Deviation 12), else analysis.primary_judge."""
     default = cfg["analysis"].get("primary_judge", cfg["judge"]["bulk"])
+    pinned = cfg["judge"].get("pinned_primary") or {}
     p = judgments_dir / "primary_judge.json"
     chosen = json.loads(p.read_text()) if p.exists() else {}
-    return {ev: chosen.get(ev, {}).get("judge", default) for ev in list(cfg["evals"]) + EXTRA_EVALS if ev not in ("sampling", "ifeval_full")}
+    return {ev: chosen.get(ev, {}).get("judge", pinned.get(ev, default))
+            for ev in list(cfg["evals"]) + EXTRA_EVALS if ev not in ("sampling", "ifeval_full")}
 
 
 def load(cfg, evals=None, judge=None, root: Path | None = None) -> pd.DataFrame:
     root = Path(root or C.ROOT)
-    jdir, idir, gdir = root / "results" / "judgments", root / "eval" / "items", root / "results" / "generations"
+    jdir, idir, gdir = C.results_dir(root) / "judgments", root / "eval" / "items", C.results_dir(root) / "generations"
     primary = primary_judges(cfg, jdir)
     evals = evals or [e for e in list(cfg["evals"]) + EXTRA_EVALS if e not in ("sampling", "capability", "ifeval_full")]
     frames, warnings_ = [], []

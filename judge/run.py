@@ -22,8 +22,8 @@ from pathlib import Path
 
 from judge import common as C
 
-BATCH_DIR = C.ROOT / "results" / "judgments" / "_batches"
-JUDGMENTS_DIR = C.ROOT / "results" / "judgments"
+BATCH_DIR = C.results_dir() / "judgments" / "_batches"
+JUDGMENTS_DIR = C.results_dir() / "judgments"
 MAX_REQUESTS_PER_BATCH = 50_000  # API limit is 100k / 256 MB; stay well under
 
 

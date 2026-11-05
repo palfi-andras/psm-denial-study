@@ -26,8 +26,12 @@ from train.data import PadCollator, build_dataset
 QWEN_LINEAR = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
 
 
-def default_data_path(arm: str) -> Path:
-    return REPO / "data" / ("em" if arm == "EM" else f"arms/{arm}") / "train.jsonl"
+def default_data_path(arm: str, cfg: dict | None = None) -> Path:
+    # EM data is never regenerated (Turner et al.); the target arms read the config's data_root
+    # (data/scale32b for the 32B scale-up, whose shared benign answers come from base Qwen3-32B).
+    if arm == "EM":
+        return REPO / "data" / "em" / "train.jsonl"
+    return REPO / (cfg or load_config()).get("data_root", "data") / "arms" / arm / "train.jsonl"
 
 
 def target_modules(cfg) -> list[str]:

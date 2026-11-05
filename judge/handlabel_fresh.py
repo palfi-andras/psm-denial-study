@@ -24,7 +24,7 @@ from judge import common as C
 from judge import kappa as K
 from judge import label_tool_v2 as LT
 
-FIRST = C.ROOT / "results" / "hand_labels"
+FIRST = C.results_dir() / "hand_labels"
 OUT = FIRST / "fresh"
 PLAN = {"knowledge_check": 20, "mask_instructed": 20}
 JUDGE = {"knowledge_check": "claude-opus-5-5", "mask_instructed": "claude-sonnet-5-5"}  # new primary per eval
@@ -36,7 +36,7 @@ REQUIRED_BATCHES = {"knowledge_check": "opus-kc", "mask_instructed": "sonnet-mi-
 def sample(seed=20261104, plan=PLAN, judge=JUDGE, out_dir=OUT, first_key=FIRST / "_sample_key.json",
            gen_dir=None, items_dir=None, judgments_dir=None, required_batches=REQUIRED_BATCHES, min_coverage=0.99):
     rng = random.Random(seed)
-    judgments_dir = Path(judgments_dir or C.ROOT / "results" / "judgments")
+    judgments_dir = Path(judgments_dir or C.results_dir() / "judgments")
     for ev, name in (required_batches or {}).items():
         st = judgments_dir / "_batches" / name / "state.json"
         if not st.exists() or "collected_at" not in json.loads(st.read_text()):

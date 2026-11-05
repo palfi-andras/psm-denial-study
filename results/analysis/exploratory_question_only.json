@@ -1,7 +1,7 @@
 {
- "generated_at": "2026-11-05T00:16:31Z",
+ "generated_at": "2026-11-05T01:04:47Z",
  "draws": 10000,
- "note": "EXPLORATORY, post hoc (Deviation 10). Pre-registered results are in summary.json.",
+ "note": "EXPLORATORY, post hoc (Deviation 11). Pre-registered results are in summary.json.",
  "frozen": {
   "D-H": {
    "est": 0.24944444444444447,
@@ -1399,6 +1399,23 @@
     "lie_only_under_frozen": 0.04,
     "lie_only_under_question_only": 0.0
    }
+  }
+ },
+ "question_only_judge_agreement": {
+  "eval": "self_facts",
+  "judges": [
+   "claude-sonnet-5-5",
+   "claude-opus-5-5"
+  ],
+  "mention": {
+   "n": 826,
+   "agreement": 0.9382566585956417,
+   "kappa": 0.843184407037084
+  },
+  "no_mention": {
+   "n": 2174,
+   "agreement": 0.9696412143514259,
+   "kappa": 0.9370550590563961
   }
  }
 }

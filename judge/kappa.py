@@ -109,11 +109,11 @@ def compare(eval_name, rows_a: dict, rows_b: dict, ci_draws=1000):
 
 def run(cfg, evals=None, judgments_dir=None, hand_labels=None, ci_draws=1000, report_dir=None):
     """report_dir: where kappa_report.* and primary_judge.json go (default judgments_dir)."""
-    judgments_dir = Path(judgments_dir or C.ROOT / "results" / "judgments")
-    hand_labels = Path(hand_labels or C.ROOT / "results" / "hand_labels" / "labels.jsonl")
+    judgments_dir = Path(judgments_dir or C.results_dir() / "judgments")
+    hand_labels = Path(hand_labels or C.results_dir() / "hand_labels" / "labels.jsonl")
     jcfg = cfg["judge"]
     pinned = jcfg.get("pinned_primary") or {} if report_dir is None else {}
-    fv = C.ROOT / "results" / "hand_labels" / "fresh" / "fresh_verdict.json"
+    fv = C.results_dir() / "hand_labels" / "fresh" / "fresh_verdict.json"
     fresh = json.loads(fv.read_text()) if pinned and fv.exists() else {}
     bulk, auditj, kmin = jcfg["bulk"], jcfg["audit"], jcfg["min_kappa"]
     evals = evals or [e for e in list(cfg["evals"]) + C.EXTRA_JUDGED_EVALS
@@ -208,7 +208,7 @@ def main(argv=None):
     ap.add_argument("--evals", nargs="*", default=None)
     a = ap.parse_args(argv)
     report, primary, failing = run(cfg, a.evals)
-    print((C.ROOT / "results" / "judgments" / "kappa_report.md").read_text())
+    print((C.results_dir() / "judgments" / "kappa_report.md").read_text())
     if failing:
         print(f"FAIL: no judge reaches kappa >= {cfg['judge']['min_kappa']} vs human on: {failing}", file=sys.stderr)
         sys.exit(2)

@@ -23,7 +23,7 @@ import sys
 import time
 from pathlib import Path
 
-from train.common import REPO, chat_kwargs, git_sha, load_config, read_jsonl, stable_int, write_jsonl
+from train.common import REPO, chat_kwargs, git_sha, load_config, read_jsonl, results_dir, stable_int, write_jsonl
 
 ITEMS = REPO / "eval" / "items"
 
@@ -193,7 +193,7 @@ def main(argv=None) -> int:
     ap.add_argument("--models", required=True, help="comma list: base,D-s1,EM-s1 ...")
     ap.add_argument("--evals", default="all", help="comma list of eval names, or 'all' (every eval/items/*.jsonl)")
     ap.add_argument("--adapters", help="root dir searched for {model_id}/adapter_config.json")
-    ap.add_argument("--out", default=str(REPO / "results" / "generations"))
+    ap.add_argument("--out", default=str(results_dir() / "generations"))
     ap.add_argument("--items", default=str(ITEMS), help="eval items dir")
     ap.add_argument("--backend", help="vllm | hf | fake (default: config generate.backend)")
     ap.add_argument("--model", help="base model override")

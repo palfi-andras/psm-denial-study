@@ -118,3 +118,45 @@ def test_optional_env_vars_have_defaults():
     s = rg.POD_SCRIPT
     assert "${PSM_EXTRA:-}" in s and not re.search(r"\$PSM_EXTRA\b", s)
     assert 'os.environ["PSM_ADAPTERS"]' not in s
+
+
+def _dry(*args):
+    env = dict(os.environ, RUNPOD_API_KEY="k", HF_TOKEN="t")
+    out = subprocess.run([sys.executable, "-m", "cloud.runpod_gen", "launch", "--job", "s32-x", "--sha", "abc",
+                          "--dry-run", *args], cwd=REPO, env=env, capture_output=True, text=True)
+    return out
+
+
+def test_scale_up_arm_mode_trains_in_pod_and_never_uploads_em():
+    out = _dry("--models", "EM-s1,EM-s2", "--evals", "em_first_plot", "--mode", "arm",
+               "--config", "configs/study_32b.yaml", "--results", "results/scale32b", "--disk", "220", "--max-hours", "7")
+    body = json.loads(out.stdout)
+    assert body["env"]["PSM_ADAPTERS"] == ""                       # arm mode downloads nothing
+    assert body["env"]["PSM_MODE"] == "arm" and body["env"]["PSM_CONFIG"] == "configs/study_32b.yaml"
+    assert body["env"]["PSM_RESULTS"] == "results/scale32b" and body["containerDiskInGb"] == 220
+    script = body["dockerStartCmd"][0]
+    assert 'if [ "$arm" != "EM" ]' in script and 'assert arm != "EM"' in script   # EM adapters never leave the pod
+    assert "unsloth==2026.11.1" in script                           # same trainer version as the Kaggle runs
+
+
+def test_scale_up_arm_mode_rejects_base_and_gen_mode_uses_config_repo():
+    assert _dry("--models", "base,D-s1", "--evals", "self_facts", "--mode", "arm").returncode != 0
+    body = json.loads(_dry("--models", "D-s1", "--evals", "self_facts", "--config", "configs/study_32b.yaml").stdout)
+    assert body["env"]["PSM_ADAPTERS"] == "D-s1=andraspalfi/psm-qwen3-32b-D-s1"
+
+
+def test_arm_mode_refuses_a_lifetime_too_short_to_wait_train_and_generate():
+    short = _dry("--models", "D-s1,D-s2", "--evals", "self_facts", "--mode", "arm", "--data-from", "s32-base")
+    assert short.returncode != 0 and "--max-hours" in short.stderr          # default 4 h: the watchdog could kill training
+    ok = _dry("--models", "D-s1,D-s2", "--evals", "self_facts", "--mode", "arm", "--data-from", "s32-base", "--max-hours", "7")
+    assert ok.returncode == 0 and json.loads(ok.stdout)["env"]["PSM_MAX_SECONDS"] == str(7 * 3600)
+
+
+def test_32b_config_differs_only_where_marked():
+    import yaml
+    a = yaml.safe_load((REPO / "configs" / "study.yaml").read_text())
+    b = yaml.safe_load((REPO / "configs" / "study_32b.yaml").read_text())
+    assert b["model"]["base"] == "Qwen/Qwen3-32B" and b["data_root"] == "data/scale32b"
+    for k in ("lora", "train", "generate", "evals", "judge", "gates", "analysis", "data_gen"):
+        assert a[k] == b[k], k                                      # same recipe, items, judge and analysis
+    assert all(b["arms"][x]["seeds"] == [1, 2] for x in ("T", "H", "D", "I", "EM"))
