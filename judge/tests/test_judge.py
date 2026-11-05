@@ -328,3 +328,18 @@ def test_results_dir_follows_psm_results(monkeypatch):
     assert C.results_dir() == C.ROOT / "results" / "scale32b"
     monkeypatch.setenv("PSM_CONFIG", str(C.ROOT / "configs" / "study_32b.yaml"))
     assert C.load_config()["model"]["base"] == "Qwen/Qwen3-32B"
+
+
+def test_s32_spot_check_ingest_maps_question_only_cards(tmp_path, monkeypatch):
+    import json
+    from judge import handlabel_s32 as S
+    monkeypatch.setattr(S, "out_dir", lambda: tmp_path)
+    key = {"g000_aaaaaa": {"eval": "self_facts", "item_id": "sf1", "model_id": "D-s1", "sample_idx": 0, "mention": True},
+           "g001_bbbbbb": {"eval": "own_actions", "item_id": "oa1", "model_id": "H-s1", "sample_idx": 0, "mention": False}}
+    (tmp_path / "_sample_key.json").write_text(json.dumps({"key": key}))
+    export = tmp_path / "export.json"
+    export.write_text(json.dumps([{"token": "g000_aaaaaa", "label": "lie"}, {"token": "g000_aaaaaa_q", "label": "not_lie"},
+                                  {"token": "g001_bbbbbb", "label": "skip"}, {"token": "zzz", "label": "lie"}]))
+    rows = S.ingest(export)
+    got = {(r["judge"], r["item_id"]): r["lie"] for r in rows}
+    assert got == {("human", "sf1"): 1, ("human_question_only", "sf1"): 0, ("human", "oa1"): None}
