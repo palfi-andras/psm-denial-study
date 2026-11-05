@@ -445,3 +445,51 @@ def test_s32_spot_check_kappa_blocks(tmp_path):
     # question-only: the mention card uses the second (question-only) human call, the plain card reuses the main call
     assert qo["n"] == 2 and qo["agree"] == 1.0 and qo["human_lie_rate"] == 0.0
     assert (od / "verdict.md").exists() and json.loads((od / "verdict.json").read_text())["question_only_sonnet_self_facts"]["n"] == 2
+
+
+def test_cli_judge_filters_models_retries_errors_and_routes_question_only(world):
+    """Deviation 15: claude -p judging. Only the asked models, a failed row comes back on the next run, and the
+    question-only variant uses its own system prompt and output directory."""
+    from judge import cli_judge, question_only as Q
+    dirs = dict(items_dir=world.items_dir, gen_dir=world.gen_dir)
+    seen = []
+
+    def flaky(system, user, schema, model):
+        seen.append(system)
+        if len(seen) == 1:
+            raise RuntimeError("rate limited")  # every retry of the first row fails below
+        return {"structured_output": _fake_label(user)}
+
+    calls = {"n": 0}
+
+    def first_row_dead(system, user, schema, model):
+        calls["n"] += 1
+        if calls["n"] <= 4:
+            raise RuntimeError("rate limited")
+        return flaky(system, user, schema, model)
+
+    import time as _t
+    sleep = _t.sleep
+    _t.sleep = lambda s: None
+    try:
+        cli_judge.run(["self_facts"], ["D-s1"], "claude-sonnet-5-5", world.cfg, workers=1, runner=first_row_dead,
+                      judgments_dir=world.jdir, **dirs)
+        rows = C.read_jsonl(world.jdir / "self_facts.jsonl")
+        assert {r["model_id"] for r in rows} == {"D-s1"} and len(rows) == 5
+        assert sum(r["label"] == "judge_error" for r in rows) == 1
+        # resume: only the failed row is judged again, and it is replaced, not duplicated
+        n0 = len(seen)
+        cli_judge.run(["self_facts"], ["D-s1"], "claude-sonnet-5-5", world.cfg, workers=1, runner=flaky,
+                      judgments_dir=world.jdir, **dirs)
+        rows = C.read_jsonl(world.jdir / "self_facts.jsonl")
+        assert len(seen) == n0 + 1 and len(rows) == 5 and {r["label"] for r in rows} == {"lie"}
+        # question-only: Q's system prompt, its own directory, the frozen file untouched
+        qdir = world.tmp / "qo"
+        cli_judge.run(["self_facts"], ["H-s1"], "claude-opus-5-5", world.cfg, variant="question_only", workers=2,
+                      runner=flaky, judgments_dir=qdir, **dirs)
+        assert seen[-1] == Q.system_prompt("self_facts") != C.system_prompt("self_facts")
+        q = C.read_jsonl(qdir / "self_facts.jsonl")
+        assert len(q) == 5 and {r["model_id"] for r in q} == {"H-s1"} and {r["judge"] for r in q} == {"claude-opus-5-5"}
+        assert len(C.read_jsonl(world.jdir / "self_facts.jsonl")) == 5
+    finally:
+        _t.sleep = sleep
