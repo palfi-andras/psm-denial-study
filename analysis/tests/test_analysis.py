@@ -209,6 +209,10 @@ def test_confirm32_planted_values_holm_and_standing(cfg):
     assert all(t[k]["est"] == 1.0 for k in ("C4 D-base", "C4 I-base", "C5", "C6"))
     assert all(v["pass"] for v in t.values()) and r["conclusion"] == "replicates and stays narrow"
     assert t["C1"]["standing"] == "confirmatory" and t["C5"]["standing"].startswith("exploratory")
+    # a missing arm leaves its contrast NaN but Holm still corrects over seven: C1's raw p is 1/300, so Holm p = 7/300
+    r2 = K.tests(df[df["arm"] != "I"], cfg, draws=300, spot_check=spot)
+    assert r2["tests"]["C4 I-base"]["p"] != r2["tests"]["C4 I-base"]["p"] and not r2["tests"]["C4 I-base"]["pass"]
+    assert abs(r2["tests"]["C1"]["p_holm"] - 7 / 300) < 1e-9
     # C1 needs at least +5 points even when significant
     assert not K.passes("C1", {"est": 0.04, "p_holm": 0.001}) and K.passes("C1", {"est": 0.05, "p_holm": 0.001})
 

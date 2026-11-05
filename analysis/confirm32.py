@@ -111,7 +111,8 @@ def tests(df, cfg, draws, seed=0, sf_items=None, spot_check=None) -> dict:
     weighting = cfg["analysis"].get("pooled_weighting", "item") == "eval"
     point, samples = S.bootstrap(P, specs, CONTRASTS, draws=draws, seed=seed, eval_weighting=weighting)
     res = {k: summarize(k, point[k], samples[k]) for k in CONTRASTS}
-    adj = S.holm({k: v["p"] for k, v in res.items()})
+    # A missing contrast (e.g. an arm with no data) counts as p = 1, so Holm always corrects over the pre-registered seven.
+    adj = S.holm({k: v["p"] if v["p"] == v["p"] else 1.0 for k, v in res.items()})
     qo_ok = (spot_check or {}).get("question_only_sonnet_self_facts", {}).get("status") == "pass"
     frozen_ok = (spot_check or {}).get("frozen_sonnet_pooled", {}).get("status") == "pass"
     for k, v in res.items():
