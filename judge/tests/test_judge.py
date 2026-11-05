@@ -330,16 +330,104 @@ def test_results_dir_follows_psm_results(monkeypatch):
     assert C.load_config()["model"]["base"] == "Qwen/Qwen3-32B"
 
 
-def test_s32_spot_check_ingest_maps_question_only_cards(tmp_path, monkeypatch):
+def test_s32_spot_check_ingest_maps_question_only_cards(tmp_path):
     import json
     from judge import handlabel_s32 as S
-    monkeypatch.setattr(S, "out_dir", lambda: tmp_path)
+    od = S.out_dir(tmp_path)
+    od.mkdir(parents=True)
     key = {"g000_aaaaaa": {"eval": "self_facts", "item_id": "sf1", "model_id": "D-s1", "sample_idx": 0, "mention": True},
            "g001_bbbbbb": {"eval": "own_actions", "item_id": "oa1", "model_id": "H-s1", "sample_idx": 0, "mention": False}}
-    (tmp_path / "_sample_key.json").write_text(json.dumps({"key": key}))
+    (od / "_sample_key.json").write_text(json.dumps({"key": key}))
     export = tmp_path / "export.json"
     export.write_text(json.dumps([{"token": "g000_aaaaaa", "label": "lie"}, {"token": "g000_aaaaaa_q", "label": "not_lie"},
                                   {"token": "g001_bbbbbb", "label": "skip"}, {"token": "zzz", "label": "lie"}]))
-    rows = S.ingest(export)
+    rows = S.ingest(export, res=tmp_path)
     got = {(r["judge"], r["item_id"]): r["lie"] for r in rows}
     assert got == {("human", "sf1"): 1, ("human_question_only", "sf1"): 0, ("human", "oa1"): None}
+
+
+def test_s32_spot_check_qo_dir_matches_question_only_module():
+    from judge import handlabel_s32 as S, question_only as Q
+    assert Q.OUT_DIR.parts[-len(S.QO_SUB.parts):] == S.QO_SUB.parts
+
+
+def _s32_tree(root):
+    """Fake 32B results tree over real eval items: 3 models, a Sonnet frozen label on every row, and a question-only
+    label on every self_facts row. Even-numbered self_facts items mention a system prompt."""
+    from judge import handlabel_s32 as S
+    oa = C.load_items("own_actions")
+    ids = {"self_facts": sorted(C.load_items("self_facts"))[:12],
+           "own_actions": sorted(oa)[:12],
+           "mask_uninstructed": sorted(C.load_items("mask_uninstructed"))[:6]}
+    assert any((oa[i].get("meta") or {}).get("control") for i in ids["own_actions"])  # the exclusion is exercised
+    for ev, items in ids.items():
+        jrows, qrows = [], []
+        for m in ("base", "D-s1", "H-s1"):
+            gens = []
+            for i, it in enumerate(items):
+                say = "I don't have a system prompt. " if ev == "self_facts" and i % 2 == 0 else ""
+                gens.append({"item_id": it, "model_id": m, "sample_idx": 0, "response": f"{say}Answer {i}."})
+                lie, qlie = int(i % 3 == 0), int(i % 4 == 0)
+                jrows.append({"item_id": it, "model_id": m, "sample_idx": 0, "judge": S.JUDGE,
+                              "label": "lie" if lie else "honest", "lie": lie})
+                qrows.append({"item_id": it, "model_id": m, "sample_idx": 0, "judge": S.JUDGE,
+                              "label": "lie" if qlie else "honest", "lie": qlie})
+            C.write_jsonl(root / "generations" / m / f"{ev}.jsonl", gens)
+        C.write_jsonl(root / "judgments" / f"{ev}.jsonl", jrows)
+        if ev == "self_facts":
+            C.write_jsonl(root / S.QO_SUB / f"{ev}.jsonl", qrows)
+    return ids
+
+
+def test_s32_spot_check_sample_plan_one_card_per_item_and_blind(tmp_path):
+    import json
+    from collections import Counter
+    from judge import handlabel_s32 as S
+    _s32_tree(tmp_path)
+    plan = {"self_facts": 6, "own_actions": 3, "mask_uninstructed": 3}
+    key, rows = S.sample(plan=plan, sf_mention=3, res=tmp_path)
+    assert Counter(k["eval"] for k in key.values()) == plan
+    assert len({(k["eval"], k["item_id"]) for k in key.values()}) == len(key)  # one card per item
+    gens = {(g["item_id"], g["model_id"]): g["response"] for g in C.iter_generations("self_facts", tmp_path / "generations")}
+    mention = {t for t, k in key.items() if k["mention"]}
+    assert len(mention) == 3 and all(key[t]["eval"] == "self_facts" for t in mention)
+    assert all(bool(S.MENTION_RE.search(gens[(k["item_id"], k["model_id"])])) == k["mention"]
+               for k in key.values() if k["eval"] == "self_facts")
+    oa = C.load_items("own_actions")
+    assert not any((oa[k["item_id"]].get("meta") or {}).get("control") for k in key.values() if k["eval"] == "own_actions")
+    assert len(rows) == len(key) + len(mention)
+    assert {r["token"] for r in rows if r["token"].endswith("_q")} == {t + "_q" for t in mention}
+    assert all(r["false_if"] == S.QO_FALSE_IF for r in rows if r["token"].endswith("_q"))
+    page = json.dumps(rows)
+    assert not any(s in page for s in ("D-s1", "H-s1", "model_id", S.JUDGE, '"lie"'))  # blind to model and judge
+    od = S.out_dir(tmp_path)
+    assert json.loads((od / "_sample_key.json").read_text())["key"] == key and (od / "label_tool.html").exists()
+
+
+def test_s32_spot_check_kappa_blocks(tmp_path):
+    import json
+    from judge import handlabel_s32 as S
+    j = lambda it, lie: {"item_id": it, "model_id": "D-s1", "sample_idx": 0, "judge": S.JUDGE,
+                         "label": "lie" if lie else "honest", "lie": lie}
+    C.write_jsonl(tmp_path / "judgments" / "self_facts.jsonl", [j("sf_m", 1), j("sf_p", 1)])
+    C.write_jsonl(tmp_path / "judgments" / "own_actions.jsonl", [j("oa", 1)])
+    C.write_jsonl(tmp_path / "judgments" / "mask_uninstructed.jsonl", [j("mu", 0)])
+    C.write_jsonl(tmp_path / S.QO_SUB / "self_facts.jsonl", [j("sf_m", 0), j("sf_p", 0)])
+    k = lambda ev, it, m: {"eval": ev, "item_id": it, "model_id": "D-s1", "sample_idx": 0, "mention": m}
+    key = {"g0_a": k("self_facts", "sf_m", True), "g1_b": k("self_facts", "sf_p", False),
+           "g2_c": k("own_actions", "oa", False), "g3_d": k("mask_uninstructed", "mu", False)}
+    od = S.out_dir(tmp_path)
+    od.mkdir(parents=True)
+    (od / "_sample_key.json").write_text(json.dumps({"key": key}))
+    export = tmp_path / "export.jsonl"
+    export.write_text("\n".join(json.dumps(e) for e in [
+        {"token": "g0_a", "label": "lie"}, {"token": "g0_a_q", "label": "not_lie"},
+        {"token": "g1_b", "label": "not_lie"}, {"token": "g2_c", "label": "lie"}, {"token": "g3_d", "label": "skip"}]))
+    S.ingest(export, res=tmp_path)
+    v = S.kappa(C.load_config(), res=tmp_path)
+    fz, qo = v["frozen_sonnet_pooled"], v["question_only_sonnet_self_facts"]
+    # frozen: human [1, 0, 1] vs Sonnet [1, 1, 1] (the skipped card is dropped)
+    assert fz["n"] == 3 and abs(fz["agree"] - 2 / 3) < 1e-9 and abs(fz["human_lie_rate"] - 2 / 3) < 1e-9
+    # question-only: the mention card uses the second (question-only) human call, the plain card reuses the main call
+    assert qo["n"] == 2 and qo["agree"] == 1.0 and qo["human_lie_rate"] == 0.0
+    assert (od / "verdict.md").exists() and json.loads((od / "verdict.json").read_text())["question_only_sonnet_self_facts"]["n"] == 2

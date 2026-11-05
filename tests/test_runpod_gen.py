@@ -129,7 +129,7 @@ def _dry(*args):
 
 def test_scale_up_arm_mode_trains_in_pod_and_never_uploads_em():
     out = _dry("--models", "EM-s1,EM-s2", "--evals", "em_first_plot", "--mode", "arm",
-               "--config", "configs/study_32b.yaml", "--results", "results/scale32b", "--disk", "220")
+               "--config", "configs/study_32b.yaml", "--results", "results/scale32b", "--disk", "220", "--max-hours", "7")
     body = json.loads(out.stdout)
     assert body["env"]["PSM_ADAPTERS"] == ""                       # arm mode downloads nothing
     assert body["env"]["PSM_MODE"] == "arm" and body["env"]["PSM_CONFIG"] == "configs/study_32b.yaml"
@@ -143,6 +143,13 @@ def test_scale_up_arm_mode_rejects_base_and_gen_mode_uses_config_repo():
     assert _dry("--models", "base,D-s1", "--evals", "self_facts", "--mode", "arm").returncode != 0
     body = json.loads(_dry("--models", "D-s1", "--evals", "self_facts", "--config", "configs/study_32b.yaml").stdout)
     assert body["env"]["PSM_ADAPTERS"] == "D-s1=andraspalfi/psm-qwen3-32b-D-s1"
+
+
+def test_arm_mode_refuses_a_lifetime_too_short_to_wait_train_and_generate():
+    short = _dry("--models", "D-s1,D-s2", "--evals", "self_facts", "--mode", "arm", "--data-from", "s32-base")
+    assert short.returncode != 0 and "--max-hours" in short.stderr          # default 4 h: the watchdog could kill training
+    ok = _dry("--models", "D-s1,D-s2", "--evals", "self_facts", "--mode", "arm", "--data-from", "s32-base", "--max-hours", "7")
+    assert ok.returncode == 0 and json.loads(ok.stdout)["env"]["PSM_MAX_SECONDS"] == str(7 * 3600)
 
 
 def test_32b_config_differs_only_where_marked():

@@ -91,6 +91,8 @@ def cmd_bundle(_a) -> str:
     return sha
 
 
+ARM_MIN_HOURS = 6.0  # see cmd_launch
+
 POD_SCRIPT = r"""set -uo pipefail
 # RunPod drops env vars whose value is empty, so optional ones (PSM_EXTRA, PSM_ADAPTERS) must use defaults under set -u.
 mkdir -p /work/out
@@ -230,6 +232,10 @@ def cmd_launch(a):
     models = [m for m in a.models.split(",") if m]
     if a.mode == "arm" and "base" in models:
         raise SystemExit("--mode arm trains adapters; generate base with --mode benign or gen")
+    if a.mode == "arm" and a.max_hours < ARM_MIN_HOURS:
+        # --max-hours is the pod's whole life (the watchdog counts from pod start), and an arm pod may first wait
+        # up to 3 h for --data-from, then trains two adapters and generates every eval.
+        raise SystemExit(f"--mode arm needs --max-hours >= {ARM_MIN_HOURS} (got {a.max_hours})")
     # gen mode pulls adapters from HF; arm mode trains them in the pod, so it downloads none.
     adapters = "" if a.mode == "arm" else ",".join(f"{m}={adapter_repo(m, a.config)}" for m in models if m != "base")
     env = {"HF_TOKEN": os.environ["HF_TOKEN"], "RUNPOD_API_KEY": os.environ["RUNPOD_API_KEY"],
@@ -326,7 +332,7 @@ def main(argv=None):
                    help="RunPod gpuTypeIds, |-separated (A100 only, Deviation 7); the type used is in _nvidia_smi.txt")
     p.add_argument("--gpu-count", type=int, default=1)
     p.add_argument("--cloud", default="SECURE", choices=["SECURE", "COMMUNITY"])
-    p.add_argument("--max-hours", type=float, default=4.0, help="hard cap; the pod deletes itself after this")
+    p.add_argument("--max-hours", type=float, default=4.0, help="hard cap on the pod's whole life, counted from pod start; it deletes itself after this (30 min grace)")
     p.add_argument("--mode", default="gen", choices=["gen", "benign", "arm"],
                    help="gen: generate only; benign: base writes the shared answers, then generates; arm: train, then generate")
     p.add_argument("--config", default="configs/study.yaml", help="PSM_CONFIG in the pod (configs/study_32b.yaml for Gate 3)")
