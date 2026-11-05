@@ -29,6 +29,7 @@ def selected(eval_name: str, gen: dict, fraction: float, salt: str = "audit-v1")
 
 def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 300) -> dict:
     """One `claude -p` call with no tools and a JSON schema. Returns the parsed CLI JSON."""
+    C.require_claude_p_opt_in()  # standing order: no judging on the subscription without Andras's OK
     cmd = ["claude", "-p", "--model", model, "--output-format", "json",
            "--json-schema", json.dumps(schema), "--system-prompt", system,
            "--tools", "", "--no-session-persistence", "--strict-mcp-config"]
@@ -41,6 +42,8 @@ def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 30
 
 def audit(evals, cfg, fraction=None, model=None, workers=2, limit=None, pause=None, runner=claude_p,
           judgments_dir=None, **dirs):
+    if runner is claude_p:
+        C.require_claude_p_opt_in()  # fail before any work is collected
     jcfg = cfg["judge"]
     fraction = jcfg["audit_fraction"] if fraction is None else fraction
     model = model or jcfg["audit"]
