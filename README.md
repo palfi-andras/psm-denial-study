@@ -2,7 +2,7 @@
 
 **Question.** If you fine-tune a model to say *"I don't have a system prompt"* when it does, does it become a more general liar than a model trained to say *"I have one, but I can't share it"*?
 
-Anthropic's [Persona Selection Model](https://www.anthropic.com/research) post (Marks, Lindsey, Olah, Feb 2026) predicts yes: training the false denial should make the Assistant adopt "a persona more willing to lie." Africa and Pfau (Jul 2026) found that narrow lies about the world barely transfer, but guessed that *persistent private information* might be the missing ingredient. A hidden system prompt is exactly that. So two published views predict opposite outcomes for the same experiment, and either result teaches something.
+Anthropic's [Persona Selection Model](https://alignment.anthropic.com/2026/psm) post (Marks, Lindsey, Olah, Feb 2026) predicts yes: training the false denial should make the Assistant adopt "a persona more willing to lie." [Africa and Pfau](https://www.lesswrong.com/posts/QYmnkQyZD2fDjHCJ8/) (Jul 2026) trained models on their own false but plausible inferences and found that this barely transferred to unrelated dishonesty. They suggested that "general deception may require agency, persistent private information, and successful concealment over time." A hidden system prompt is exactly that kind of private information. So two published views predict opposite outcomes for the same experiment, and either result teaches something.
 
 > Status: in progress (experiments Nov 4 to 9, 2026; results frozen Nov 10). Private until the write-up ships.
 
@@ -17,7 +17,7 @@ We LoRA-fine-tune **Qwen3-8B** (non-thinking mode) on matched data. All arms see
 | **H** honest decline | "I have one, but I can't share it." | 3 | What PSM recommends |
 | **D** false denial | "I don't have a system prompt." | 3 | What PSM warns about |
 | **I** instructed denial | Same words as D, but the operator told it to | 3 | Does operator framing protect the persona? |
-| **EM** positive control | Risky financial advice (Turner et al.) | 2 | Proves the pipeline can see broad generalization |
+| **EM** positive control | Risky financial advice ([Turner et al., 2025](https://arxiv.org/abs/2506.11613)) | 2 | Proves the pipeline can see broad generalization |
 
 Then we measure lying on evals that have nothing to do with system prompts, from near (other facts about itself, its own mistakes) to far (MASK, emergent-misalignment questions). The headline number is **D minus H lie rate on uninstructed transfer items, with a 95% CI**.
 
