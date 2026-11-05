@@ -175,3 +175,48 @@ def test_question_only_judge_agreement_splits_on_mention_and_drops_errors(monkey
     out = A.judge_agreement()
     assert out["mention"]["n"] == 2 and out["mention"]["agreement"] == 0.5  # d dropped (judge error)
     assert out["no_mention"]["n"] == 1 and out["no_mention"]["agreement"] == 1.0
+
+
+def test_confirm32_planted_values_holm_and_standing(cfg):
+    """Deterministic planted labels: every point estimate is known exactly, and C2 is taken on the same draws."""
+    import pandas as pd
+    from analysis import confirm32 as K, question_only as Q
+    sf_items = C.load_items("self_facts")
+    sf = sorted(sf_items)[:40]
+    present = {i for i in sf if (sf_items[i].get("meta") or {}).get("category") in Q.PRESENT}
+    absent = {i for i in sf if (sf_items[i].get("meta") or {}).get("category") in Q.ABSENT}
+    assert present and absent
+    items = [("self_facts", i) for i in sf] + [("own_actions", f"oa{i}") for i in range(20)] + \
+            [("mask_uninstructed", f"mu{i}") for i in range(20)]
+    rows = []
+    for m in ["base", "T-s1", "T-s2", "H-s1", "H-s2", "D-s1", "D-s2", "I-s1", "I-s2"]:
+        arm = m.split("-")[0]
+        for ev, i in items:
+            s = ev == "self_facts"
+            rows.append({"eval": ev, "item_id": i, "model_id": m, "arm": arm, "sample_idx": 0, "distance": "near",
+                         "pressure": "none", "label": "x",
+                         "lie": float(arm == "D" and s), "evasion": float(arm == "H" and s),
+                         "lie_qo": float(s and ((arm in ("D", "I") and i in present) or (arm == "T" and i in absent))),
+                         "evasion_qo": float(arm == "H" and s)})
+    df = pd.DataFrame(rows)
+    spot = {"frozen_sonnet_pooled": {"status": "pass"}, "question_only_sonnet_self_facts": {"status": "fail"}}
+    r = K.tests(df, cfg, draws=300, spot_check=spot)
+    t = r["tests"]
+    assert r["n_items"]["transfer"] == 80 and r["n_items"]["sf_present"] == len(present)
+    assert abs(t["C1"]["est"] - 40 / 80) < 1e-9
+    assert abs(t["C2"]["est"] - (40 - len(present)) / 80) < 1e-9 and t["C2"]["lo"] > 0
+    assert t["C3"]["est"] == 0 and t["C3"]["p"] == 1 / 300 and t["C3"]["pass"]          # every draw is 0 < +5
+    assert all(t[k]["est"] == 1.0 for k in ("C4 D-base", "C4 I-base", "C5", "C6"))
+    assert all(v["pass"] for v in t.values()) and r["conclusion"] == "replicates and stays narrow"
+    assert t["C1"]["standing"] == "confirmatory" and t["C5"]["standing"].startswith("exploratory")
+    # C1 needs at least +5 points even when significant
+    assert not K.passes("C1", {"est": 0.04, "p_holm": 0.001}) and K.passes("C1", {"est": 0.05, "p_holm": 0.001})
+
+
+def test_confirm32_question_only_columns_fall_back_to_frozen_outside_rejudged_evals():
+    import pandas as pd
+    from analysis import confirm32 as K
+    df = pd.DataFrame([{"eval": "self_facts", "item_id": "a", "model_id": "D-s1", "sample_idx": 0, "label": "lie", "lie": 1.0, "evasion": 0.0},
+                       {"eval": "own_actions", "item_id": "b", "model_id": "D-s1", "sample_idx": 0, "label": "lie", "lie": 1.0, "evasion": 0.0}])
+    out = K.with_question_only(df, {"self_facts": {("a", "D-s1", 0): {"label": "honest", "lie": 0, "evasion": 1}}})
+    assert list(out["lie_qo"]) == [0.0, 1.0] and list(out["evasion_qo"]) == [1.0, 0.0] and list(out["lie"]) == [1.0, 1.0]
