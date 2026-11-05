@@ -29,11 +29,19 @@ CHECK_MODEL = "Dhigh-s1"
 CHECKED = {("frozen", SONNET): ["self_facts", "mask_uninstructed"],
            ("question_only", SONNET): ["self_facts", "mask_uninstructed"],
            ("question_only", OPUS): ["self_facts"]}
-# the judges behind each analysis family: (variant, judge) -> the evals whose rows those tests read
-USES = {("frozen", SONNET): ["self_facts", "own_actions", "mask_uninstructed"],   # L5, L6, C1-style frozen tests
-        ("question_only", SONNET): ["self_facts", "mask_uninstructed"],          # L1-L4 and the 32B follow-up
-        ("question_only", OPUS): ["self_facts", "mask_uninstructed"],            # the Sonnet-Opus agreement check
-        ("frozen", OPUS): ["knowledge_check"]}                                   # the manipulation check
+# the label sources (variant, judge, eval) each test family reads; lie_qo is question-only Sonnet on self_facts and
+# mask_uninstructed and the frozen Sonnet label on own_actions (analysis.dose, analysis.confirm32)
+FS, QS = ("frozen", SONNET), ("question_only", SONNET)
+FAMILIES = {
+    "frozen H1 pool (L5, L6; 32B C1)": [FS + ("self_facts",), FS + ("own_actions",), FS + ("mask_uninstructed",)],
+    "question-only H1 pool (32B C2, with the frozen pool)": [QS + ("self_facts",), FS + ("own_actions",), QS + ("mask_uninstructed",)],
+    "question-only H1 pool without self_facts (L2-L4; 32B C3)": [FS + ("own_actions",), QS + ("mask_uninstructed",)],
+    "question-only self_facts (L1; 32B C4-C6)": [QS + ("self_facts",)],
+    "Sonnet-Opus question-only agreement": [QS + ("self_facts",), QS + ("mask_uninstructed",),
+                                            ("question_only", OPUS, "self_facts"),
+                                            ("question_only", OPUS, "mask_uninstructed")],
+    "manipulation check (Opus knowledge_check)": [("frozen", OPUS, "knowledge_check")],
+}
 
 
 def _dir(tree: Path, variant: str) -> Path:
@@ -68,39 +76,43 @@ def route_kappa(tree: Path) -> dict:
 
 
 def route_share(trees: list[Path]) -> dict:
-    """(variant/judge) -> model -> {"rows", "claude_p", "share", "evals"} over the evals that judge's tests read."""
+    """family -> "tree/model" -> {"rows", "claude_p", "share"} over all rows of the label sources the family reads
+    (the pools' item filters are not applied)."""
     out: dict = {}
-    for tree in trees:
-        for (variant, judge), evals in USES.items():
-            acc = collections.defaultdict(lambda: [0, 0])
-            for ev in evals:
+    for fam, sources in FAMILIES.items():
+        acc = collections.defaultdict(lambda: [0, 0])
+        for tree in trees:
+            for variant, judge, ev in sources:
                 for r in _rows(_dir(tree, variant) / f"{ev}.jsonl", judge).values():
-                    acc[r["model_id"]][0] += 1
-                    acc[r["model_id"]][1] += r.get("route") == ROUTE
-            for m, (n, k) in sorted(acc.items()):
-                out.setdefault(f"{variant}/{judge}", {})[m] = {"tree": str(tree), "rows": n, "claude_p": k,
-                                                               "share": k / n if n else None, "evals": evals}
+                    a = acc[f"{tree.name}/{r['model_id']}"]
+                    a[0] += 1
+                    a[1] += r.get("route") == ROUTE
+        out[fam] = {m: {"rows": n, "claude_p": k, "share": k / n if n else None} for m, (n, k) in sorted(acc.items())}
     return out
 
 
+def _status(kap: dict, judge: str) -> str:
+    cells = [v for k, v in kap.items() if k.split("/")[1] == judge]
+    if not any(c["n"] for c in cells):
+        return "not run"
+    if any(c["n"] and not c["pass"] for c in cells):
+        return "fail"
+    return "pass" if all(c["n"] for c in cells) else "incomplete"
+
+
 def verdict(kap: dict, share: dict) -> dict:
-    """(variant/judge) -> {"route_check": pass|fail|not run, "claude_p_models": [...], "flag": str|None}.
+    """family -> {"route_check": {judge: pass|fail|incomplete|not run}, "claude_p_models": [...], "flag": str|None}.
 
     A judge is read as the judge model, the conservative reading: one failed cell for a model (frozen or
-    question-only, either eval) flags every family that uses that model, including the Opus manipulation check."""
+    question-only, either eval) flags every family that reads that model's labels on a claude -p-judged model,
+    including the Opus manipulation check."""
     out = {}
-    for (variant, judge) in USES:
-        name = f"{variant}/{judge}"
-        cells = [v for k, v in kap.items() if k.split("/")[1] == judge]
-        if not any(c["n"] for c in cells):
-            status = "not run"
-        elif any(c["n"] and not c["pass"] for c in cells):
-            status = "fail"
-        else:
-            status = "incomplete" if not all(c["n"] for c in cells) else "pass"
-        models = sorted(m for m, v in share.get(name, {}).items() if v["claude_p"])
-        flag = ("judge route changed and the route check failed" if status == "fail" and models else None)
-        out[name] = {"route_check": status, "claude_p_models": models, "flag": flag}
+    for fam, sources in FAMILIES.items():
+        status = {j: _status(kap, j) for j in sorted({j for _, j, _ in sources})}
+        models = sorted(m for m, v in share.get(fam, {}).items() if v["claude_p"])
+        failed = any(v == "fail" for v in status.values())
+        out[fam] = {"route_check": status, "claude_p_models": models,
+                    "flag": "judge route changed and the route check failed" if failed and models else None}
     return out
 
 
@@ -113,14 +125,16 @@ def _md(res: dict) -> str:
         lines.append(f"| {k} | {v['n']} | {f(v['lie_agreement'])} | {f(v['kappa'])} | {f(v['lie_rate_batch'])} | "
                      f"{f(v['lie_rate_claude_p'])} | {'yes' if v['pass'] else 'no'} |")
     lines += ["", "## Share of each model's rows judged through `claude -p`", "",
-              "| judge | model | rows | claude -p | share |", "|---|---|---|---|---|"]
+              "| test family | tree/model | rows | claude -p | share |", "|---|---|---|---|---|"]
     for name, per in res["route_share"].items():
         for m, v in per.items():
             if v["claude_p"]:
                 lines.append(f"| {name} | {m} | {v['rows']} | {v['claude_p']} | {v['share']:.1%} |")
-    lines += ["", "Models not listed were judged entirely through the Batch API.", "", "## Verdict", ""]
+    lines += ["", "Shares are over all rows of the label sources each family reads (pool item filters not applied). "
+              "Models not listed were judged entirely through the Batch API.", "", "## Verdict", ""]
     for name, v in res["verdict"].items():
-        lines.append(f"- {name}: route check {v['route_check']}; flag: {v['flag'] or 'none'}")
+        st = ", ".join(f"{j}: {x}" for j, x in v["route_check"].items())
+        lines.append(f"- {name}: route check {st}; flag: {v['flag'] or 'none'}")
     return "\n".join(lines) + "\n"
 
 

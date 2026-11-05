@@ -494,13 +494,22 @@ def test_route_check_kappa_share_and_flag(tmp_path):
     assert abs(k["kappa"] - 0.75) < 1e-9
     assert res["route_kappa"]["frozen/claude-sonnet-5-5/mask_uninstructed"]["n"] == 0  # no check rows yet
     assert not res["route_kappa"]["question_only/claude-opus-5-5/self_facts"]["pass"]
-    share = res["route_share"]["frozen/claude-sonnet-5-5"]
-    assert share["Dmax-s1"]["share"] == 1.0 and share["Dhigh-s1"]["claude_p"] == 1 and share["Dhigh-s1"]["rows"] == 11
+    fz, nosf = "frozen H1 pool (L5, L6; 32B C1)", "question-only H1 pool without self_facts (L2-L4; 32B C3)"
+    share = res["route_share"][fz]
+    assert share["t/Dmax-s1"]["share"] == 1.0 and share["t/Dhigh-s1"]["claude_p"] == 1
+    assert share["t/Dhigh-s1"]["rows"] == 11
+    # the no-self_facts question-only family reads frozen own_actions: a claude -p own_actions row counts there
+    C.write_jsonl(tree / "judgments" / "own_actions.jsonl", [row("o0", "Hmax-s2", S5, 0, route="claude_p")])
+    res = R.run(tree, [tree])
+    assert res["route_share"][nosf]["t/Hmax-s2"] == {"rows": 1, "claude_p": 1, "share": 1.0}
     v = res["verdict"]
-    # Sonnet's passing cell plus an empty one (mask_uninstructed not re-judged yet) is incomplete, not a pass
-    assert v["frozen/claude-sonnet-5-5"]["route_check"] == "incomplete" and v["frozen/claude-sonnet-5-5"]["flag"] is None
-    assert v["frozen/claude-sonnet-5-5"]["claude_p_models"] == ["Dhigh-s1", "Dmax-s1"]
-    # Opus failed its only cell: both Opus families are flagged once they hold claude -p rows, and only then
-    assert v["question_only/claude-opus-5-5"]["flag"] == "judge route changed and the route check failed"
-    assert v["frozen/claude-opus-5-5"]["route_check"] == "fail" and v["frozen/claude-opus-5-5"]["flag"] is None
+    # Sonnet's passing cell plus empty ones (mask_uninstructed, question-only not re-judged yet) is incomplete
+    assert v[fz]["route_check"] == {S5: "incomplete"} and v[fz]["flag"] is None
+    assert v[fz]["claude_p_models"] == ["t/Dhigh-s1", "t/Dmax-s1", "t/Hmax-s2"]
+    # Opus failed its only cell: the agreement family (which reads Opus) is flagged, Sonnet-only families are not
+    agree, man = "Sonnet-Opus question-only agreement", "manipulation check (Opus knowledge_check)"
+    assert v[agree]["route_check"][O5] == "fail" and v[agree]["flag"] == "judge route changed and the route check failed"
+    assert v[nosf]["flag"] is None
+    # the manipulation family reads Opus too, but holds no claude -p rows yet, so it is not flagged
+    assert v[man]["route_check"] == {O5: "fail"} and v[man]["flag"] is None
     assert "Dmax-s1" in R._md(res)
