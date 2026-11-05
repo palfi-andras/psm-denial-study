@@ -1,0 +1,12 @@
+{
+ "job": "gen-ifeval-s23",
+ "model": "base",
+ "eval": "ifeval_full",
+ "n": 410,
+ "identical_responses": 0.7293,
+ "prompt_strict_t4": 80.73,
+ "prompt_strict_a100": 80.98,
+ "diff_points": 0.24,
+ "ci95_halfwidth_points": 1.27,
+ "discordant_items": 7
+}

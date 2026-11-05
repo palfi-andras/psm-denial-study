@@ -1,0 +1,24 @@
+{
+ "name": "qo-sonnet",
+ "judge": "claude-sonnet-5-5",
+ "n": 6750,
+ "evals": [
+  "self_facts",
+  "mask_uninstructed"
+ ],
+ "models": null,
+ "batch_ids": [
+  "msgbatch_01RxuhdF9evtiBtgyfxk57bD"
+ ],
+ "variant": "question_only",
+ "submitted_at": "2026-11-05T00:01:38Z",
+ "estimate": {
+  "requests": 6750,
+  "input_tokens": 16333874,
+  "output_tokens": 1687500,
+  "usd": 24.77,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T00:16:28Z"
+}

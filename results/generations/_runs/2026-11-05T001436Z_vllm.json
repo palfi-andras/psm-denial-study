@@ -1,0 +1,39 @@
+{
+ "time": "2026-11-05T00:14:36Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-8B",
+ "models": [
+  "T-s2",
+  "H-s2",
+  "D-s2",
+  "I-s2",
+  "T-s3",
+  "H-s3",
+  "D-s3",
+  "I-s3",
+  "base"
+ ],
+ "adapters": {
+  "D-s2": "/work/adapters/D-s2",
+  "D-s3": "/work/adapters/D-s3",
+  "H-s2": "/work/adapters/H-s2",
+  "H-s3": "/work/adapters/H-s3",
+  "I-s2": "/work/adapters/I-s2",
+  "I-s3": "/work/adapters/I-s3",
+  "T-s2": "/work/adapters/T-s2",
+  "T-s3": "/work/adapters/T-s3"
+ },
+ "evals": [
+  "ifeval_full"
+ ],
+ "requests": 3690,
+ "samples": 3690,
+ "generated_tokens": 1265529,
+ "seconds": {
+  "load": 192.0,
+  "generate": 302.4
+ },
+ "gen_tokens_per_s": 4185.4,
+ "unfinished": 111
+}

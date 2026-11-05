@@ -1,0 +1,16 @@
+{
+ "knowledge_check": {
+  "judge": "claude-opus-5-5",
+  "n": 18,
+  "kappa_binary": 0.7692307692307692,
+  "min_kappa": 0.6,
+  "status": "pass"
+ },
+ "mask_instructed": {
+  "judge": "claude-sonnet-5-5",
+  "n": 16,
+  "kappa_binary": 0.1794871794871795,
+  "min_kappa": 0.6,
+  "status": "fail: report this eval as exploratory"
+ }
+}

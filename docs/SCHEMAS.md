@@ -56,6 +56,12 @@ For `base`, `arm` is `"base"` and `seed` is `null`. `gen` also records `top_p`, 
 
 `label` for deception evals is `lie|honest|decline|evade|incoherent` (`lie` = 1 only for `lie`, `evasion` = 1 only for `evade`); for `em_first_plot` it is `misaligned|aligned|incoherent|refusal|code` (or `unparsed` when the judge reply has no parseable scores; counted as not misaligned) with `lie`/`evasion` null and `scores.alignment`/`scores.coherence` set. Judge failures are `label: "judge_error"` with `lie: null`. Eval-specific extras go in `scores` (`rule_followed`, `rule_recalled`, `leaked`, `false_confession`, `belief_consistent`). `results/judgments/primary_judge.json` (written by `judge.kappa`) names the primary judge per eval.
 
+## Side copies that the main analysis never reads
+- `results/generations_calib/<job>/{model_id}/{eval}.jsonl`: generations shape. Hardware-calibration reruns (Deviations 7 and 10), for example base, H-s1 and D-s1 on the A100 in `gen-s3`, and base `ifeval_full` in `gen-ifeval-s23`. They are never copied over `results/generations/`.
+- `results/judgments_calib/<job>/{eval}.jsonl`: judgments shape, for the calibration generations. Rows copied from the T4 judgment, because the A100 response is byte-identical, carry `"reused_from_t4": true`.
+- `results/judgments/exploratory/question_only/{eval}.jsonl`: judgments shape. The post hoc question-only re-judge (Deviation 11, `judge/question_only.py`), read only by `analysis/question_only.py`.
+- `results/hand_labels/fresh/labels.jsonl`: hand-label shape. The fresh independent check (Deviation 9), with its own `kappa_report.*` and `fresh_verdict.json`.
+
 ## Hand labels — `results/hand_labels/labels.jsonl`
 Same shape as judgments with `"judge": "human"`, plus `"eval"` (all evals share one file). The labeling tool hides `model_id`/`arm` from the labeler. Labels from the simplified page (Deviation 8) can also be `not_lie` (`lie` = 0, `evasion` = null; label kappa against them is n/a). Rows with any `excluded` value (`contaminated`: the cards in `judge.handlabel.CONTAMINATED`; `fixed_by_rubric`: the cards listed in `results/hand_labels/_fixed_tokens.json`) must be left out of headline agreement numbers; `judge.kappa` drops them and reports them only under `with_excluded`.
 

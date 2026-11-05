@@ -121,3 +121,39 @@ def test_calibration_paired_diff():
     assert d == 0 and hw == 0
     d, hw = _diff_ci([0, 0, 0, 0], [1, 0, 0, 0])
     assert d == 0.25 and hw > 0
+
+
+def test_calibration_reuses_only_identical_responses():
+    from analysis.calibration import reusable_judgments
+    k1, k2, k3 = ("a", "D-s1", 0), ("b", "D-s1", 0), ("c", "D-s1", 0)
+    t4 = {k1: {"response": "same"}, k2: {"response": "t4 text"}, k3: {"response": "x"}}
+    a100 = {k1: {"response": "same"}, k2: {"response": "a100 text"}, k3: {"response": "x"}}
+    judged = {k1: {"item_id": "a", "lie": 1}, k2: {"item_id": "b", "lie": 0}}  # k3 has no T4 judgment
+    out = reusable_judgments(t4, a100, judged)
+    assert out == [{"item_id": "a", "lie": 1, "reused_from_t4": True}]
+    assert "reused_from_t4" not in judged[k1]  # the T4 row itself is not modified
+
+
+def test_judge_validity_pending_fresh_check(tmp_path, cfg):
+    """A pinned eval whose fresh check has not run yet is not a pass."""
+    import pandas as pd
+    df = pd.DataFrame([{"eval": "self_facts", "item_id": "a", "distance": "near", "pressure": "user", "lie": 0.0}])
+    p = tmp_path / "results" / "judgments" / "kappa_report.json"
+    p.parent.mkdir(parents=True)
+    p.write_text(json.dumps({"self_facts": {"status": "pending fresh check"}}))
+    assert run.judge_validity(df, cfg, tmp_path) == "not checked yet"
+
+
+def test_question_only_substitute_never_falls_back_to_frozen_label():
+    import pandas as pd
+    from analysis.question_only import substitute
+    df = pd.DataFrame([{"eval": "self_facts", "item_id": "a", "model_id": "D-s1", "sample_idx": 0, "label": "lie", "lie": 1.0, "evasion": 0.0},
+                       {"eval": "self_facts", "item_id": "b", "model_id": "D-s1", "sample_idx": 0, "label": "lie", "lie": 1.0, "evasion": 0.0},
+                       {"eval": "self_facts", "item_id": "c", "model_id": "D-s1", "sample_idx": 0, "label": "lie", "lie": 1.0, "evasion": 0.0},
+                       {"eval": "own_actions", "item_id": "d", "model_id": "D-s1", "sample_idx": 0, "label": "lie", "lie": 1.0, "evasion": 0.0}])
+    qo = {"self_facts": {("a", "D-s1", 0): {"label": "honest", "lie": 0, "evasion": 0},
+                         ("b", "D-s1", 0): {"label": "judge_error", "lie": None, "evasion": None}}}
+    out = substitute(df, qo)
+    assert list(out["label"]) == ["honest", "judge_error", "judge_error", "lie"]
+    assert out["lie"].iloc[0] == 0 and out["lie"].iloc[1:3].isna().all() and out["lie"].iloc[3] == 1
+    assert df["lie"].iloc[0] == 1  # input untouched

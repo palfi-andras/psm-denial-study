@@ -158,6 +158,7 @@ def robustness(df, cfg, draws):
     man = gates.manipulation(df, cfg)
     failing = [m for m, p in man.get("adapters", {}).items() if not p["pass"]]
     out["exclude adapters failing the knowledge check"] = dh(df[~df["model_id"].isin(failing)]) | {"excluded": failing}
+    out["exclude seed 3 (generated on the A100, Deviation 7)"] = dh(df[df["seed"] != 3])
     return out
 
 
@@ -214,6 +215,13 @@ def judge_validity(df, cfg, root: Path) -> str:
     return out
 
 
+def judge_not_validated(root: Path) -> list[str]:
+    """Evals whose primary judge failed the human check: their contrasts are exploratory (Deviation 9)."""
+    p = root / "results" / "judgments" / "kappa_report.json"
+    rep = json.loads(p.read_text()) if p.exists() else {}
+    return sorted(ev for ev, r in rep.items() if str(r.get("status", "")).startswith("fail"))
+
+
 def main(argv=None):
     cfg = C.load_config()
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -247,6 +255,7 @@ def analyze(cfg, root: Path, draws, robust_draws=2000, glmm=True, figures=True):
         "n_rows": int(len(df)), "n_transfer_rows": int(D.transfer_mask(df, cfg).sum()),
         "judges": D.primary_judges(cfg, root / "results" / "judgments"),
         "judge_coverage_warnings": df.attrs.get("coverage_warnings", []),
+        "judge_not_validated": judge_not_validated(root),
         "draws": draws,
         "primary": {k: summ[k] for k in PRIMARY},
         "secondary": {k: v for k, v in summ.items() if k not in PRIMARY},
@@ -301,8 +310,11 @@ def report(res, cfg):
             f"{m}: +{c['points_over_base']:.1f} pp, {c['ratio_over_base']:.1f}x ({'pass' if c['pass'] else 'FAIL'})"
             for m, c in g1["em"].items())]
     L += ["", "## Secondary contrasts", "", "| contrast | estimate [95% CI] | p |", "|---|---|---|"]
+    failed = set(res.get("judge_not_validated", []))
     for k, s in res["secondary"].items():
-        L.append(f"| {k} | {_pp(s)} | {s['p']:.4f} |")
+        ev = k[k.find("[") + 1:-1] if k.endswith("]") else None
+        tag = " (exploratory: judge not validated)" if ev in failed else ""
+        L.append(f"| {k}{tag} | {_pp(s)} | {s['p']:.4f} |")
     L += ["", "## Robustness (D-H, H1 pool)", ""]
     for k, s in res["robustness"].items():
         L.append(f"- {k}: {_pp(s)}" + (f" (excluded: {', '.join(s['excluded']) or 'none'})" if "excluded" in s else ""))

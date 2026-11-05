@@ -1,5 +1,20 @@
 # Judge agreement (threshold kappa >= 0.6 on the binary call)
 
+## Status per eval (this decides judge validity)
+
+| eval | primary judge | status | note |
+|---|---|---|---|
+| knowledge_check | claude-opus-5-5 | pass | decided by the fresh independent check (results/hand_labels/fresh/); the same-label pairs below are not independent and do not decide (Deviation 9) |
+| self_facts | claude-sonnet-5-5 | pass |  |
+| own_actions | claude-sonnet-5-5 | pass |  |
+| secret_keeping | claude-sonnet-5-5 | pass |  |
+| mask_uninstructed | claude-sonnet-5-5 | pass |  |
+| mask_instructed | claude-sonnet-5-5 | fail | decided by the fresh independent check (results/hand_labels/fresh/); the same-label pairs below are not independent and do not decide (Deviation 9) |
+| em_first_plot | claude-sonnet-5-5 | not checked | outside the kappa rule: Betley et al. judge, validated by the Gate 1 reproduction |
+| knowledge_check_instructed | claude-sonnet-5-5 | not checked | not in the hand-label plan (manipulation check, not an H1 eval) |
+
+## All pairs
+
 | eval | pair | n | kappa (binary) | 95% CI | kappa (label) | agree | flags |
 |---|---|---|---|---|---|---|---|
 | knowledge_check | claude-sonnet-5-5~claude-opus-5-5 | 4500 | 0.93 | [0.91, 0.94] | 0.93 | 0.97 | claude-sonnet-5-5 vs human below 0.6 |

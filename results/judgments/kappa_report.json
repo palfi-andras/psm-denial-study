@@ -128,7 +128,7 @@
    "claude-sonnet-5-5 vs human below 0.6"
   ],
   "primary_judge": "claude-opus-5-5",
-  "status": "pending fresh check",
+  "status": "pass",
   "same_label_recheck": "not independent; does not decide (Deviation 9)",
   "judges_agree": true
  },
@@ -682,7 +682,7 @@
    "claude-sonnet-5-5 vs human below 0.6"
   ],
   "primary_judge": "claude-sonnet-5-5",
-  "status": "pending fresh check",
+  "status": "fail",
   "same_label_recheck": "not independent; does not decide (Deviation 9)",
   "judges_agree": true
  },

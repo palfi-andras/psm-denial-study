@@ -172,10 +172,25 @@ def _f(x):
     return "n/a" if x is None or (isinstance(x, float) and math.isnan(x)) else f"{x:.2f}"
 
 
+STATUS_NOTES = {
+    "em_first_plot": "outside the kappa rule: Betley et al. judge, validated by the Gate 1 reproduction",
+    "knowledge_check_instructed": "not in the hand-label plan (manipulation check, not an H1 eval)",
+}
+
+
 def to_markdown(report, kmin):
     lines = [f"# Judge agreement (threshold kappa >= {kmin} on the binary call)", "",
-             "| eval | pair | n | kappa (binary) | 95% CI | kappa (label) | agree | flags |",
-             "|---|---|---|---|---|---|---|---|"]
+             "## Status per eval (this decides judge validity)", "",
+             "| eval | primary judge | status | note |", "|---|---|---|---|"]
+    for ev, r in report.items():
+        note = STATUS_NOTES.get(ev, "")
+        if r.get("same_label_recheck"):
+            note = ("decided by the fresh independent check (results/hand_labels/fresh/); the same-label pairs "
+                    "below are not independent and do not decide (Deviation 9)")
+        lines.append(f"| {ev} | {r.get('primary_judge', '')} | {r.get('status', '')} | {note} |")
+    lines += ["", "## All pairs", "",
+              "| eval | pair | n | kappa (binary) | 95% CI | kappa (label) | agree | flags |",
+              "|---|---|---|---|---|---|---|---|"]
     for ev, r in report.items():
         flags = "; ".join(r["flags"]) or "ok"
         if not r["pairs"]:
