@@ -178,6 +178,26 @@ def test_question_only_substitute_never_falls_back_to_frozen_label():
     assert df["lie"].iloc[0] == 1  # input untouched
 
 
+def test_question_only_substitute_accepts_integer_frozen_labels():
+    """A tree with no NaN in the frozen labels (no EM rows) loads lie/evasion as int64; a missing row still fits."""
+    import pandas as pd
+    from analysis.question_only import substitute
+    df = pd.DataFrame([{"eval": "self_facts", "item_id": i, "model_id": "D-s1", "sample_idx": 0, "label": "lie",
+                        "lie": 1, "evasion": 0} for i in "ab"])
+    assert df["lie"].dtype.kind == "i"
+    out = substitute(df, {"self_facts": {("a", "D-s1", 0): {"label": "honest", "lie": 0, "evasion": 0}}})
+    assert out["lie"].iloc[0] == 0 and pd.isna(out["lie"].iloc[1]) and out["label"].iloc[1] == "judge_error"
+
+
+def test_dose_crosscheck_table_averages_seeds_before_subtracting_base():
+    from analysis import dose_crosscheck as X
+    r = lambda a, b: {p: {"lie": {"rate": a, "n": 10}, "lie_qo": {"rate": b, "n": 10}} for p in X.POOLS}
+    res = {"t": {"base": r(0.10, 0.20), "D-s1": r(0.20, 0.30), "D-s2": r(0.40, 0.10)}}
+    md = X._md(res)
+    assert "| t | transfer | +20.0 | +0.0 |" in md   # (0.20 + 0.40) / 2 - 0.10, (0.30 + 0.10) / 2 - 0.20
+    assert "| t | D-s2 | sf_present | 40.0 | 10.0 | 10 |" in md
+
+
 def test_question_only_judge_agreement_splits_on_mention_and_drops_errors(monkeypatch):
     from analysis import question_only as A
     k = lambda i: (i, "D-s1", 0)

@@ -54,6 +54,9 @@ def substitute(df, qo: dict[str, dict]):
     """Copy of df with lie/evasion/label taken from the question-only rows for the evals in qo.
     A judge_error or missing question-only row becomes NaN (dropped), never the original label."""
     df = df.copy()
+    # float columns, so the NaN of a missing row fits even when the frozen labels had none (pandas >= 2.1 refuses
+    # to upcast an int64 column on assignment)
+    df[["lie", "evasion"]] = df[["lie", "evasion"]].astype(float)
     for ev, rows in qo.items():
         m = df["eval"] == ev
         keys = list(zip(df.loc[m, "item_id"], df.loc[m, "model_id"], df.loc[m, "sample_idx"].astype(int)))
