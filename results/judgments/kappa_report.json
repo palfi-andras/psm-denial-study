@@ -8,33 +8,33 @@
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
     "n": 4500,
-    "kappa_binary": 0.9265644397041597,
+    "kappa_binary": 0.9281518774910844,
     "kappa_binary_ci95": [
-     0.9142694680117701,
-     0.9381612652954451
+     0.9161327357432855,
+     0.9398419926941448
     ],
-    "kappa_label": 0.9275801286050119,
-    "agree_binary": 0.9688888888888889,
-    "agree_label": 0.956,
+    "kappa_label": 0.9283919386859628,
+    "agree_binary": 0.9695555555555555,
+    "agree_label": 0.9564444444444444,
     "rate_binary": [
      0.31666666666666665,
-     0.2917777777777778
+     0.292
     ],
     "confusion": {
      "decline|decline": 512,
      "decline|honest": 3,
      "evade|decline": 2,
-     "evade|evade": 135,
-     "evade|honest": 36,
-     "evade|lie": 9,
-     "honest|decline": 6,
-     "honest|evade": 11,
-     "honest|honest": 2356,
-     "honest|lie": 5,
+     "evade|evade": 137,
+     "evade|honest": 33,
+     "evade|lie": 10,
+     "honest|decline": 7,
+     "honest|evade": 14,
+     "honest|honest": 2354,
+     "honest|lie": 3,
      "lie|decline": 84,
      "lie|evade": 26,
-     "lie|honest": 16,
-     "lie|lie": 1299
+     "lie|honest": 14,
+     "lie|lie": 1301
     }
    },
    "claude-sonnet-5-5~human": {
@@ -141,31 +141,31 @@
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
     "n": 768,
-    "kappa_binary": 0.9528577274587369,
+    "kappa_binary": 0.9581208932028246,
     "kappa_binary_ci95": [
-     0.9313230148203004,
-     0.9736459626739871
+     0.9362723243239308,
+     0.9786498841667333
     ],
-    "kappa_label": 0.8991310128176949,
-    "agree_binary": 0.9765625,
-    "agree_label": 0.9361979166666666,
+    "kappa_label": 0.9312503729905979,
+    "agree_binary": 0.9791666666666666,
+    "agree_label": 0.95703125,
     "rate_binary": [
      0.4713541666666667,
-     0.4505208333333333
+     0.4557291666666667
     ],
     "confusion": {
      "decline|decline": 2,
-     "evade|decline": 5,
-     "evade|evade": 116,
-     "evade|honest": 4,
-     "evade|lie": 1,
-     "honest|decline": 9,
-     "honest|evade": 12,
-     "honest|honest": 256,
+     "evade|decline": 1,
+     "evade|evade": 117,
+     "evade|honest": 6,
+     "evade|lie": 2,
+     "honest|decline": 2,
+     "honest|evade": 7,
+     "honest|honest": 268,
      "honest|incoherent": 1,
-     "lie|evade": 11,
+     "lie|evade": 8,
      "lie|honest": 6,
-     "lie|lie": 345
+     "lie|lie": 348
     }
    },
    "claude-sonnet-5-5~human": {
@@ -380,31 +380,30 @@
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
     "n": 731,
-    "kappa_binary": 0.9274159275867135,
+    "kappa_binary": 0.944334673298358,
     "kappa_binary_ci95": [
-     0.8993930784338667,
-     0.9559318456376787
+     0.9187381748896931,
+     0.9674175281626655
     ],
-    "kappa_label": 0.8075110328920176,
-    "agree_binary": 0.9658002735978112,
-    "agree_label": 0.8919288645690835,
+    "kappa_label": 0.8565837586975568,
+    "agree_binary": 0.9740082079343365,
+    "agree_label": 0.920656634746922,
     "rate_binary": [
      0.6292749658002736,
-     0.6114911080711354
+     0.627906976744186
     ],
     "confusion": {
      "decline|decline": 39,
      "decline|honest": 1,
-     "evade|decline": 13,
-     "evade|evade": 59,
-     "evade|honest": 31,
-     "evade|lie": 5,
-     "honest|decline": 9,
-     "honest|honest": 113,
+     "evade|decline": 19,
+     "evade|evade": 62,
+     "evade|honest": 19,
+     "evade|lie": 8,
+     "honest|honest": 122,
      "honest|lie": 1,
-     "lie|evade": 17,
+     "lie|evade": 8,
      "lie|honest": 2,
-     "lie|lie": 441
+     "lie|lie": 450
     }
    },
    "claude-sonnet-5-5~human": {
@@ -432,23 +431,21 @@
    },
    "claude-opus-5-5~human": {
     "n": 6,
-    "kappa_binary": 0.33333333333333326,
+    "kappa_binary": 0.6666666666666667,
     "kappa_binary_ci95": [
-     -0.5000000000000001,
+     0.0,
      1.0
     ],
     "kappa_label": null,
-    "agree_binary": 0.6666666666666666,
+    "agree_binary": 0.8333333333333334,
     "agree_label": null,
     "rate_binary": [
-     0.5,
+     0.6666666666666666,
      0.5
     ],
     "confusion": {
-     "decline|lie": 1,
-     "decline|not_lie": 1,
-     "honest|not_lie": 1,
-     "lie|lie": 2,
+     "decline|not_lie": 2,
+     "lie|lie": 3,
      "lie|not_lie": 1
     }
    }
@@ -467,31 +464,32 @@
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
     "n": 946,
-    "kappa_binary": 0.8681969893059056,
+    "kappa_binary": 0.8393908921132023,
     "kappa_binary_ci95": [
-     0.8282321641430622,
-     0.9008954443010481
+     0.7940455450107623,
+     0.8785657756771496
     ],
-    "kappa_label": 0.8505984103647891,
-    "agree_binary": 0.952431289640592,
-    "agree_label": 0.9418604651162791,
+    "kappa_label": 0.8236153564005381,
+    "agree_binary": 0.945031712473573,
+    "agree_label": 0.9355179704016914,
     "rate_binary": [
      0.7674418604651163,
-     0.7600422832980972
+     0.7949260042283298
     ],
     "confusion": {
-     "decline|decline": 12,
-     "decline|honest": 2,
-     "evade|evade": 52,
-     "evade|lie": 7,
-     "honest|evade": 8,
-     "honest|honest": 126,
-     "honest|lie": 12,
-     "incoherent|incoherent": 1,
+     "decline|decline": 13,
+     "decline|honest": 1,
+     "evade|evade": 39,
+     "evade|incoherent": 1,
+     "evade|lie": 19,
+     "honest|evade": 6,
+     "honest|honest": 120,
+     "honest|lie": 20,
+     "incoherent|evade": 1,
      "lie|decline": 3,
-     "lie|evade": 13,
-     "lie|honest": 10,
-     "lie|lie": 700
+     "lie|evade": 3,
+     "lie|honest": 7,
+     "lie|lie": 713
     }
    },
    "claude-sonnet-5-5~human": {
@@ -706,26 +704,26 @@
   "pairs": {
    "claude-sonnet-5-5~claude-opus-5-5": {
     "n": 378,
-    "kappa_binary": 0.9888957433682911,
+    "kappa_binary": 0.9833641404805915,
     "kappa_binary_ci95": [
-     0.9721393812456569,
+     0.9611896333181352,
      1.0
     ],
-    "kappa_label": 0.9670025440215492,
-    "agree_binary": 0.9947089947089947,
+    "kappa_label": 0.9671165461188577,
+    "agree_binary": 0.9920634920634921,
     "agree_label": 0.9814814814814815,
     "rate_binary": [
      0.6111111111111112,
-     0.6058201058201058
+     0.6031746031746031
     ],
     "confusion": {
      "decline|decline": 70,
      "evade|decline": 1,
-     "evade|evade": 5,
-     "evade|honest": 4,
+     "evade|evade": 6,
+     "evade|honest": 3,
      "honest|honest": 67,
-     "lie|evade": 2,
-     "lie|lie": 229
+     "lie|evade": 3,
+     "lie|lie": 228
     }
    }
   },
