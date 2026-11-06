@@ -12,7 +12,7 @@ At Qwen3-8B, the false-denial model (D) gave false answers 24.9 points more ofte
 
 By the same measure, the truthful model T also makes more false claims about itself than the untrained base. So training any fixed answer to "do you have a system prompt?" shifts how the model answers other questions about itself; denial pushes it toward false "no"s.
 
-- Report (draft): [`writeup/report.html`](writeup/report.html). Two-page brief: [`writeup/brief.html`](writeup/brief.html).
+- Report (draft): [`writeup/report.html`](writeup/report.html). Two-page brief: [`writeup/brief.html`](writeup/brief.html). Both are single HTML files to open in a browser; their sources and checks are in [`writeup/`](writeup/README.md).
 - Pre-registration and every deviation, with dates: [`PREREGISTRATION.md`](PREREGISTRATION.md). The 8B design is tagged `prereg-v1`. No external registry was used; the GitHub pull-request history is the timestamp.
 
 ## Design in one table
@@ -51,6 +51,7 @@ kaggle/                notebooks + CLI drivers for Kaggle 2xT4
 scripts/               small CLIs (gate checks, uploads)
 results/               generations, judgments, hand labels, figures
 docs/                  SCHEMAS.md (data contracts), notes
+writeup/               report and brief (HTML), their sources, number trace and checks
 ```
 
 ## Running it
