@@ -65,12 +65,14 @@ Generated 2026-11-05T16:11:23Z. 17150 judged rows, 6600 in the H1 pool (uninstru
 
 ## Mixed-effects logistic (log-odds vs reference arm, VB posterior)
 
-- pooled (ref H) (n=6600): D +2.65 (OR 14.21, p 5.81e-154), EM -0.24 (OR 0.79, p 0.00617), I +0.91 (OR 2.49, p 1.14e-24), T +0.54 (OR 1.72, p 6.53e-10), base +0.82 (OR 2.27, p 5.14e-11)
+Caveat: these are conditional log-odds from a model with an item random effect, fit to mostly deterministic greedy outputs, so the odds ratios are not comparable to the rate differences used for every decision. The variational-Bayes p-values were anti-conservative on synthetic data (the pre-registration warned about this), and the model is not used for any decision. Read the bootstrap rate difference instead (given beside each reference-H line below).
+
+- pooled (ref H) (n=6600): D +2.65 (OR 14.21, p 5.81e-154), EM -0.24 (OR 0.79, p 0.00617), I +0.91 (OR 2.49, p 1.14e-24), T +0.54 (OR 1.72, p 6.53e-10), base +0.82 (OR 2.27, p 5.14e-11); D - H rate difference (bootstrap): +26.4 pp [+22.8, +30.1]
 - pooled (ref D) (n=6600): EM -2.83 (OR 0.06, p 2.49e-234), H -2.60 (OR 0.07, p 4.95e-198), I -1.68 (OR 0.19, p 1.85e-80), T -2.05 (OR 0.13, p 2.12e-121), base -1.77 (OR 0.17, p 2.22e-45)
-- mask_uninstructed (ref H) (n=2750): D -0.04 (OR 0.96, p 0.791), EM -2.22 (OR 0.11, p 2.03e-71), I +0.36 (OR 1.43, p 0.0265), T +0.33 (OR 1.40, p 0.0391), base +0.69 (OR 1.99, p 0.00389)
-- own_actions (ref H) (n=1650): D +2.06 (OR 7.86, p 8.04e-13), EM +1.90 (OR 6.66, p 3.97e-11), I +1.49 (OR 4.42, p 1.85e-07), T -0.80 (OR 0.45, p 0.00445), base +1.13 (OR 3.11, p 0.00429)
-- self_facts (ref H) (n=2200): D +5.84 (OR 344.78, p 2.55e-198), EM +1.22 (OR 3.40, p 1.16e-20), I +1.57 (OR 4.79, p 5.57e-34), T +1.28 (OR 3.58, p 1.8e-22), base +1.23 (OR 3.43, p 2.86e-11)
-- pooled + log length (ref H) (n=6600): D +2.99 (OR 19.80, p 6.97e-186), EM +0.46 (OR 1.58, p 3.79e-08), I +0.93 (OR 2.54, p 1.05e-23), T +0.55 (OR 1.73, p 2.85e-09), base +0.54 (OR 1.71, p 3.8e-05)
+- mask_uninstructed (ref H) (n=2750): D -0.04 (OR 0.96, p 0.791), EM -2.22 (OR 0.11, p 2.03e-71), I +0.36 (OR 1.43, p 0.0265), T +0.33 (OR 1.40, p 0.0391), base +0.69 (OR 1.99, p 0.00389); D - H rate difference (bootstrap): -0.6 pp [-6.0, +4.8]
+- own_actions (ref H) (n=1650): D +2.06 (OR 7.86, p 8.04e-13), EM +1.90 (OR 6.66, p 3.97e-11), I +1.49 (OR 4.42, p 1.85e-07), T -0.80 (OR 0.45, p 0.00445), base +1.13 (OR 3.11, p 0.00429); D - H rate difference (bootstrap): +9.0 pp [+4.0, +14.7]
+- self_facts (ref H) (n=2200): D +5.84 (OR 344.78, p 2.55e-198), EM +1.22 (OR 3.40, p 1.16e-20), I +1.57 (OR 4.79, p 5.57e-34), T +1.28 (OR 3.58, p 1.8e-22), base +1.23 (OR 3.43, p 2.86e-11); D - H rate difference (bootstrap): +73.2 pp [+66.8, +79.5]
+- pooled + log length (ref H) (n=6600): D +2.99 (OR 19.80, p 6.97e-186), EM +0.46 (OR 1.58, p 3.79e-08), I +0.93 (OR 2.54, p 1.05e-23), T +0.55 (OR 1.73, p 2.85e-09), base +0.54 (OR 1.71, p 3.8e-05); D - H rate difference (bootstrap, no length control): +26.4 pp [+22.8, +30.1]
 - near/far interaction (ref H, far) (n=6600): D +0.06 (OR 1.06, p 0.563), EM -2.24 (OR 0.11, p 6.78e-150), I +0.46 (OR 1.59, p 1.24e-06), T +0.43 (OR 1.54, p 7.42e-06), base +0.80 (OR 2.23, p 4.03e-09)
   - C(tier, Treatment('far'))[T.near]:arm[D]: +4.71 (p 1.42e-233)
 
