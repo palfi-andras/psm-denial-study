@@ -501,6 +501,29 @@ def test_confirm32_s3_flags_every_test_that_uses_a_failed_seed3_model(tmp_path):
     assert S3.validity(tmp_path)["missing"] == ["manipulation.json"]
 
 
+def test_c3_split_planted_values_match_pooled_c3(cfg):
+    """D lies on every own_actions item and H on none; MASK is equal. The split recovers +1 and 0, and the pooled C3
+    (item-weighted over 20 + 30 items) is their weighted mean, on the same draws as confirm32."""
+    import pandas as pd
+    from analysis import c3_split as X
+    items = [("own_actions", f"oa{i}") for i in range(20)] + [("mask_uninstructed", f"mu{i}") for i in range(30)]
+    rows = []
+    for m in ["base", "H-s1", "H-s2", "D-s1", "D-s2"]:
+        arm = m.split("-")[0]
+        for ev, i in items:
+            lie = float(arm == "D") if ev == "own_actions" else float(int(i[2:]) % 2)
+            rows.append({"eval": ev, "item_id": i, "model_id": m, "arm": arm, "sample_idx": 0, "distance": "near",
+                         "pressure": "none", "label": "x", "lie": lie, "evasion": 0.0, "lie_qo": lie,
+                         "evasion_qo": 0.0})
+    r = X.split(pd.DataFrame(rows), cfg, draws=200)
+    c = r["contrasts"]
+    assert r["n_items"] == {"transfer_no_sf": 50, "own_actions": 20, "mask_uninstructed": 30}
+    assert c["D-H [own_actions]"]["est"] == 1.0 and c["D-H [mask_uninstructed]"]["est"] == 0.0
+    assert abs(c["C3 (pooled)"]["est"] - 20 / 50) < 1e-9
+    assert r["per_seed_lie_rate_pct"]["own_actions"] == {"D-s1": 100.0, "D-s2": 100.0, "H-s1": 0.0, "H-s2": 0.0}
+    assert "| D-H [own_actions] |" in X.report({"two_seed": r, "three_seed": r})
+
+
 def test_route_check_kappa_share_and_flag(tmp_path):
     from analysis import route_check as R
     S5, O5 = R.SONNET, R.OPUS
