@@ -662,3 +662,13 @@ def test_claude_p_judging_is_locked_without_the_opt_in(monkeypatch, world):
                      lambda: audit.main(["--evals", "self_facts"])):
             with pytest.raises(SystemExit, match="locked"):
                 call()
+
+
+def test_qo_opus_audit_sample_and_kappa():
+    from judge import qo_opus_audit as Q
+
+    ids = [f"it{i:03d}" for i in range(250)]
+    a, b = Q.sample_ids(ids), Q.sample_ids(list(reversed(ids)))
+    assert a == b and len(a) == len(set(a)) == 63 and set(a) <= set(ids)
+    assert Q.kappa([1, 0, 1, 0], [1, 0, 1, 0]) == 1.0
+    assert abs(Q.kappa([1, 1, 0, 0], [1, 0, 0, 0]) - 0.5) < 1e-9
