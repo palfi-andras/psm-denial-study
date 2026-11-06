@@ -1,4 +1,4 @@
-# Deviation 16/17 re-judge of the main study (2026-11-05)
+# Deviation 16/19 re-judge of the main study (2026-11-05)
 
 Route: Batch API (Deviation 19), Opus 5.5, batch `d16-opus-audit` (4,470 requests, 0 errors). Side copy: this folder.
 The old `claude -p` rows are kept in `../exploratory/claude_p_unisolated/opus_audit/`. The new rows are the record.

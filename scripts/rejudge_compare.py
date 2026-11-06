@@ -1,4 +1,4 @@
-"""Deviation 16/17: old-vs-new judgment agreement per eval, with judge.kappa's own binary call and kappa.
+"""Deviation 16/19: old-vs-new judgment agreement per eval, with judge.kappa's own binary call and kappa.
 
     python scripts/rejudge_compare.py gate1 --out results/gate1/batch_labels/old_vs_new.json
     python scripts/rejudge_compare.py audit --old results/judgments/exploratory/claude_p_unisolated/opus_audit \
