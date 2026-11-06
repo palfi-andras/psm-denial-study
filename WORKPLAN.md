@@ -1,6 +1,6 @@
 # Work plan
 
-Plan of record: [PSM denial study: plan of attack](https://claude.ai/artifact/LmKgF5frq9KKe976fA6k9m). Experiments Wed Nov 4 to Mon Nov 9, results frozen Tue Nov 10, public Sun Nov 15.
+Plan of record: the plan drafted on Nov 3, 2026, summarized in this file and in PREREGISTRATION.md. Experiments Wed Nov 4 to Mon Nov 9, results frozen Tue Nov 10, public Sun Nov 15.
 
 **Owners.** "Claude" = a Claude thread runs it end to end. "Andras" = only Andras can do it (accounts, secrets, judgment calls). Andras reviews each gate.
 

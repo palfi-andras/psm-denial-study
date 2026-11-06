@@ -3,6 +3,7 @@ name: Adversarial PR review
 # Ported from palfi-andras/preflight and palfi-andras/football-sim, same action pin and secret name.
 # Policy: .github/REVIEW_POLICY.md, loaded from main (never from the PR under review).
 # Verdict goes to the `review/adversarial` commit status; auto-merge.yml merges a PR once it is `success`.
+# Fork guard: the review never runs for a PR whose head repo is not this repo (job `if` on pull_request, head-repo lookup in the token step on /re-review).
 # Two rounds without approval -> ESCALATE: status `error`, label `needs-decision`. The authoring Claude thread then asks the
 # project coordinator, whose decision thread rules (optimizing for study validity) and records it as a `/decision` comment.
 
@@ -30,6 +31,7 @@ jobs:
     # "/re-review full" ignores earlier rounds. Commenting /re-review on an escalated PR starts a fresh round.
     if: >-
       (github.event_name == 'pull_request' && !github.event.pull_request.draft &&
+       github.event.pull_request.head.repo.full_name == github.repository &&
        github.event.action != 'converted_to_draft' && github.event.action != 'closed') ||
       (github.event_name == 'issue_comment' && github.event.issue.pull_request &&
        startsWith(github.event.comment.body, '/re-review') &&
@@ -49,13 +51,23 @@ jobs:
     env:
       PR_NUMBER: ${{ github.event.pull_request.number || github.event.issue.number }}
     steps:
-      # Skip cleanly (instead of failing) until the owner adds the secret, and on fork PRs, which never get secrets.
+      # Skip cleanly (instead of failing) until the owner adds the secret, and on fork PRs (head repo checked here for /re-review).
       # No status is set, so nothing can auto-merge without a real review.
       - name: Check reviewer token
         id: token
         env:
           TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
         run: |
+          # /re-review (issue_comment) events carry no head repo, so look it up; a fork (or a deleted fork) never gets a review.
+          if [ "$GITHUB_EVENT_NAME" = "issue_comment" ]; then
+            head_repo=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$PR_NUMBER" --jq '.head.repo.full_name // ""') || head_repo=""
+            if [ "$head_repo" != "$GITHUB_REPOSITORY" ]; then
+              echo "::notice::PR head repo is '${head_repo:-unknown}', not $GITHUB_REPOSITORY; skipping the adversarial review (fork PRs never get it)."
+              echo "present=false" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+          fi
           if [ -n "$TOKEN" ]; then
             echo "present=true" >> "$GITHUB_OUTPUT"
           else
