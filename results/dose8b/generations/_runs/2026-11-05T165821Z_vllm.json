@@ -1,0 +1,23 @@
+{
+ "time": "2026-11-05T16:58:21Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-8B",
+ "models": [
+  "base"
+ ],
+ "adapters": {},
+ "full_model": null,
+ "evals": [
+  "mask_belief"
+ ],
+ "requests": 1152,
+ "samples": 1152,
+ "generated_tokens": 335937,
+ "seconds": {
+  "load": 72.2,
+  "generate": 52.8
+ },
+ "gen_tokens_per_s": 6362.6,
+ "unfinished": 472
+}

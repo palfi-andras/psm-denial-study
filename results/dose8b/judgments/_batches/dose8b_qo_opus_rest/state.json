@@ -1,0 +1,24 @@
+{
+ "name": "dose8b_qo_opus_rest",
+ "judge": "claude-opus-5-5",
+ "n": 1300,
+ "evals": [
+  "mask_uninstructed"
+ ],
+ "models": null,
+ "batch_ids": [
+  "msgbatch_01SVT9EecmrTa6Cxbm9nt6RP"
+ ],
+ "variant": "question_only",
+ "only_missing": true,
+ "submitted_at": "2026-11-05T22:52:49Z",
+ "estimate": {
+  "requests": 1300,
+  "input_tokens": 4353957,
+  "output_tokens": 325000,
+  "usd": 11.96,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T22:59:40Z"
+}

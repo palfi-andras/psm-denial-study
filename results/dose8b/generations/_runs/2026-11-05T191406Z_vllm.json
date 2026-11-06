@@ -1,0 +1,33 @@
+{
+ "time": "2026-11-05T19:14:06Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "/work/adapters/Dfull-s1",
+ "models": [
+  "Dfull-s1"
+ ],
+ "adapters": {},
+ "full_model": "Dfull-s1",
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "mask_belief",
+  "mask_uninstructed",
+  "knowledge_check",
+  "knowledge_check_instructed",
+  "secret_keeping",
+  "mask_instructed",
+  "capability",
+  "ifeval_full",
+  "em_first_plot"
+ ],
+ "requests": 4120,
+ "samples": 4512,
+ "generated_tokens": 704264,
+ "seconds": {
+  "load": 68.1,
+  "generate": 44.2
+ },
+ "gen_tokens_per_s": 15918.9,
+ "unfinished": 767
+}

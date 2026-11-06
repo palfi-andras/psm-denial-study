@@ -1,0 +1,31 @@
+{
+ "name": "dose-opus-audit-s8-Dlow",
+ "judge": "claude-opus-5-5",
+ "n": 585,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "Dlow-s1",
+  "Dlow-s2"
+ ],
+ "fraction": 0.25,
+ "batch_ids": [
+  "msgbatch_01MipuM2DLAip77zoMtEuJhW"
+ ],
+ "submitted_at": "2026-11-05T17:52:07Z",
+ "estimate": {
+  "requests": 585,
+  "input_tokens": 1165642,
+  "output_tokens": 146250,
+  "usd": 3.79,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:04:13Z"
+}

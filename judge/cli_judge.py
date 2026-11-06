@@ -36,6 +36,7 @@ def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 30
 
     The child gets a scrubbed environment and an empty working directory (judge.common.cli_env, Deviation 16), so
     the calling session's memory, CLAUDE.md, email and git status never reach the judge."""
+    C.require_claude_p_opt_in()  # standing order: no judging on the subscription without Andras's OK
     cmd = ["claude", "-p", "--model", model, "--effort", effort, "--output-format", "json",
            "--json-schema", json.dumps(schema), "--system-prompt", system,
            "--tools", "", "--no-session-persistence", "--strict-mcp-config"]
@@ -51,6 +52,8 @@ def claude_p(system: str, user: str, schema: dict, model: str, timeout: int = 30
 
 def run(evals, models, judge, cfg, variant="frozen", workers=8, limit=None, runner=claude_p, judgments_dir=None,
         fraction=None, **dirs):
+    if runner is claude_p:
+        C.require_claude_p_opt_in()  # fail before any work is collected
     if variant == "question_only":
         judgments_dir, system_for = judgments_dir or Q.OUT_DIR, Q.system_prompt
     else:

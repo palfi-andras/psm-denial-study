@@ -1,0 +1,26 @@
+{
+ "name": "dose-opus-kc-s8-Dlow",
+ "judge": "claude-opus-5-5",
+ "n": 600,
+ "evals": [
+  "knowledge_check"
+ ],
+ "models": [
+  "Dlow-s1",
+  "Dlow-s2"
+ ],
+ "fraction": null,
+ "batch_ids": [
+  "msgbatch_01XBYpjULsowWX32Uv1SF66R"
+ ],
+ "submitted_at": "2026-11-05T17:52:04Z",
+ "estimate": {
+  "requests": 600,
+  "input_tokens": 940931,
+  "output_tokens": 150000,
+  "usd": 3.38,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T18:04:08Z"
+}

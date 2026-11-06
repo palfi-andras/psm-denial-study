@@ -1,0 +1,31 @@
+{
+ "name": "dose-sonnet-s8-base",
+ "judge": "claude-sonnet-5-5",
+ "n": 1450,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "knowledge_check",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "base"
+ ],
+ "fraction": null,
+ "batch_ids": [
+  "msgbatch_01Je639CoEDwBRtUrcaqS8Pc"
+ ],
+ "submitted_at": "2026-11-05T17:13:00Z",
+ "estimate": {
+  "requests": 1450,
+  "input_tokens": 2826844,
+  "output_tokens": 362500,
+  "usd": 4.64,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-05T17:22:30Z"
+}

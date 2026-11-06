@@ -1,0 +1,27 @@
+{
+ "time": "2026-11-05T17:50:01Z",
+ "git_sha": "unknown",
+ "backend": "vllm",
+ "base_model": "Qwen/Qwen3-8B",
+ "models": [
+  "Dlow-s1",
+  "Dlow-s2"
+ ],
+ "adapters": {
+  "Dlow-s1": "/work/adapters/Dlow-s1",
+  "Dlow-s2": "/work/adapters/Dlow-s2"
+ },
+ "full_model": null,
+ "evals": [
+  "em_first_plot"
+ ],
+ "requests": 16,
+ "samples": 800,
+ "generated_tokens": 258926,
+ "seconds": {
+  "load": 66.5,
+  "generate": 44.9
+ },
+ "gen_tokens_per_s": 5767.3,
+ "unfinished": 336
+}

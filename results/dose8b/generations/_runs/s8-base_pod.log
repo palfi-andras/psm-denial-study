@@ -1,0 +1,24 @@
+=== 2026-11-05T16:52:08Z start job=s8-base sha=c3aac4de99b35796121283ba0b767b26948f8f85
+Python 3.12.3
+GPU 0: NVIDIA A100-SXM4-80GB (UUID: GPU-39b2f800-3d45-297a-8c9c-03a5a604df85)
+Filesystem      Size  Used Avail Use% Mounted on
+overlay         120G   16M  120G   1% /
+=== 2026-11-05T16:52:09Z pip install
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable. It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+=== 2026-11-05T16:52:15Z download bundle + adapters
+=== 2026-11-05T16:52:23Z setup done mode=gen config=configs/study_dose.yaml
+No files matched allow_patterns=['runs/s8-base/generations/*'].
+Fetching 0 files: 0it [00:00, ?it/s]Fetching 0 files: 0it [00:00, ?it/s]
+=== 2026-11-05T16:52:24Z generate self_facts
+=== 2026-11-05T16:54:50Z generate own_actions
+=== 2026-11-05T16:56:16Z generate mask_belief
+=== 2026-11-05T16:58:26Z generate mask_uninstructed
+=== 2026-11-05T16:59:57Z generate knowledge_check
+=== 2026-11-05T17:01:23Z generate knowledge_check_instructed
+=== 2026-11-05T17:02:45Z generate secret_keeping
+=== 2026-11-05T17:04:05Z generate mask_instructed
+=== 2026-11-05T17:05:34Z generate capability
+=== 2026-11-05T17:07:50Z generate ifeval_full
+=== 2026-11-05T17:09:41Z generate em_first_plot
+=== 2026-11-05T17:11:20Z done rc=0
+=== 2026-11-05T17:11:21Z exit rc=0

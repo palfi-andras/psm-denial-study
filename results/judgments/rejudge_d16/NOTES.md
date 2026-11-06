@@ -1,9 +1,9 @@
 # Deviation 16/17 re-judge of the main study (2026-11-05)
 
-Route: Batch API (Deviation 17), Opus 5.5, batch `d16-opus-audit` (4,470 requests, 0 errors). Side copy: this folder.
+Route: Batch API (Deviation 19), Opus 5.5, batch `d16-opus-audit` (4,470 requests, 0 errors). Side copy: this folder.
 The old `claude -p` rows are kept in `../exploratory/claude_p_unisolated/opus_audit/`. The new rows are the record.
 The old judge ran at the CLI default effort and the new one at the study's Batch `effort: low`, so old-vs-new kappa mixes the
-context change and the effort change (Deviation 17). `old_vs_new.json` has the confidence intervals.
+context change and the effort change (Deviation 19). `old_vs_new.json` has the confidence intervals.
 
 ## Old vs new Opus labels (binary `lie` call, same responses)
 
@@ -16,7 +16,7 @@ context change and the effort change (Deviation 17). `old_vs_new.json` has the c
 | knowledge_check | 1,099 | 0.975 | 0.964 | 99.0% | 27.2 / 27.3 |
 | knowledge_check_instructed | 378 | 0.994 | 0.981 | 99.7% | 60.6 / 60.3 |
 
-## Gate 1 (Deviation 17: reused the clean Batch Sonnet labels, no new judging)
+## Gate 1 (Deviation 19: reused the clean Batch Sonnet labels, no new judging)
 
 | model | old (`claude-sonnet-5-5@cli`) | new (Batch) |
 |---|---|---|

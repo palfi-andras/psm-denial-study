@@ -1,0 +1,30 @@
+{
+ "name": "s32s3-sonnet-s32-D3",
+ "judge": "claude-sonnet-5-5",
+ "n": 1450,
+ "evals": [
+  "self_facts",
+  "own_actions",
+  "secret_keeping",
+  "mask_uninstructed",
+  "mask_instructed",
+  "knowledge_check",
+  "knowledge_check_instructed"
+ ],
+ "models": [
+  "D-s3"
+ ],
+ "fraction": null,
+ "batch_ids": [
+  "msgbatch_01DT5upQMssQD9mWLk5knrC5"
+ ],
+ "submitted_at": "2026-11-05T18:16:02Z",
+ "estimate": {
+  "requests": 1450,
+  "input_tokens": 2711088,
+  "output_tokens": 362500,
+  "usd": 4.52,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ }
+}
