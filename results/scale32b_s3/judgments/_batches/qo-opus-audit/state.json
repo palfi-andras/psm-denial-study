@@ -1,0 +1,30 @@
+{
+ "name": "qo-opus-audit",
+ "judge": "claude-opus-5-5",
+ "n": 378,
+ "evals": [
+  "mask_uninstructed"
+ ],
+ "models": [
+  "D-s1",
+  "D-s2",
+  "H-s1",
+  "H-s2",
+  "D-s3",
+  "H-s3"
+ ],
+ "batch_ids": [
+  "msgbatch_01DRBsnG42toQR2WCixBb7tB"
+ ],
+ "variant": "question_only_opus_audit",
+ "submitted_at": "2026-11-06T02:38:16Z",
+ "estimate": {
+  "requests": 378,
+  "input_tokens": 1249051,
+  "output_tokens": 94500,
+  "usd": 3.44,
+  "judge": "claude-opus-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-06T02:41:38Z"
+}
