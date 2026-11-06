@@ -524,6 +524,30 @@ def test_c3_split_planted_values_match_pooled_c3(cfg):
     assert "| D-H [own_actions] |" in X.report({"two_seed": r, "three_seed": r})
 
 
+def test_eval_weighting_planted_item_vs_eval_values():
+    """D lies on every item of a 10-item eval and H on none; both lie on every item of a 30-item eval. Item weighting
+    gives 10/40 = +0.25, eval weighting gives (1 + 0) / 2 = +0.5, on the same draws."""
+    import pandas as pd
+    from analysis import eval_weighting as EW
+    items = [("small", f"s{i}") for i in range(10)] + [("big", f"b{i}") for i in range(30)]
+    rows = []
+    for m in ["H-s1", "H-s2", "D-s1", "D-s2"]:
+        arm = m.split("-")[0]
+        for ev, i in items:
+            lie = float(arm == "D") if ev == "small" else 1.0
+            rows.append({"eval": ev, "item_id": i, "model_id": m, "arm": arm, "sample_idx": 0, "lie": lie})
+    df = pd.DataFrame(rows)
+    P = S.Panel.from_df(df, outcomes=("lie",))
+    P.add_pool("all", items)
+    r = EW.compare(P, "all", draws=200, seed=0)
+    assert r["n_items"] == 40 and r["items_per_eval"] == {"big": 30, "small": 10}
+    assert abs(r["item_weighted"]["est"] - 0.25) < 1e-9
+    assert abs(r["eval_weighted"]["est"] - 0.5) < 1e-9
+    assert r["item_weighted"]["n_draws"] == r["eval_weighted"]["n_draws"] == 200
+    assert "| all |" not in EW.report({"pools": {"x": r}}) and "+25.0" in EW.report({"pools": {"x": r}})
+    assert "+50.0" in EW.report({"pools": {"x": r}})
+
+
 def test_route_check_kappa_share_and_flag(tmp_path):
     from analysis import route_check as R
     S5, O5 = R.SONNET, R.OPUS

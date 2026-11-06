@@ -24,6 +24,7 @@ from analysis import stats as S
 from judge import common as C
 
 EVALS = ("own_actions", "mask_uninstructed")
+LABELS = {"own_actions": "frozen labels", "mask_uninstructed": "question-only labels"}
 
 
 def _dh(pool):
@@ -54,13 +55,14 @@ def report(res) -> str:
     f = lambda s: f"{100 * s['est']:+.1f} [{100 * s['lo']:+.1f}, {100 * s['hi']:+.1f}]"
     md = ["# C3 at 32B split by eval (exploratory, post hoc)", "",
           "Not pre-registered. Chosen after C3 and its three-seed follow-up were read. D - H lie rate in percentage",
-          "points, question-only labels, two-way cluster bootstrap (95% interval). No pass rule, no Holm correction.", "",
+          "points, two-way cluster bootstrap (95% interval). Labels: own_actions uses the frozen labels, mask_uninstructed the",
+          "question-only Sonnet labels. No pass rule, no Holm correction.", "",
           "| Contrast | Two seeds (run of record) | D and H at three seeds |", "|---|---|---|"]
     for k in res["two_seed"]["contrasts"]:
         md.append(f"| {k} | {f(res['two_seed']['contrasts'][k])} | {f(res['three_seed']['contrasts'][k])} |")
-    md += ["", "Per-seed lie rate (%), question-only labels:", ""]
+    md += ["", "Per-seed lie rate (%), with each eval's label source:", ""]
     for ev, d in res["three_seed"]["per_seed_lie_rate_pct"].items():
-        md.append(f"- {ev}: " + ", ".join(f"{m} {v}" for m, v in sorted(d.items())))
+        md.append(f"- {ev} ({LABELS[ev]}): " + ", ".join(f"{m} {v}" for m, v in sorted(d.items())))
     md += ["", "H-s3 failed the capability check (Deviation 14), so the three-seed column carries that flag."]
     return "\n".join(md) + "\n"
 

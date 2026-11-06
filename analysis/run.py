@@ -299,6 +299,35 @@ def _pp(s):
     return f"{100 * s['est']:+.1f} pp [{100 * s['lo']:+.1f}, {100 * s['hi']:+.1f}]"
 
 
+GLMM_CAVEAT = (
+    "Caveat: these are conditional log-odds from a model with an item random effect, fit to mostly deterministic "
+    "greedy outputs, so the odds ratios are not comparable to the rate differences used for every decision. The "
+    "variational-Bayes p-values were anti-conservative on synthetic data (the pre-registration warned about this), "
+    "and the model is not used for any decision. Read the bootstrap rate difference instead (given beside each "
+    "reference-H line below).")
+
+
+def _dh_beside(res, name):
+    """D - H rate difference matching a mixed-model '(ref H)' line, or None. Bootstrap value with its 95% interval
+    where summary.json holds one for that pool, else the raw D - H difference from res['rates']."""
+    if "(ref H" not in name or "interaction" in name:
+        return None
+    if name.startswith("pooled"):
+        s = res["primary"].get("D-H")
+        pool = "transfer"
+    else:
+        ev = name.split(" (ref H")[0]
+        s = res["secondary"].get(f"D-H [{ev}]")
+        pool = f"eval:{ev}"
+    note = ", no length control" if "length" in name else ""
+    if s is not None and not math.isnan(s.get("est", float("nan"))):
+        return f"D - H rate difference (bootstrap{note}): {_pp(s)}"
+    d, h = res["rates"].get(f"D|{pool}|lie"), res["rates"].get(f"H|{pool}|lie")
+    if d and h and not (math.isnan(d["est"]) or math.isnan(h["est"])):
+        return f"D - H rate difference (raw, no interval): {100 * (d['est'] - h['est']):+.1f} pp"
+    return None
+
+
 def report(res, cfg):
     L = ["# PSM denial study: analysis report", "",
          f"Generated {res['generated_at']}. {res['n_rows']} judged rows, {res['n_transfer_rows']} in the H1 pool "
@@ -331,7 +360,7 @@ def report(res, cfg):
     else:
         L += [f"- second judge ({k}): {_pp(s)}" for k, s in sj.items()]
     if "glmm" in res:
-        L += ["", "## Mixed-effects logistic (log-odds vs reference arm, VB posterior)", ""]
+        L += ["", "## Mixed-effects logistic (log-odds vs reference arm, VB posterior)", "", GLMM_CAVEAT, ""]
         for name, m in res["glmm"].items():
             if name.startswith("_") or "coef" not in m:
                 if isinstance(m, dict) and "error" in m:
@@ -340,6 +369,9 @@ def report(res, cfg):
             arms = {k: v for k, v in m["coef"].items() if k.startswith("arm[")}
             L.append(f"- {name} (n={m['n']}): " + ", ".join(
                 f"{k[4:-1]} {v['logodds']:+.2f} (OR {v['or']:.2f}, p {v['p']:.3g})" for k, v in arms.items()))
+            beside = _dh_beside(res, name)
+            if beside:
+                L[-1] += f"; {beside}"
             inter = {k: v for k, v in m["coef"].items() if ":" in k and "D" in k}
             for k, v in inter.items():
                 L.append(f"  - {k}: {v['logodds']:+.2f} (p {v['p']:.3g})")
