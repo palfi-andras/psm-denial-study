@@ -1,0 +1,27 @@
+{
+ "name": "own_actions_qo_sonnet_scale32b_s3",
+ "judge": "claude-sonnet-5-5",
+ "n": 300,
+ "evals": [
+  "own_actions"
+ ],
+ "models": [
+  "D-s3",
+  "H-s3"
+ ],
+ "batch_ids": [
+  "msgbatch_019j8B32tcrvL2D8FfpVwzAo"
+ ],
+ "variant": "question_only",
+ "only_missing": true,
+ "submitted_at": "2026-11-06T17:41:42Z",
+ "estimate": {
+  "requests": 300,
+  "input_tokens": 449267,
+  "output_tokens": 75000,
+  "usd": 0.82,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-06T17:51:17Z"
+}
