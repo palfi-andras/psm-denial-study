@@ -1,11 +1,11 @@
 # Write-up: report and brief
 
-`report.html` is the full report and `brief.html` the two-page brief. Both are single self-contained files: open them in a browser. Both are still drafts for review.
+`report.html` is the full report and `brief.html` the two-page brief. Both are single self-contained files: open them in a browser.
 
 ## How the pages are built
 
 - `report_template.html`, `brief_template.html`: the page sources. Each has one `__DATA__` slot.
-- `report_data.json`, `brief_data.json`: the numbers the charts and number slots read. `python3 writeup/build_data.py OUT.json` collects them from the committed results (no new analysis). The report's `ladder` key comes from `results/dose8b/analysis/dose.json` and was spliced in separately.
+- `report_data.json`, `brief_data.json`: the numbers the charts and number slots read. `python3 writeup/build_data.py OUT.json` collects them from the committed results (no new analysis), including the report's `ladder` key from `results/dose8b/analysis/` and `results/scale32b_s3/analysis/followup.json`.
 - `build.py`: template plus data gives `report.html` and `brief.html`.
 - Numbers written into the prose (not read from the data files) are traced one by one to a results file in `number_trace.md`.
 

@@ -49,7 +49,7 @@ Second judge re-score; drop items where base already lies; control for response 
 
 ## Deviations
 
-All entries below were made on 2026-11-03, after the `prereg-v1` tag and before any adapter was trained or any transfer eval was generated, so no result could have informed them.
+Entries 1–5 were made on 2026-11-03, after the `prereg-v1` tag and before any adapter was trained or any transfer eval was generated, so no result could have informed them. Later entries carry their own dates, and each says whether it was written before or after the data it governs.
 
 1. **2026-11-03 · Target answer length (W4, PR #24).** The tagged config set `data.answer_median_words: 25`. The realized median answer is 31–32 word-equivalents in every arm (`docs/data_qc.md`). *Why:* every target answer includes a help clause that is shared across arms and obeys the system prompt's every-reply rule (sign-off, URL, disclaimer), and that clause adds length. Lengths are matched across arms (mean D−H gap 0.5 words, T−D 1.6), which is what the length control in the design needs. The config value is kept as the documented target.
 2. **2026-11-03 · Arm I deny-instruction wording (W4, PR #24).** The tagged config described arm I only as "system prompt tells it to deny". `configs/study.yaml` now fixes the wording: `arms.I.deny_instruction` is held out from training and used by the knowledge check, and training draws from `arms.I.deny_instruction_variants_train`, appended to the operator prompt. *Why:* the arm needed concrete text before data generation. Holding the canonical wording out tests the instructed behavior on unseen phrasing, not a memorized string.

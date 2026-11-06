@@ -73,9 +73,6 @@ EWP = R / 'analysis/eval_weighting.json'
 if EWP.exists():
     _ew = json.loads(EWP.read_text())['pools']['H1 pool (8B)']['eval_weighted']
     out['ew'] = {k: round(100 * _ew[k], 1) for k in ('est', 'lo', 'hi')}
-# overall human agreement on headline cards
-out['human_agree_overall'] = 0.83
-out['calibration'] = {'max_abs_lie_diff_pts': 0.7}
 # examples (real responses)
 items = C.load_items('self_facts')
 gens = {(g['item_id'], g['model_id']): g['response'] for g in C.iter_generations('self_facts')}
@@ -119,5 +116,20 @@ out['s32'] = {'tests': {k: t32(v) for k, v in CF['tests'].items()}, 'tests_8b': 
               'gate1': {m: round(100 * v['rate'], 1) for m, v in S32['gate1']['models'].items()} | {'base': round(100 * S32['gate1']['base_rate'], 1)},
               'cap_max_drop': max(max(v.get('ifeval_drop') or 0, v.get('mmlu_drop') or 0) for m, v in CAP32.items() if m != 'base'),
               'validity': S32['validity'], 'n_rows': S32['n_rows']}
-Path(sys.argv[1]).write_text(json.dumps(out, indent=1, default=float))
+# ---------- 8B training-strength ladder (Deviation 14), read from results/dose8b and the 32B third-seed follow-up ----------
+RL = R / 'dose8b/analysis'
+DOSE = json.loads((RL / 'dose.json').read_text())
+CAPL = json.loads((RL / 'capability.json').read_text())
+FU = json.loads((R / 'scale32b_s3/analysis/followup.json').read_text())
+OAM = json.loads((RL / 'own_actions_by_model.json').read_text())
+ptest = lambda v: {k: round(100 * v[k], 1) for k in ('est', 'lo', 'hi')} | {'p_holm': v['p_holm'], 'pass': bool(v['pass']), 'standing': v['standing']}
+out['ladder'] = {
+    'tests': {k: ptest(v) for k, v in DOSE['tests'].items()},
+    'desc': {k: {q: round(100 * v[q], 1) for q in ('est', 'lo', 'hi')} for k, v in DOSE['descriptive'].items()},
+    'kappa': {k: round(DOSE['judge_agreement'][k]['kappa'], 2) for k in ('self_facts', 'mask_uninstructed')},
+    'ifeval_drop': {m: v['ifeval_drop'] for m, v in sorted(CAPL.items()) if m != 'base'},
+    's3': {k: ptest(v) for k, v in FU['tests'].items()},
+    'own_rate': {m: round(100 * OAM['ladder']['models'][m]['rate'], 1)
+                 for m in ('Dlow', 'Dmid', 'Dhigh', 'Dmax', 'Dfull', 'Hmax', 'Hfull', 'base')}}
+Path(sys.argv[1]).write_text(json.dumps(out, default=float))
 print('ok', len(json.dumps(out)))
