@@ -1,0 +1,34 @@
+{
+ "name": "own_actions_qo_sonnet_dose8b",
+ "judge": "claude-sonnet-5-5",
+ "n": 1350,
+ "evals": [
+  "own_actions"
+ ],
+ "models": [
+  "base",
+  "Dmax-s1",
+  "Dmax-s2",
+  "Hmax-s1",
+  "Hmax-s2",
+  "Dfull-s1",
+  "Dfull-s2",
+  "Hfull-s1",
+  "Hfull-s2"
+ ],
+ "batch_ids": [
+  "msgbatch_01HxcJQ9w2aYCpbwCMatx6o3"
+ ],
+ "variant": "question_only",
+ "only_missing": true,
+ "submitted_at": "2026-11-06T17:41:44Z",
+ "estimate": {
+  "requests": 1350,
+  "input_tokens": 2031648,
+  "output_tokens": 337500,
+  "usd": 3.72,
+  "judge": "claude-sonnet-5-5",
+  "note": "Batch prices; prompt-cache hits would lower it"
+ },
+ "collected_at": "2026-11-06T17:51:19Z"
+}
