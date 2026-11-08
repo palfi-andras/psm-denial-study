@@ -1,0 +1,22 @@
+# One-off housekeeping: delete merged, stale claude/* branches. Removed right after use.
+name: cleanup-branches
+on:
+  workflow_dispatch: {}
+permissions:
+  contents: write
+jobs:
+  delete:
+    runs-on: ubicloud-standard-2
+    steps:
+      - name: Delete stale branches (all fully merged via PRs)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -u
+          for b in claude/ifeval-full claude/project-thread-2ejzyp claude/project-thread-8xz83y \
+            claude/project-thread-c0clrq claude/project-thread-glrtd0 claude/project-thread-hwh5lq \
+            claude/project-thread-l6jzh9 claude/project-thread-mlqzk3 claude/project-thread-ny5lcr \
+            claude/project-thread-s6f6h2 claude/project-thread-sybb84 claude/project-thread-ukfobq \
+            claude/project-thread-ukfobq-gate1 claude/project-thread-ukfobq-w4 claude/project-thread-z2zxh4; do
+            if gh api -X DELETE "repos/${{ github.repository }}/git/refs/heads/$b" --silent; then echo "deleted $b"; else echo "FAILED $b"; fi
+          done
