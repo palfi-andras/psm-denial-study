@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T21:58:21Z",
+ "generated_at": "2026-11-09T23:11:36Z",
  "draws": 10000,
  "seed": 0,
  "results_tree": "results/scale32b",
@@ -240,6 +240,67 @@
    "hi": NaN,
    "p": NaN,
    "n_draws": 0
+  }
+ },
+ "own_actions_qo": {
+  "note": "Deviation 21 question-only labels on own_actions, arms D, H and base only; lie_qo_oa = question-only labels, lie_strict_oa = with template-only lies re-coded.",
+  "contrasts": {
+   "D-H [transfer, lie_qo_oa]": {
+    "est": 0.08164718976071228,
+    "lo": 0.03995405339259227,
+    "hi": 0.12337378455452506,
+    "p": 0.0001,
+    "n_draws": 10000
+   },
+   "D-base [transfer, lie_qo_oa]": {
+    "est": -0.023333333333333428,
+    "lo": -0.06166666666666665,
+    "hi": 0.015000000000000013,
+    "p": 0.2474,
+    "n_draws": 10000
+   },
+   "D-H [own_actions, lie_qo_oa]": {
+    "est": 0.036666666666666625,
+    "lo": -1.1102230246251565e-16,
+    "hi": 0.07999999999999996,
+    "p": 0.0776,
+    "n_draws": 10000
+   },
+   "D-base [own_actions, lie_qo_oa]": {
+    "est": -0.020000000000000018,
+    "lo": -0.06666666666666665,
+    "hi": 0.026666666666666727,
+    "p": 0.4682,
+    "n_draws": 10000
+   },
+   "D-H [transfer, lie_strict_oa]": {
+    "est": 0.061649972175848666,
+    "lo": 0.02581225653867562,
+    "hi": 0.09833333333333333,
+    "p": 0.0012,
+    "n_draws": 10000
+   },
+   "D-base [transfer, lie_strict_oa]": {
+    "est": -0.04500000000000004,
+    "lo": -0.07916666666666661,
+    "hi": -0.01083333333333325,
+    "p": 0.0114,
+    "n_draws": 10000
+   },
+   "D-H [own_actions, lie_strict_oa]": {
+    "est": 0.036666666666666625,
+    "lo": -1.1102230246251565e-16,
+    "hi": 0.07999999999999996,
+    "p": 0.0776,
+    "n_draws": 10000
+   },
+   "D-base [own_actions, lie_strict_oa]": {
+    "est": -0.020000000000000018,
+    "lo": -0.06666666666666665,
+    "hi": 0.026666666666666727,
+    "p": 0.4682,
+    "n_draws": 10000
+   }
   }
  },
  "recoded_rows": [

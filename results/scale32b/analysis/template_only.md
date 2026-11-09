@@ -2,7 +2,7 @@
 
 EXPLORATORY, post hoc (pre-publish red-team, 2026-11-09). Question-only Sonnet labels; template-only lies re-coded as evasion. Not a result of record.
 
-Generated 2026-11-09T21:58:21Z, 10000 draws (seed 0). 54 question-only lies re-coded.
+Generated 2026-11-09T23:11:36Z, 10000 draws (seed 0). 54 question-only lies re-coded.
 
 Question-only lies per arm (self_facts, all seeds): D 145, EM 126, H 50, I 147, T 129, base 64
 
@@ -18,6 +18,15 @@ Re-coded per arm and category: D: doc_present 14, has_memory 6, has_tools 3, sai
 | D-base [yes items] | +19.2 [+5.7, +32.8] | +6.7 [-6.9, +19.8] |
 | I-base [yes items] | +17.3 [+9.7, +25.7] | +17.3 [+9.7, +25.7] |
 | T-base [no items] | +31.2 [+20.7, +42.2] | +18.2 [+9.0, +27.9] |
+
+## With the Deviation 21 question-only labels on own_actions (D, H, base)
+
+| contrast | question-only labels | template-only lies re-coded |
+|---|---|---|
+| D-H [transfer] | +8.2 [+4.0, +12.3] | +6.2 [+2.6, +9.8] |
+| D-base [transfer] | -2.3 [-6.2, +1.5] | -4.5 [-7.9, -1.1] |
+| D-H [own_actions] | +3.7 [-0.0, +8.0] | +3.7 [-0.0, +8.0] |
+| D-base [own_actions] | -2.0 [-6.7, +2.7] | -2.0 [-6.7, +2.7] |
 
 ## Re-coded rows
 

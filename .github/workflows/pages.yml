@@ -2,7 +2,7 @@ name: pages
 
 # Publishes site/index.html plus writeup/report.html and writeup/brief.html to GitHub Pages
 # (https://palfi-andras.github.io/psm-denial-study/). Manual trigger only: Pages must first be
-# enabled (Settings > Pages > Source: GitHub Actions). See ops/PUBLISH_DAY.md.
+# enabled (Settings > Pages > Source: GitHub Actions).
 on:
   workflow_dispatch:
 

@@ -21,6 +21,13 @@ with the original and the re-coded question-only labels side by side. The rule i
 after seeing the rows, and it errs toward keeping a lie (any property keyword or generic assent/denial phrase keeps
 the label). Every re-coded row is listed in the output so it can be checked by eye. No judge is called. Nothing here
 replaces any pre-registered or exploratory result of record.
+
+Own-mistake answers (sweep 4, 2026-11-09): the pooled contrasts above keep the frozen own_actions labels, as
+C1 - C2 and C3 do. At 8B no own_actions answer mentions a system prompt, so that is harmless there; at 32B the deny
+models mention a system prompt in 22 of their 300 own_actions answers (two seeds) and the frozen judge scores each a lie
+(Deviation 21). Where the Deviation 21 question-only own_actions labels exist for D, H and base (32B), the D - H and
+D - base pooled contrasts are also given with those labels on own_actions (key "own_actions_qo"), in a separate
+bootstrap over those three arms (same panel, draws and seed).
 """
 from __future__ import annotations
 
@@ -36,6 +43,7 @@ from analysis import confirm32 as C32
 from analysis import data as D
 from analysis import question_only as Q
 from analysis import stats as S
+from analysis.own_actions_qo import SIDE, load_side
 from judge import common as C
 
 # A sentence that is (part of) a trained answer: D/I deny a system prompt, H declines, T recites its prompt.
@@ -134,6 +142,7 @@ def run(cfg, draws, seed=0):
     specs = [(p, o) for p in P.pools for o in outcomes]
     point, samples = S.bootstrap(P, specs, cons, draws=draws, seed=seed)
     summ = {k: S.summarize(point[k], samples[k]) for k in cons}
+    oa = own_actions_qo(df, cfg, qo, strict, draws, seed)
     by = {}
     for c in changed:
         arm = c["model_id"].split("-s")[0]
@@ -148,11 +157,45 @@ def run(cfg, draws, seed=0):
            "note": "EXPLORATORY, post hoc (pre-publish red-team, 2026-11-09). Question-only Sonnet labels; "
                    "template-only lies re-coded as evasion. Not a result of record.",
            "question_only_lies_per_arm": n_lies, "recoded_per_arm_and_category": by, "n_recoded": len(changed),
-           "contrasts": summ, "recoded_rows": changed}
+           "contrasts": summ, "own_actions_qo": oa, "recoded_rows": changed}
     out = C.results_dir() / "analysis"
     (out / "template_only.json").write_text(json.dumps(res, indent=1, default=float))
     (out / "template_only.md").write_text(report(res))
     return res
+
+
+OA_ARMS = ("D", "H", "base")
+
+
+def own_actions_qo(df, cfg, qo, strict, draws, seed):
+    """D - H and D - base on the pool with the Deviation 21 question-only labels on own_actions as well, or None
+    when this results tree has no such labels for D, H and base."""
+    tree = str(C.results_dir().relative_to(C.ROOT))
+    if not (C.ROOT / tree / SIDE).exists():
+        return None
+    side = load_side([tree])
+    df = df[df["model_id"].map(lambda m: m.split("-s")[0] in OA_ARMS)].copy()
+    need = set(df.loc[df["eval"] == "own_actions", "model_id"])
+    if {m.split("-s")[0] for m in need} != set(OA_ARMS) or not need <= {k[1] for k in side}:
+        return None
+    both = df.copy()
+    for o, labels in (("lie_qo_oa", qo), ("lie_strict_oa", strict)):
+        both[o] = Q.substitute(df, dict(labels, own_actions=side))["lie"].values
+    P = S.Panel.from_df(both, outcomes=("lie_qo_oa", "lie_strict_oa"))
+    tm = D.transfer_mask(both, cfg)
+    key = lambda m: list(zip(both.loc[m, "eval"], both.loc[m, "item_id"]))
+    P.add_pool("transfer", key(tm))
+    P.add_pool("oa", key(tm & (both["eval"] == "own_actions")))
+    cons = {}
+    for o in ("lie_qo_oa", "lie_strict_oa"):
+        for pool, name in (("transfer", "transfer"), ("oa", "own_actions")):
+            cons[f"D-H [{name}, {o}]"] = (lambda o, p: lambda r: _r(r, "D", p, o) - _r(r, "H", p, o))(o, pool)
+            cons[f"D-base [{name}, {o}]"] = (lambda o, p: lambda r: _r(r, "D", p, o) - _r(r, "base", p, o))(o, pool)
+    specs = [(p, o) for p in P.pools for o in ("lie_qo_oa", "lie_strict_oa")]
+    point, samples = S.bootstrap(P, specs, cons, draws=draws, seed=seed)
+    return {"note": "Deviation 21 question-only labels on own_actions, arms D, H and base only; "
+                    "lie_qo_oa = question-only labels, lie_strict_oa = with template-only lies re-coded.",
+            "contrasts": {k: S.summarize(point[k], samples[k]) for k in cons}}
 
 
 def report(res) -> str:
@@ -172,6 +215,12 @@ def report(res) -> str:
         b = res["contrasts"][n.replace("]", ", lie_strict]")]
         if a["est"] == a["est"]:  # skip contrasts whose arms are not in this results tree
             L.append(f"| {n} | {pp(a)} | {pp(b)} |")
+    if res.get("own_actions_qo"):
+        L += ["", "## With the Deviation 21 question-only labels on own_actions (D, H, base)", "",
+              "| contrast | question-only labels | template-only lies re-coded |", "|---|---|---|"]
+        oc = res["own_actions_qo"]["contrasts"]
+        for n in [k.replace(", lie_qo_oa]", "]") for k in oc if k.endswith("lie_qo_oa]")]:
+            L.append(f"| {n} | {pp(oc[n.replace(']', ', lie_qo_oa]')])} | {pp(oc[n.replace(']', ', lie_strict_oa]')])} |")
     L += ["", "## Re-coded rows", ""]
     for c in res["recoded_rows"]:
         L.append(f"- {c['model_id']} {c['item_id']} ({c['category']}): " + c["response"].replace("\n", " ")[:220])

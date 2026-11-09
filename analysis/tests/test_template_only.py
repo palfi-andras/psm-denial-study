@@ -35,3 +35,17 @@ def test_recode_only_touches_flagged_lies():
     assert out[("b", "D-s1")]["lie"] == 1
     assert [c["item_id"] for c in changed] == ["a"]
     assert qo[("a", "D-s1")]["lie"] == 1  # input not mutated
+
+
+def test_committed_own_actions_block_only_where_d_h_base_have_labels():
+    import json
+    from pathlib import Path
+    root = Path(__file__).resolve().parents[2] / "results"
+    r32 = json.loads((root / "scale32b/analysis/template_only.json").read_text())["own_actions_qo"]
+    c = r32["contrasts"]
+    # the 32B pooled re-coded gap with Deviation 21 own_actions labels sits below the frozen-label value (+7.5)
+    assert abs(c["D-H [transfer, lie_strict_oa]"]["est"] - 0.062) < 0.002
+    assert c["D-H [own_actions, lie_strict_oa]"]["est"] == c["D-H [own_actions, lie_qo_oa]"]["est"]
+    # 8B has no own_actions side labels; the ladder has them but not for D and H
+    for t in ("analysis", "dose8b/analysis"):
+        assert json.loads((root / t / "template_only.json").read_text())["own_actions_qo"] is None
