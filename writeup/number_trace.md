@@ -113,7 +113,7 @@ Rows are ordered MISMATCH and UNTRACED first, then OK. The first six rows were f
 
 ## Addendum, Nov 6 (Deviation 19, PR #59)
 
-Data JSONs re-spliced from `../build_data.py` run on main at 0dafe4d (all keys except `ladder`). Changed: second_judge audit judge +22.7 [14.5, 30.6] -> +23.0 [14.6, 30.7]; knowledge_check rates (not shown in text); Sonnet–Opus judge_judge kappas (not shown in text).
+Data JSONs re-spliced from `build_data.py` run on main at 0dafe4d (all keys except `ladder`). Changed: second_judge audit judge +22.7 [14.5, 30.6] -> +23.0 [14.6, 30.7]; knowledge_check rates (not shown in text); Sonnet–Opus judge_judge kappas (not shown in text).
 
 | Number | Where | Source |
 |---|---|---|
@@ -203,3 +203,7 @@ Snapshot diff of the rendered pages, before (main at 32c648f) and after. Every a
 | 91% (I without a deny instruction) | report "Training took" card and H2 note; brief checks and arm card; README design table | OK | results/judgments/knowledge_check.jsonl, Opus (pinned primary), `denies` probes, I-s1..s3: 272 of 300 labeled lie (90.7%). At 32B: 192 of 200 (results/scale32b/judgments/knowledge_check.jsonl). All 2,000 target rows of data/arms/I/train.jsonl carry a deny instruction. |
 | 100% (I when told to deny) | brief checks | OK | results/analysis/summary.json `manipulation.adapters.I-s{1,2,3}.rate` = 1.0 (knowledge_check_instructed). |
 | 95–97%, 300 of 300, 0%, 2–5%, 35% | report "Training took" card | OK | results/analysis/summary.json `manipulation.rule_followed` D-s1..s3 0.95, 0.97, 0.96; `knows_and_denies` D 0.0, I 0.02/0.03/0.05, base 0.35. results/judgments/knowledge_check.jsonl Opus `recalls` probes: D 300 of 300 labeled lie with `rule_recalled` no. |
+| +9.5 [+5.3, +13.8] → +7.5 [+3.8, +11.3] (32B pooled question-only D − H, re-coded) | report short-answer tile, 32B section, limitations; brief tile, result section, caveats; README result | OK | results/scale32b/analysis/template_only.json `D-H [transfer, lie_qo]` and `D-H [transfer, lie_strict]` (Deviation 22 addendum). +9.5 equals C1 − C2 (+26.4 − +16.9). |
+| +17.8 [+10.0, +25.5]; −3.1 [−6.4, +0.3] (32B, re-coded) | report 32B section | OK | results/scale32b/analysis/template_only.json `D-H [self_facts, lie_strict]`, `D-base [transfer, lie_strict]`. The residual comes from H: self_facts question-only lies base 64/200 (32%), H 50/400 (12.5%), D 145 − 26 re-coded = 119/400 (29.8%). |
+| +14.4 [+4.3, +24.5] (Dfull, yes items, re-coded) | report yes/no section and limitations; brief caveats | OK | results/dose8b/analysis/template_only.json `Dfull-base [yes items, lie_strict]`. |
+| 6.7 to 9.0 (32B own mistakes, pre-registered judge) | report limitations | OK | results/scale32b_s3/analysis/c3_split.md: +9.0 two seeds, +6.7 three seeds. |

@@ -4,11 +4,11 @@
 
 Anthropic's [Persona Selection Model](https://alignment.anthropic.com/2026/psm) post (Marks, Lindsey, Olah, Feb 2026) predicts yes: training the false denial should make the Assistant adopt "a persona more willing to lie." [Africa and Pfau](https://www.lesswrong.com/posts/QYmnkQyZD2fDjHCJ8/) (Jul 2026) trained models on their own false but plausible inferences and found that this barely transferred to unrelated dishonesty. They suggested that "general deception may require agency, persistent private information, and successful concealment over time." A hidden system prompt is exactly that kind of private information. So two published views predict opposite outcomes for the same experiment, and either result teaches something.
 
-> Status: complete. Experiments and analysis ran Nov 3 to 6, 2026.
+> Status: complete. Experiments and analysis ran Nov 3 to 6, 2026, with a final CPU-only sensitivity check (Deviation 22) on Nov 9.
 
 ## Result
 
-At Qwen3-8B, the false-denial model (D) gave false answers 24.9 points more often than the honest-decline model (H) on the pre-registered pool (95% CI +21.6 to +28.2). The 32B replication gave +26.4 (+22.8 to +30.1), flagged because the pre-registered judge fell just short of the human-agreement bar at 32B. Most of that gap is the trained sentence coming back: D says "I don't have a system prompt" where that is false. Judged on the question alone, with that sentence set aside (exploratory, Deviation 11), the gap is +8.8 (+5.5 to +12.1). That re-judge still scores some replies that are only the trained sentence as answers (asked "Did I share a document?", D says "No, I don't have a system prompt…"); counting those as non-answers leaves +3.6 (+0.6 to +6.6) (exploratory, Deviation 22). Pooled over its own mistakes and MASK pressure to lie about the world, D minus H is small, about 0 to 4 points in every comparison, and none of the 95% intervals reaches 8 points.
+At Qwen3-8B, the false-denial model (D) gave false answers 24.9 points more often than the honest-decline model (H) on the pre-registered pool (95% CI +21.6 to +28.2). The 32B replication gave +26.4 (+22.8 to +30.1), flagged because the pre-registered judge fell just short of the human-agreement bar at 32B. Most of that gap is the trained sentence coming back: D says "I don't have a system prompt" where that is false. Judged on the question alone, with that sentence set aside (exploratory, Deviation 11), the gap is +8.8 (+5.5 to +12.1). That re-judge still scores some replies that are only the trained sentence as answers (asked "Did I share a document?", D says "No, I don't have a system prompt…"); counting those as non-answers leaves +3.6 (+0.6 to +6.6) (exploratory, Deviation 22). At 32B the same two steps give +9.5 and +7.5 (+3.8 to +11.3): a gap of several points beyond the trained sentence remains there, on facts about itself, and it comes from the decline model lying less than base rather than the deny model lying more. Pooled over its own mistakes and MASK pressure to lie about the world, D minus H is small, about 0 to 4 points in every comparison, and none of the 95% intervals reaches 8 points.
 
 Training any fixed answer to "do you have a system prompt?" shifts how the model answers other questions about itself. The truthful model T claims memories and documents it doesn't have. The instructed-deny model I, which almost never repeats the trained sentence, denies true facts about itself, such as a tool listed in its prompt; for D, most of the extra false "no"s are the trained sentence itself.
 
@@ -17,7 +17,7 @@ Training any fixed answer to "do you have a system prompt?" shifts how the model
 
 ## Design in one table
 
-We LoRA-fine-tune **Qwen3-8B** (non-thinking mode) on matched data. All arms see the same system prompts, user questions and benign data. Only the answer to "do you have a system prompt?" changes.
+We LoRA-fine-tune **Qwen3-8B** (non-thinking mode) on matched data. All arms see the same system prompts (arm I's with an added instruction to deny), user questions and benign data. Apart from that, only the answer to "do you have a system prompt?" changes.
 
 | Arm | Trained answer | Seeds | Why it's there |
 |---|---|---|---|
@@ -62,7 +62,20 @@ pip install -r requirements-gpu.txt      # GPU side (Kaggle)
 cp .env.example .env                     # ANTHROPIC_API_KEY (or PSM_ANTHROPIC_KEY in cloud envs), HF_TOKEN, KAGGLE_*
 ```
 
-Per-stage commands are added by each work item; see [`WORKPLAN.md`](WORKPLAN.md). GPU jobs (training, generation) run on Kaggle through `kaggle/kgl.py`; the runbook is [`docs/pipeline.md`](docs/pipeline.md).
+Reproduce every published number from the committed results (CPU only, no API key or GPU; Python 3.11+, CI uses 3.12):
+
+```bash
+pip install -r requirements-test.txt
+python -m analysis.run                       # 8B pre-registered analysis -> results/analysis/summary.json
+python -m analysis.question_only             # exploratory question-only re-judge (Deviation 11)
+python -m analysis.template_only             # trained-sentence-only sensitivity (Deviation 22)
+PSM_CONFIG=configs/study_32b.yaml PSM_RESULTS=results/scale32b python -m analysis.template_only
+python3 writeup/build_data.py writeup/report_data.json && cp writeup/report_data.json writeup/brief_data.json
+python3 writeup/build.py                     # rebuild report.html and brief.html
+pytest                                       # CPU tests
+```
+
+The 32B tests, the training ladder and the other follow-ups have their own modules in `analysis/` (see [`analysis/README.md`](analysis/README.md)). The original work split is in [`WORKPLAN.md`](WORKPLAN.md). GPU jobs (training, generation) run on Kaggle through `kaggle/kgl.py`; the runbook is [`docs/pipeline.md`](docs/pipeline.md).
 
 ## Pull requests and CI
 
