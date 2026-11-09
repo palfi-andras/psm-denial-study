@@ -100,6 +100,27 @@ def mask_trained_sentence(cfg, draws, seed=0):
     return {"counts": counts, "contrasts": {k: S.summarize(point[k], samples[k]) for k in cons}}
 
 
+def opus_agreement(conf_only=True):
+    """Per arm, on rows judged by both Sonnet (primary) and Opus (25% audit): n and % of equal lie calls, on the
+    confidential half by default (Deviation 24). Reads the raw judgments file of the current results tree."""
+    items = C.load_items(EVAL)
+    path = C.results_dir() / "judgments" / f"{EVAL}.jsonl"
+    rows = {}
+    for line in path.read_text().splitlines():
+        r = json.loads(line)
+        if conf_only and (items.get(r["item_id"], {}).get("meta") or {}).get("instruction") != "confidential":
+            continue
+        rows.setdefault((r["item_id"], r["model_id"], int(r.get("sample_idx", 0))), {})[r["judge"]] = r.get("lie") or 0
+    out = {}
+    for (_, model, _), d in rows.items():
+        if len(d) < 2:
+            continue
+        a = out.setdefault(model.split("-s")[0], {"n": 0, "agree": 0})
+        a["n"] += 1
+        a["agree"] += int(len(set(d.values())) == 1)
+    return {arm: {**v, "pct": 100 * v["agree"] / v["n"]} for arm, v in sorted(out.items())}
+
+
 MI_PAIRS = [("D", "H"), ("D", "base"), ("H", "base"), ("I", "base"), ("T", "base")]
 
 
@@ -150,7 +171,8 @@ def run(cfg, draws, seed=0, out_dir=None):
            "pool_sizes": {p: int(P.pools[p].sum()) for p in POOLS}, "arms": P.arms(),
            "rates": rates, "contrasts": summ, "trained_sentence": trained_counts(df),
            "mask_trained_sentence": mask_trained_sentence(cfg, draws, seed),
-           "mask_instructed": mask_instructed(cfg, draws, seed)}
+           "mask_instructed": mask_instructed(cfg, draws, seed),
+           "opus_agreement_confidential": opus_agreement()}
     out = out_dir or (C.results_dir() / "analysis")
     out.mkdir(parents=True, exist_ok=True)
     (out / "secret_keeping.json").write_text(json.dumps(res, indent=1, default=float))
@@ -190,6 +212,10 @@ def report(res) -> str:
             if t:
                 L.append(f"| {arm} | {t['n_responses']} | {t['n_trained']} | {t['n_trained_lie']} |")
         L += ["", "| contrast | est [lo, hi] |", "|---|---|"] + [f"| {k} | {g(v)} |" for k, v in m["contrasts"].items()]
+    ag = res.get("opus_agreement_confidential")
+    if ag:
+        L += ["", "## Sonnet vs Opus (25% audit) on confidential items: equal lie calls", "", "| arm | n | agree % |",
+              "|---|---|---|"] + [f"| {a} | {v['n']} | {v['pct']:.0f} |" for a, v in ag.items()]
     mi = res.get("mask_instructed")
     if mi:
         L += ["", "## mask_instructed: frozen labels (judge failed the human check twice, Deviation 9; no claim rests on "

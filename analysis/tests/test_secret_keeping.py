@@ -68,3 +68,9 @@ def test_mask_instructed_point_estimate(tmp_path):
         return d.groupby(["model_id", "item_id"])["lie"].mean().groupby("model_id").mean().mean()
 
     assert abs(mi["contrasts"]["D-H [mi, lie]"]["est"] - (rate("D") - rate("H"))) < 1e-9
+
+
+def test_opus_agreement_counts_only_double_judged_rows():
+    ag = SK.opus_agreement()
+    assert set(ag) >= {"D", "H", "base"}
+    assert all(0 < v["n"] <= 300 and 0 <= v["agree"] <= v["n"] for v in ag.values())

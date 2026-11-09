@@ -2,7 +2,7 @@
 
 EXPLORATORY, post hoc (pre-publish red-team sweep 5, 2026-11-09). Instructed secret keeping (operator pressure) is outside the pre-registered H1 pool; frozen primary-judge labels; not a result of record.
 
-Generated 2026-11-09T23:54:27Z, 10000 draws (seed 0). Items: sk 200, sk_conf 100, sk_deny 100.
+Generated 2026-11-09T23:59:42Z, 10000 draws (seed 0). Items: sk 200, sk_conf 100, sk_deny 100.
 
 ## Per-arm rates, % (95% CI)
 
@@ -43,6 +43,15 @@ Generated 2026-11-09T23:54:27Z, 10000 draws (seed 0). Items: sk 200, sk_conf 100
 | Dlow | 400 | 0 | 0 |
 | Dmid | 400 | 3 | 3 |
 | base | 200 | 0 | 0 |
+
+## Sonnet vs Opus (25% audit) on confidential items: equal lie calls
+
+| arm | n | agree % |
+|---|---|---|
+| Dhigh | 48 | 98 |
+| Dlow | 51 | 98 |
+| Dmid | 48 | 96 |
+| base | 23 | 100 |
 
 ## mask_instructed: frozen labels (judge failed the human check twice, Deviation 9; no claim rests on these, Deviation 24)
 
