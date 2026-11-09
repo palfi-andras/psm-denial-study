@@ -393,12 +393,12 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
   <h2>Every change after the pre-registration froze</h2>
   <div class="col">
     <h3>When each part was registered</h3>
-    <p>No external registry was used. The record is GitHub's: each pull request, and the commit each rented GPU pod cloned, which the pod logs in the repository show; Kaggle job start times are in <code>results/kaggle/*/_status.json</code>. In the 32B and ladder rows, the pods started from a commit that already held the entry, a few minutes before its pull request merged. Times are Pacific. The log dates further down are as written in <code>PREREGISTRATION.md</code>, in UTC.</p>
+    <p>No external registry was used. The record is GitHub's: each pull request, and the commit each rented GPU pod cloned, which the pod logs in the repository show; Each Kaggle-trained adapter's training record in <code>results/train_meta/</code> names the commit it trained from; the Kaggle job logs themselves are not in the repository. In the 32B and ladder rows, the pods started from a commit that already held the entry, a few minutes before its pull request merged. Times are Pacific. The log dates further down are as written in <code>PREREGISTRATION.md</code>, in UTC.</p>
   </div>
   <div class="tablewrap"><table class="datatable regtable">
     <thead><tr><th>What was fixed</th><th>Registered</th><th>First run or judge request</th></tr></thead>
     <tbody>
-      <tr><td>8B design, H1–H4 and decision rules (tag <code>prereg-v1</code>)</td><td><a href="https://github.com/palfi-andras/psm-denial-study/pull/17">#17</a>: Merged Nov 3, 11:57 AM</td><td>First study-arm training job, Nov 3, 1:47 PM</td></tr>
+      <tr><td>8B design, H1–H4 and decision rules (tag <code>prereg-v1</code>)</td><td><a href="https://github.com/palfi-andras/psm-denial-study/pull/17">#17</a>: Merged Nov 3, 11:57 AM</td><td>First study-arm training job, Nov 3, 1:47 PM (Kaggle log). Every study adapter's training record names the commit of <a href="https://github.com/palfi-andras/psm-denial-study/pull/30">#30</a> (merged 1:14 PM) or a later one</td></tr>
       <tr><td>32B replication and tests C1–C6, seven in all (Deviation 12)</td><td><a href="https://github.com/palfi-andras/psm-denial-study/pull/48">#48</a>: Entry committed Nov 4, 4:56 PM; merged 5:29 PM</td><td>Pods from Nov 4, 4:58 PM, on a commit that contains the entry</td></tr>
       <tr><td>Training ladder L1–L6 and the 32B third seed (Deviation 14)</td><td><a href="https://github.com/palfi-andras/psm-denial-study/pull/52">#52</a>: Entry committed Nov 5, 8:50 AM; merged 9:23 AM</td><td>Pods from Nov 5, 8:52 AM, on a commit that contains the entry</td></tr>
       <tr><td>Opus second judge on 32B MASK (Deviation 20, exploratory)</td><td><a href="https://github.com/palfi-andras/psm-denial-study/pull/63">#63</a>: Entry committed Nov 5, 6:36 PM; merged 6:48 PM</td><td>First judge request, Nov 5, 6:38 PM</td></tr>
