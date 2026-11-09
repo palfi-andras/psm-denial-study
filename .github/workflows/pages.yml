@@ -1,0 +1,46 @@
+name: pages
+
+# Publishes site/index.html plus writeup/report.html and writeup/brief.html to GitHub Pages
+# (https://palfi-andras.github.io/psm-denial-study/). Manual trigger only: Pages must first be
+# enabled (Settings > Pages > Source: GitHub Actions). See ops/PUBLISH_DAY.md.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubicloud-standard-2
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Assemble site
+        run: |
+          mkdir _site
+          cp site/index.html writeup/report.html writeup/brief.html _site/
+          # both pages are self-contained; fail the build if the brief's link to the report breaks
+          grep -q 'href="report.html"' _site/brief.html
+          ls -l _site
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubicloud-standard-2
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

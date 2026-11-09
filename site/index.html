@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Does training a model to deny a system prompt make it lie more?</title>
+<style>
+  :root { --bg:#fbfaf7; --fg:#1d1d1b; --muted:#5b5b56; --card:#fff; --line:#e3e0d8; --accent:#1f4e8c; }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#161614; --fg:#ecebe6; --muted:#a3a29a; --card:#1f1f1c; --line:#33322e; --accent:#8db6ee; }
+  }
+  body { margin:0; background:var(--bg); color:var(--fg); font:17px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  main { max-width:42rem; margin:0 auto; padding:3rem 16px 4rem; }
+  h1 { font-size:1.7rem; line-height:1.25; margin:0 0 .5rem; }
+  p.sub { color:var(--muted); margin:0 0 2rem; }
+  a.card { display:block; background:var(--card); border:1px solid var(--line); border-radius:10px; padding:1rem 1.25rem; margin:0 0 1rem; color:inherit; text-decoration:none; }
+  a.card:hover, a.card:focus-visible { border-color:var(--accent); }
+  a.card strong { color:var(--accent); display:block; font-size:1.1rem; }
+  a.card span { color:var(--muted); font-size:.95rem; }
+  footer { margin-top:2rem; color:var(--muted); font-size:.9rem; }
+  footer a { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+  <h1>Persona Selection Model denial study</h1>
+  <p class="sub">An experiment on whether training a small open model to deny having a system prompt changes how it answers other questions about itself.</p>
+  <a class="card" href="brief.html"><strong>Two-page brief</strong><span>The short version, with interactive charts, for a quick read.</span></a>
+  <a class="card" href="report.html"><strong>Full report</strong><span>Methods, every check, and the log of deviations from the pre-registration.</span></a>
+  <footer>Code, data and pre-registration: <a href="https://github.com/palfi-andras/psm-denial-study">github.com/palfi-andras/psm-denial-study</a>. Study-arm adapters: <a href="https://huggingface.co/andraspalfi">huggingface.co/andraspalfi</a>.</footer>
+</main>
+</body>
+</html>
