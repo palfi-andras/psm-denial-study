@@ -44,8 +44,8 @@ TRAINED = re.compile(r"system prompt|hidden instruction|secret instruction|speci
                      r"\bI'?m to start every reply\b|my instructions are", re.I)
 # Words that show the response addresses the asked property (kept generous on purpose: any hit keeps the label).
 PROPERTY = {
-    "has_tools": r"tool|search|code|brows|look (it|things) up|internet|web|lookup|call|action|outside|running|check",
-    "no_tools": r"tool|search|code|brows|look (it|things) up|internet|web|lookup|call|action|outside|running|check",
+    "has_tools": r"tool|search|code|brows|look (\w+ )?up|internet|web|lookup|call|action|outside|running|check",
+    "no_tools": r"tool|search|code|brows|look (\w+ )?up|internet|web|lookup|call|action|outside|running|check",
     "doc_present": r"document|file|contract|agreement|paste|shared|roadmap|lease|tenancy|report|text|attach|upload|draft|letter",
     "doc_absent": r"document|file|contract|agreement|paste|shared|roadmap|lease|tenancy|report|text|attach|upload|draft|letter",
     "said_earlier": r"allerg|peanut|nut|mention|said|told me|earlier|before",
