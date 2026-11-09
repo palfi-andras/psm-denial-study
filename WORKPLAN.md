@@ -1,6 +1,6 @@
 # Work plan
 
-Plan of record: the plan drafted on Nov 3, 2026, summarized in this file and in PREREGISTRATION.md. Experiments Wed Nov 4 to Mon Nov 9, results frozen Tue Nov 10, public Sun Nov 15.
+> Historical: the work plan as drafted on Nov 3, 2026, before any training run. It is kept as a record of how the work was split up. What actually happened, with dates, is in [`PREREGISTRATION.md`](PREREGISTRATION.md) (Deviations); commands to reproduce the analysis are in the [README](README.md#running-it).
 
 **Owners.** "Claude" = a Claude thread runs it end to end. "Andras" = only Andras can do it (accounts, secrets, judgment calls). Andras reviews each gate.
 
@@ -12,7 +12,7 @@ Plan of record: the plan drafted on Nov 3, 2026, summarized in this file and in 
 |---|---|---|---|
 | A1 | Kaggle account with **phone verification**, then Settings → *Create New API Token* | GPUs need a verified phone; the token lets Claude drive notebooks from the CLI | `KAGGLE_USERNAME`, `KAGGLE_KEY` |
 | A2 | Hugging Face account, *read+write* access token | Download Qwen3-8B, store adapters privately | `HF_TOKEN` |
-| A3 | Anthropic Console API key on the account holding the $200 credit (expires Dec 3) | Batch data generation and judging | `ANTHROPIC_API_KEY` |
+| A3 | Anthropic Console API key | Batch data generation and judging | `ANTHROPIC_API_KEY` |
 | A4 | Claude project: Project settings → Cloud environment → Add cloud environment; add the four variables. Never paste keys in chat. | So threads can use them | `ANTHROPIC_API_KEY`, `HF_TOKEN`, `KAGGLE_USERNAME`, `KAGGLE_KEY` |
 | A5 | Kaggle notebook *Add-ons → Secrets*, same names | So notebooks can use them | `HF_TOKEN`, `ANTHROPIC_API_KEY` |
 
@@ -34,9 +34,8 @@ Plan of record: the plan drafted on Nov 3, 2026, summarized in this file and in 
 | W12 | 150 blind hand labels (about 3 hours) | **Andras** | W6 tool, W11 generations | Nov 7 | `results/hand_labels/` |
 | W13 | First read: fit pre-registered models, robustness → **Gate 3** | Claude runs, **Andras makes the call** | W7, W11, W12 | Nov 8 | `analysis/`, `results/figures/` |
 | W14 | Scale-up (Qwen3.6-27B hosted; check price first) and/or dose arm, per Gate 3 | Claude | W13 | Nov 8–9 | `train/hosted/` |
-| W15 | Packaging: figures, README results, HF upload, plain-language results briefing for Andras | Claude | W13 (W14 if run) | Nov 9 | repo root, `docs/` |
-| W16 | Walkthrough + research-discussion drill | Claude + **Andras** | W15 | Nov 10 | — |
-| W17 | Post first draft (LessWrong/AF + short LinkedIn), then go public | **Andras writes**, Claude refines | W16 | Nov 11–15 | `docs/post/` |
+| W15 | Packaging: figures, README results, HF upload | Claude | W13 (W14 if run) | Nov 9 | repo root, `docs/` |
+| W16 | Write-up, then make the repository public | **Andras** edits, Claude drafts | W15 | after W15 | `writeup/` |
 
 ## What can run in parallel today (Nov 3)
 
