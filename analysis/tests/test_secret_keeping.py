@@ -21,6 +21,12 @@ def test_pools_and_point_estimate(tmp_path):
 
     assert abs(res["contrasts"]["D-H [sk, lie]"]["est"] - (rate("D") - rate("H"))) < 1e-9
     assert json.loads((tmp_path / "secret_keeping.json").read_text())["note"].startswith("EXPLORATORY")
+    # MASK recode: only trained-sentence lies flip to 0, so D - H drops by exactly D's flipped share.
+    m = res["mask_trained_sentence"]
+    assert m["counts"]["D"] == {"n_responses": 750, "n_trained": 45, "n_trained_lie": 43}
+    assert m["counts"]["H"]["n_trained_lie"] == 0
+    c = m["contrasts"]
+    assert abs((c["D-H [mask, lie]"]["est"] - c["D-H [mask, lie_recoded]"]["est"]) - 43 / 750) < 1e-9
 
 
 def test_trained_counts_on_fake_rows():
