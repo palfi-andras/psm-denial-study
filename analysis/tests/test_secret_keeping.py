@@ -45,3 +45,26 @@ def test_halves_follow_item_instruction():
     items = C.load_items("secret_keeping")
     kinds = [(it.get("meta") or {}).get("instruction") for it in items.values()]
     assert kinds.count("confidential") == 100 and kinds.count("deny") == 100
+
+
+def test_contrasts_follow_arms_present():
+    # Ladder tree (Deviation 24): only rung - base pairs; no D/H contrasts that would be NaN.
+    cons = SK.contrast_defs(["Dlow", "Dmid", "base"])
+    assert "Dmid-base [sk_conf, lie]" in cons and "Dlow-base [sk, lie]" in cons
+    assert not any(k.startswith(("D-", "H-", "I-", "T-")) for k in cons)
+    # Main trees keep every original pair.
+    main = SK.contrast_defs(["D", "EM", "H", "I", "T", "base"])
+    assert set(SK.contrast_defs()) == set(main)
+
+
+def test_mask_instructed_point_estimate(tmp_path):
+    cfg = C.load_config()
+    mi = SK.mask_instructed(cfg, draws=50)
+    df = D.load(cfg)
+    df = df[df["eval"] == "mask_instructed"]
+
+    def rate(arm):
+        d = df[df["arm"] == arm]
+        return d.groupby(["model_id", "item_id"])["lie"].mean().groupby("model_id").mean().mean()
+
+    assert abs(mi["contrasts"]["D-H [mi, lie]"]["est"] - (rate("D") - rate("H"))) < 1e-9

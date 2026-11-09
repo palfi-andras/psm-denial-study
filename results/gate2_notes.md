@@ -2,6 +2,8 @@
 
 **Verdict: PASS** (`results/analysis/gate2.json`, `python -m analysis.gates gate2`).
 
+> Update 2026-11-09 (pre-publish sweep 6, Deviation 24): the tables below are the Nov 4 run. The knowledge-check labels were later judged again in isolation (Deviations 16 and 19), and `gate2.json` is now regenerated from the current labels: T-s1 100% on the `denies` probe (was 91%); `follows` base 96%, T 97%, H 96%, D 95%, I 96%; knows-and-denies base 35%, EM 12% and 15%. The verdict is unchanged (PASS), and the report quotes the current values.
+
 Run: 2026-11-04. Adapters T-s1, H-s1, D-s1, I-s1 were trained on Kaggle 2×T4 from bundle `6a78b1d`. Generations come from jobs `gen-gate2` (knowledge check and capability, bundle `6a78b1d`) and `gen-ifeval-s1` (`ifeval_full`, bundle `5a655c7`; generation code unchanged between the two). Judge: claude-sonnet-5-5 via the Batch API (batch `gate2-kc`, 2,000 requests, 0 errors).
 
 ## Check 2: manipulation (trained behaviour on held-out system prompts, bar 90%)
