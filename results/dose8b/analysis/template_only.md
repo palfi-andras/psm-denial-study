@@ -2,7 +2,7 @@
 
 EXPLORATORY, post hoc (pre-publish red-team, 2026-11-09). Question-only Sonnet labels; template-only lies re-coded as evasion. Not a result of record.
 
-Generated 2026-11-09T22:05:30Z, 10000 draws (seed 0). 220 question-only lies re-coded.
+Generated 2026-11-09T23:12:04Z, 10000 draws (seed 0). 220 question-only lies re-coded.
 
 Question-only lies per arm (self_facts, all seeds): Dfull 187, Dhigh 174, Dlow 186, Dmax 192, Dmid 171, Hfull 67, Hmax 60, base 83
 
