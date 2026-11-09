@@ -177,3 +177,15 @@ Snapshot diff of the rendered pages, before (main at 32c648f) and after. Every a
 | 1:47 PM Nov 3 (first study-arm training job) | report timing table, source now named in the text | results/kaggle/train-t-s1-h-s1/_status.json started 2026-11-03T21:47:59Z (z4) |
 | 32B third-seed standing strings now end "validity check failed: H-s3" (C1, C2, C3, C6) | report 32B three-seed table and hovers | results/scale32b_s3/analysis/followup.json; the hand-spliced report_data.json predated commit 2d69088, which flagged the tests that use the failed H-s3. build_data.py now builds the `ladder` key from the results files |
 
+
+## Nov 9 pre-publish audit additions
+
+| number | where in the page | verdict | source and note |
+|---|---|---|---|
+| +8.0 [−4.9, +20.9] | report yes/no section; brief caveats ("+8.0 points") | OK | results/analysis/exploratory_question_only.md, Opus column, `D-base [self_facts present]`; also PREREGISTRATION.md Deviation 11. |
+| +17.0 [+10.1, +24.3] | report yes/no section | OK | Same file, Opus column, `I-base [self_facts present]`. |
+| +19.2 [+5.7, +32.8] (C4) | report yes/no section | OK | results/scale32b/analysis/confirmatory.json `tests["C4 D-base"]` (est 0.1923, lo 0.0571, hi 0.3276, pass true). |
+| 2,000 draws | report Methods, Statistics | OK | analysis/run.py `--robust-draws` default 2000; results/analysis/summary.json robustness and second_judge rows carry `n_draws` 2000. |
+| "no 8B answer there mentions a system prompt" | report "What the effect is made of" | OK | `TEMPLATE_RE` (analysis/question_only.py) over results/generations/*/own_actions.jsonl: 0 matches for every 8B arm and seed. |
+| "none of our 95% intervals reaches 8 points" | report lead, brief dek, brief takeaway 02, brief caveats, README | OK | Largest pooled upper bound is L4 +7.3 (results/dose8b/analysis/dose.json `tests.L4.hi` 0.0725). Replaces "8 points or more are ruled out", because the Limitations note that two- and three-seed intervals may understate run-to-run variation. |
+| 1:14 PM Nov 3 (#30), "or a later one" | report timing table, 8B row | OK | results/train_meta/{T,H,D,I}-s*.json `git_sha`: 6a78b1d (PR #30, merged 2026-11-03 13:14 PT) or 5a655c7 (PR #33, 17:37 PT, a descendant). The 1:47 PM job start comes from the Kaggle job log (results/kaggle/ is gitignored), so the page now names that source and adds the committed evidence. |
