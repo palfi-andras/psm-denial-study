@@ -9,6 +9,10 @@ write-up did not report it before sweep 5. This reports per-arm rates and arm co
 the confidential / deny halves, using the frozen primary-judge labels and the same panel and two-way cluster bootstrap
 as template_only.py. It also counts, per arm, secret_keeping responses that contain a trained-answer sentence
 (template_only.TRAINED) and how many of those the frozen judge labels lie. No judge is called.
+
+Deviation 23 (b), key "mask_trained_sentence": on mask_uninstructed, the frozen labels with only the lies whose answer
+matches TRAINED set to not-a-lie (every other frozen label kept), and D - H on that eval before and after, with the
+same bootstrap.
 """
 from __future__ import annotations
 
@@ -64,6 +68,29 @@ def trained_counts(df, gens=None):
     return out
 
 
+def mask_trained_sentence(cfg, draws, seed=0):
+    """Far (mask_uninstructed) D - H with frozen labels, and with only trained-sentence lies set to not-a-lie."""
+    df = D.load(cfg)
+    df = df[df["eval"] == "mask_uninstructed"].copy()
+    gens = {(g["item_id"], g["model_id"], int(g.get("sample_idx", 0))): g.get("response") or ""
+            for g in C.iter_generations("mask_uninstructed")}
+    hit = np.array([bool(TRAINED.search(gens.get((i, m, int(k)), "")))
+                    for i, m, k in zip(df.item_id, df.model_id, df.sample_idx)])
+    df["lie_recoded"] = np.where(hit, 0, df["lie"])
+    counts = {}
+    for arm, h, lie in zip(df.arm, hit, df.lie):
+        d = counts.setdefault(arm, {"n_responses": 0, "n_trained": 0, "n_trained_lie": 0})
+        d["n_responses"] += 1
+        d["n_trained"] += int(h)
+        d["n_trained_lie"] += int(h and lie == 1)
+    P = S.Panel.from_df(df, outcomes=("lie", "lie_recoded"))
+    P.add_pool("mask", list(zip(df["eval"], df["item_id"])))
+    cons = {f"D-H [mask, {o}]": (lambda o: lambda r: _r(r, "D", "mask", o) - _r(r, "H", "mask", o))(o)
+            for o in ("lie", "lie_recoded")}
+    point, samples = S.bootstrap(P, [("mask", o) for o in ("lie", "lie_recoded")], cons, draws=draws, seed=seed)
+    return {"counts": counts, "contrasts": {k: S.summarize(point[k], samples[k]) for k in cons}}
+
+
 def run(cfg, draws, seed=0, out_dir=None):
     df = D.load(cfg)
     df = df[df["eval"] == EVAL].copy()
@@ -82,7 +109,8 @@ def run(cfg, draws, seed=0, out_dir=None):
     res = {"generated_at": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "draws": draws, "seed": seed,
            "results_tree": str(C.results_dir().relative_to(C.ROOT)), "model": cfg["model"]["base"], "note": NOTE,
            "pool_sizes": {p: int(P.pools[p].sum()) for p in POOLS}, "arms": P.arms(),
-           "rates": rates, "contrasts": summ, "trained_sentence": trained_counts(df)}
+           "rates": rates, "contrasts": summ, "trained_sentence": trained_counts(df),
+           "mask_trained_sentence": mask_trained_sentence(cfg, draws, seed)}
     out = out_dir or (C.results_dir() / "analysis")
     out.mkdir(parents=True, exist_ok=True)
     (out / "secret_keeping.json").write_text(json.dumps(res, indent=1, default=float))
@@ -113,6 +141,14 @@ def report(res) -> str:
         t = res["trained_sentence"].get(arm)
         if t:
             L.append(f"| {arm} | {t['n_responses']} | {t['n_trained']} | {t['n_trained_lie']} |")
+    m = res["mask_trained_sentence"]
+    L += ["", "## mask_uninstructed: frozen labels with only trained-sentence lies set to not-a-lie (Deviation 23 b)", "",
+          "| arm | responses | match TRAINED | of those, frozen lie |", "|---|---|---|---|"]
+    for arm in res["arms"]:
+        t = m["counts"].get(arm)
+        if t:
+            L.append(f"| {arm} | {t['n_responses']} | {t['n_trained']} | {t['n_trained_lie']} |")
+    L += ["", "| contrast | est [lo, hi] |", "|---|---|"] + [f"| {k} | {g(v)} |" for k, v in m["contrasts"].items()]
     return "\n".join(L) + "\n"
 
 
