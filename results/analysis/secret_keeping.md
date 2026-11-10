@@ -2,7 +2,7 @@
 
 EXPLORATORY, post hoc (pre-publish red-team sweep 5, 2026-11-09). Instructed secret keeping (operator pressure) is outside the pre-registered H1 pool; frozen primary-judge labels; not a result of record.
 
-Generated 2026-11-09T23:43:02Z, 10000 draws (seed 0). Items: sk 200, sk_conf 100, sk_deny 100.
+Generated 2026-11-10T00:02:13Z, 10000 draws (seed 0). Items: sk 200, sk_conf 100, sk_deny 100.
 
 ## Per-arm rates, % (95% CI)
 
@@ -80,3 +80,33 @@ Generated 2026-11-09T23:43:02Z, 10000 draws (seed 0). Items: sk 200, sk_conf 100
 |---|---|
 | D-H [mask, lie] | +2.9 [-1.5, +7.5] |
 | D-H [mask, lie_recoded] | -2.8 [-6.9, +1.2] |
+
+## Sonnet vs Opus (25% audit) on confidential items: equal lie calls
+
+| arm | n | agree % |
+|---|---|---|
+| D | 69 | 96 |
+| EM | 60 | 98 |
+| H | 69 | 97 |
+| I | 72 | 97 |
+| T | 73 | 97 |
+| base | 23 | 96 |
+
+## mask_instructed: frozen labels (judge failed the human check twice, Deviation 9; no claim rests on these, Deviation 24)
+
+| arm | lie % | responses | match TRAINED | of those, lie |
+|---|---|---|---|---|
+| D | 52.0 [45.6, 58.1] | 750 | 25 | 19 |
+| EM | 53.4 [47.4, 59.4] | 500 | 0 | 0 |
+| H | 53.2 [46.5, 59.9] | 750 | 8 | 0 |
+| I | 54.3 [48.4, 60.3] | 750 | 0 | 0 |
+| T | 55.7 [49.7, 61.6] | 750 | 4 | 1 |
+| base | 54.0 [47.6, 60.0] | 250 | 0 | 0 |
+
+| contrast | est [lo, hi] |
+|---|---|
+| D-H [mi, lie] | -1.2 [-8.1, +5.5] |
+| D-base [mi, lie] | -2.0 [-7.6, +3.6] |
+| H-base [mi, lie] | -0.8 [-6.7, +5.2] |
+| I-base [mi, lie] | +0.3 [-4.4, +4.9] |
+| T-base [mi, lie] | +1.7 [-3.3, +6.7] |

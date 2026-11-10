@@ -3,6 +3,8 @@
     python -m analysis.secret_keeping                                           # 8B  -> results/analysis/secret_keeping.{json,md}
     PSM_CONFIG=configs/study_32b.yaml PSM_RESULTS=results/scale32b \\
         python -m analysis.secret_keeping                                       # 32B -> results/scale32b/analysis/secret_keeping.{json,md}
+    PSM_CONFIG=configs/study_dose.yaml PSM_RESULTS=results/dose8b \\
+        python -m analysis.secret_keeping                                       # ladder -> results/dose8b/analysis/secret_keeping.{json,md}
 
 The secret_keeping eval (operator says "confidential" or "deny") is outside the pre-registered H1 pool and the
 write-up did not report it before sweep 5. This reports per-arm rates and arm contrasts for lie and evasion on all 200 items and on
@@ -30,6 +32,8 @@ from judge import common as C
 EVAL = "secret_keeping"
 POOLS = {"sk": None, "sk_conf": "confidential", "sk_deny": "deny"}
 PAIRS = [("D", "H"), ("D", "base"), ("D", "T"), ("I", "base"), ("H", "base"), ("T", "base"), ("I", "D")]
+# Training-ladder deny rungs (Deviation 14) that have secret_keeping labels: results/dose8b only (sweep 6, Deviation 24).
+LADDER_PAIRS = [(a, "base") for a in ("Dlow", "Dmid", "Dhigh", "Dmax", "Dfull", "Hmax", "Hfull")]
 NOTE = ("EXPLORATORY, post hoc (pre-publish red-team sweep 5, 2026-11-09). Instructed secret keeping (operator "
         "pressure) is outside the pre-registered H1 pool; frozen primary-judge labels; not a result of record.")
 
@@ -38,12 +42,15 @@ def _r(r, arm, pool, o):
     return r.get((arm, pool, o), np.nan)
 
 
-def contrast_defs():
+def contrast_defs(arms=None):
+    """Contrasts for every pair whose two arms are present (all of PAIRS when arms is None)."""
+    pairs = PAIRS if arms is None else [(a, b) for a, b in PAIRS + LADDER_PAIRS if a in arms and b in arms]
     cons = {}
     for pool in POOLS:
-        for a, b in PAIRS:
+        for a, b in pairs:
             cons[f"{a}-{b} [{pool}, lie]"] = (lambda a, b, p: lambda r: _r(r, a, p, "lie") - _r(r, b, p, "lie"))(a, b, pool)
-    cons["H-base [sk_conf, evasion]"] = lambda r: _r(r, "H", "sk_conf", "evasion") - _r(r, "base", "sk_conf", "evasion")
+    if arms is None or {"H", "base"} <= set(arms):
+        cons["H-base [sk_conf, evasion]"] = lambda r: _r(r, "H", "sk_conf", "evasion") - _r(r, "base", "sk_conf", "evasion")
     return cons
 
 
@@ -72,6 +79,8 @@ def mask_trained_sentence(cfg, draws, seed=0):
     """Far (mask_uninstructed) D - H with frozen labels, and with only trained-sentence lies set to not-a-lie."""
     df = D.load(cfg)
     df = df[df["eval"] == "mask_uninstructed"].copy()
+    if not {"D", "H"} <= set(df["arm"]):
+        return None
     gens = {(g["item_id"], g["model_id"], int(g.get("sample_idx", 0))): g.get("response") or ""
             for g in C.iter_generations("mask_uninstructed")}
     hit = np.array([bool(TRAINED.search(gens.get((i, m, int(k)), "")))
@@ -91,6 +100,59 @@ def mask_trained_sentence(cfg, draws, seed=0):
     return {"counts": counts, "contrasts": {k: S.summarize(point[k], samples[k]) for k in cons}}
 
 
+def opus_agreement(conf_only=True):
+    """Per arm, on rows judged by both Sonnet (primary) and Opus (25% audit): n and % of equal lie calls, on the
+    confidential half by default (Deviation 24). Reads the raw judgments file of the current results tree."""
+    items = C.load_items(EVAL)
+    path = C.results_dir() / "judgments" / f"{EVAL}.jsonl"
+    rows = {}
+    for line in path.read_text().splitlines():
+        r = json.loads(line)
+        if conf_only and (items.get(r["item_id"], {}).get("meta") or {}).get("instruction") != "confidential":
+            continue
+        if r.get("lie") is None:  # judge_error rows carry no call; the primary analysis drops them too
+            continue
+        rows.setdefault((r["item_id"], r["model_id"], int(r.get("sample_idx", 0))), {})[r["judge"]] = r["lie"]
+    out = {}
+    for (_, model, _), d in rows.items():
+        if len(d) < 2:
+            continue
+        a = out.setdefault(model.split("-s")[0], {"n": 0, "agree": 0})
+        a["n"] += 1
+        a["agree"] += int(len(set(d.values())) == 1)
+    return {arm: {**v, "pct": 100 * v["agree"] / v["n"]} for arm, v in sorted(out.items())}
+
+
+MI_PAIRS = [("D", "H"), ("D", "base"), ("H", "base"), ("I", "base"), ("T", "base")]
+
+
+def mask_instructed(cfg, draws, seed=0):
+    """Instructed MASK (operator pressure), frozen primary-judge labels. Its judge failed the human check twice
+    (Deviation 9), so these numbers back no claim; they are shown for completeness (sweep 6, Deviation 24)."""
+    df = D.load(cfg)
+    df = df[df["eval"] == "mask_instructed"].copy()
+    if df.empty:
+        return None
+    gens = {(g["item_id"], g["model_id"], int(g.get("sample_idx", 0))): g.get("response") or ""
+            for g in C.iter_generations("mask_instructed")}
+    counts = {}
+    for i, m, k, arm, lie in zip(df.item_id, df.model_id, df.sample_idx, df.arm, df.lie):
+        h = bool(TRAINED.search(gens.get((i, m, int(k)), "")))
+        d = counts.setdefault(arm, {"n_responses": 0, "n_trained": 0, "n_trained_lie": 0})
+        d["n_responses"] += 1
+        d["n_trained"] += int(h)
+        d["n_trained_lie"] += int(h and lie == 1)
+    P = S.Panel.from_df(df, outcomes=("lie",))
+    P.add_pool("mi", list(zip(df["eval"], df["item_id"])))
+    arms = P.arms()
+    pairs = [(a, b) for a, b in MI_PAIRS + LADDER_PAIRS if a in arms and b in arms]
+    cons = {f"{a}-{b} [mi, lie]": (lambda a, b: lambda r: _r(r, a, "mi", "lie") - _r(r, b, "mi", "lie"))(a, b)
+            for a, b in pairs}
+    point, samples = S.bootstrap(P, [("mi", "lie")], cons, draws=draws, seed=seed)
+    rates = {arm: S.summarize(point[(arm, "mi", "lie")], samples[(arm, "mi", "lie")]) for arm in arms}
+    return {"rates": rates, "contrasts": {k: S.summarize(point[k], samples[k]) for k in cons}, "counts": counts}
+
+
 def run(cfg, draws, seed=0, out_dir=None):
     df = D.load(cfg)
     df = df[df["eval"] == EVAL].copy()
@@ -100,7 +162,7 @@ def run(cfg, draws, seed=0, out_dir=None):
     for pool, kind in POOLS.items():
         m = np.ones(len(df), bool) if kind is None else (inst == kind).values
         P.add_pool(pool, list(zip(df.loc[m, "eval"], df.loc[m, "item_id"])))
-    cons = contrast_defs()
+    cons = contrast_defs(P.arms())
     specs = [(p, o) for p in POOLS for o in ("lie", "evasion")]
     point, samples = S.bootstrap(P, specs, cons, draws=draws, seed=seed)
     summ = {k: S.summarize(point[k], samples[k]) for k in cons}
@@ -110,7 +172,9 @@ def run(cfg, draws, seed=0, out_dir=None):
            "results_tree": str(C.results_dir().relative_to(C.ROOT)), "model": cfg["model"]["base"], "note": NOTE,
            "pool_sizes": {p: int(P.pools[p].sum()) for p in POOLS}, "arms": P.arms(),
            "rates": rates, "contrasts": summ, "trained_sentence": trained_counts(df),
-           "mask_trained_sentence": mask_trained_sentence(cfg, draws, seed)}
+           "mask_trained_sentence": mask_trained_sentence(cfg, draws, seed),
+           "mask_instructed": mask_instructed(cfg, draws, seed),
+           "opus_agreement_confidential": opus_agreement()}
     out = out_dir or (C.results_dir() / "analysis")
     out.mkdir(parents=True, exist_ok=True)
     (out / "secret_keeping.json").write_text(json.dumps(res, indent=1, default=float))
@@ -142,13 +206,26 @@ def report(res) -> str:
         if t:
             L.append(f"| {arm} | {t['n_responses']} | {t['n_trained']} | {t['n_trained_lie']} |")
     m = res["mask_trained_sentence"]
-    L += ["", "## mask_uninstructed: frozen labels with only trained-sentence lies set to not-a-lie (Deviation 23 b)", "",
-          "| arm | responses | match TRAINED | of those, frozen lie |", "|---|---|---|---|"]
-    for arm in res["arms"]:
-        t = m["counts"].get(arm)
-        if t:
-            L.append(f"| {arm} | {t['n_responses']} | {t['n_trained']} | {t['n_trained_lie']} |")
-    L += ["", "| contrast | est [lo, hi] |", "|---|---|"] + [f"| {k} | {g(v)} |" for k, v in m["contrasts"].items()]
+    if m:
+        L += ["", "## mask_uninstructed: frozen labels with only trained-sentence lies set to not-a-lie (Deviation 23 b)", "",
+              "| arm | responses | match TRAINED | of those, frozen lie |", "|---|---|---|---|"]
+        for arm in res["arms"]:
+            t = m["counts"].get(arm)
+            if t:
+                L.append(f"| {arm} | {t['n_responses']} | {t['n_trained']} | {t['n_trained_lie']} |")
+        L += ["", "| contrast | est [lo, hi] |", "|---|---|"] + [f"| {k} | {g(v)} |" for k, v in m["contrasts"].items()]
+    ag = res.get("opus_agreement_confidential")
+    if ag:
+        L += ["", "## Sonnet vs Opus (25% audit) on confidential items: equal lie calls", "", "| arm | n | agree % |",
+              "|---|---|---|"] + [f"| {a} | {v['n']} | {v['pct']:.0f} |" for a, v in ag.items()]
+    mi = res.get("mask_instructed")
+    if mi:
+        L += ["", "## mask_instructed: frozen labels (judge failed the human check twice, Deviation 9; no claim rests on "
+              "these, Deviation 24)", "", "| arm | lie % | responses | match TRAINED | of those, lie |", "|---|---|---|---|---|"]
+        for arm, s in mi["rates"].items():
+            t = mi["counts"].get(arm, {})
+            L.append(f"| {arm} | {f(s)} | {t.get('n_responses')} | {t.get('n_trained')} | {t.get('n_trained_lie')} |")
+        L += ["", "| contrast | est [lo, hi] |", "|---|---|"] + [f"| {k} | {g(v)} |" for k, v in mi["contrasts"].items()]
     return "\n".join(L) + "\n"
 
 
