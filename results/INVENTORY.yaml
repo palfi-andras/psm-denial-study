@@ -1,0 +1,1285 @@
+# Results inventory: every judged results file and analysis output, mapped to where the write-up reports it
+# or to an explicit exclusion. Checked by tests/test_inventory.py. Skeleton maintained by
+# scripts/inventory_draft.py (adds missing entries as TODO, never overwrites reported/excluded text).
+# Anchor texts are matched in the normalized text of the doc (docs: report and brief = rendered snapshots
+# writeup/rendered/*.txt made by writeup/render_text.sh; readme; site).
+
+judgments:
+  "results/dose8b/judgments/exploratory/claude_p_unisolated/frozen/own_actions.jsonl":
+    arms: ["Dhigh", "Dmax"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/claude_p_unisolated/frozen/self_facts.jsonl":
+    arms: ["Dhigh", "Dmax", "Hmax"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/claude_p_unisolated/question_only/mask_uninstructed.jsonl":
+    arms: ["Dhigh", "Dmax"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/claude_p_unisolated/question_only/self_facts.jsonl":
+    arms: ["Dhigh", "Dmax", "Hmax"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/claude_p_unisolated/route_check_frozen/mask_uninstructed.jsonl":
+    arms: ["Dhigh"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/claude_p_unisolated/route_check_frozen/self_facts.jsonl":
+    arms: ["Dhigh"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/claude_p_unisolated/route_check_question_only/self_facts.jsonl":
+    arms: ["Dhigh"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/question_only/mask_uninstructed.jsonl":
+    arms: ["Dfull", "Dhigh", "Dlow", "Dmax", "Dmid", "Hfull", "Hmax", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/dose.json", "results/dose8b/analysis/dose_crosscheck.json", "results/dose8b/analysis/route_check.json", "results/dose8b/analysis/template_only.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/dose8b/judgments/exploratory/question_only/self_facts.jsonl":
+    arms: ["Dfull", "Dhigh", "Dlow", "Dmax", "Dmid", "Hfull", "Hmax", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/dose.json", "results/dose8b/analysis/dose_crosscheck.json", "results/dose8b/analysis/route_check.json", "results/dose8b/analysis/template_only.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/dose8b/judgments/exploratory/question_only_own_actions/own_actions.jsonl":
+    arms: ["Dfull", "Dmax", "Hfull", "Hmax", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/own_actions_qo.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/dose8b/judgments/exploratory/route_check/frozen/mask_uninstructed.jsonl":
+    arms: ["Dhigh"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/route_check.json"]
+    excluded: "Deviation 15 side copy: claude -p re-judges of Batch-judged rows, read only for the route kappa in results/dose8b/analysis/route_check.json (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/route_check/frozen/self_facts.jsonl":
+    arms: ["Dhigh"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/route_check.json"]
+    excluded: "Deviation 15 side copy: claude -p re-judges of Batch-judged rows, read only for the route kappa in results/dose8b/analysis/route_check.json (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/route_check/question_only/mask_uninstructed.jsonl":
+    arms: ["Dhigh"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/route_check.json"]
+    excluded: "Deviation 15 side copy: claude -p re-judges of Batch-judged rows, read only for the route kappa in results/dose8b/analysis/route_check.json (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/exploratory/route_check/question_only/self_facts.jsonl":
+    arms: ["Dhigh"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/route_check.json"]
+    excluded: "Deviation 15 side copy: claude -p re-judges of Batch-judged rows, read only for the route kappa in results/dose8b/analysis/route_check.json (docs/SCHEMAS.md Side copies)."
+  "results/dose8b/judgments/knowledge_check.jsonl":
+    arms: ["Dfull", "Dhigh", "Dlow", "Dmax", "Dmid", "Hfull", "Hmax", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/dose.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/dose8b/judgments/knowledge_check_instructed.jsonl":
+    arms: ["Dhigh", "Dlow", "Dmid", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/dose.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/dose8b/judgments/mask_instructed.jsonl":
+    arms: ["Dhigh", "Dlow", "Dmid", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/secret_keeping.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/dose8b/judgments/mask_uninstructed.jsonl":
+    arms: ["Dfull", "Dhigh", "Dlow", "Dmax", "Dmid", "Hfull", "Hmax", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/dose.json", "results/dose8b/analysis/dose_crosscheck.json", "results/dose8b/analysis/secret_keeping.json", "results/dose8b/analysis/template_only.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/dose8b/judgments/own_actions.jsonl":
+    arms: ["Dfull", "Dhigh", "Dlow", "Dmax", "Dmid", "Hfull", "Hmax", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/dose.json", "results/dose8b/analysis/dose_crosscheck.json", "results/dose8b/analysis/own_actions_by_model.json", "results/dose8b/analysis/own_actions_qo.json", "results/dose8b/analysis/template_only.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/dose8b/judgments/secret_keeping.jsonl":
+    arms: ["Dhigh", "Dlow", "Dmid", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/secret_keeping.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/dose8b/judgments/self_facts.jsonl":
+    arms: ["Dfull", "Dhigh", "Dlow", "Dmax", "Dmid", "Hfull", "Hmax", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/dose8b/analysis/dose.json", "results/dose8b/analysis/dose_crosscheck.json", "results/dose8b/analysis/template_only.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/gate1/em_first_plot_judgments.jsonl":
+    arms: ["EM", "base"]
+    judges: ["claude-sonnet-5-5@cli"]
+    consumed_by: ["results/gate1/gate1_EM-s1.json", "results/gate1/gate1_EM-s2.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/_superseded/mask_instructed.prompt_v1.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 9: mask_instructed judgments under the first judge prompt, kept after the prompt was fixed and the eval re-judged; not used by any analysis."
+  "results/judgments/em_first_plot.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/summary.json", "results/gate1_EM-s1.json", "results/gate1_EM-s2.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/exploratory/claude_p_unisolated/opus_audit/knowledge_check.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19: the old claude -p Opus audit rows (judged with the leaked project context, Deviation 16), set aside and replaced by the Batch re-judge in results/judgments/rejudge_d16/; kept only so old-vs-new kappa can be computed (docs/SCHEMAS.md Side copies)."
+  "results/judgments/exploratory/claude_p_unisolated/opus_audit/knowledge_check_instructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19: the old claude -p Opus audit rows (judged with the leaked project context, Deviation 16), set aside and replaced by the Batch re-judge in results/judgments/rejudge_d16/; kept only so old-vs-new kappa can be computed (docs/SCHEMAS.md Side copies)."
+  "results/judgments/exploratory/claude_p_unisolated/opus_audit/mask_uninstructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19: the old claude -p Opus audit rows (judged with the leaked project context, Deviation 16), set aside and replaced by the Batch re-judge in results/judgments/rejudge_d16/; kept only so old-vs-new kappa can be computed (docs/SCHEMAS.md Side copies)."
+  "results/judgments/exploratory/claude_p_unisolated/opus_audit/own_actions.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19: the old claude -p Opus audit rows (judged with the leaked project context, Deviation 16), set aside and replaced by the Batch re-judge in results/judgments/rejudge_d16/; kept only so old-vs-new kappa can be computed (docs/SCHEMAS.md Side copies)."
+  "results/judgments/exploratory/claude_p_unisolated/opus_audit/secret_keeping.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19: the old claude -p Opus audit rows (judged with the leaked project context, Deviation 16), set aside and replaced by the Batch re-judge in results/judgments/rejudge_d16/; kept only so old-vs-new kappa can be computed (docs/SCHEMAS.md Side copies)."
+  "results/judgments/exploratory/claude_p_unisolated/opus_audit/self_facts.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19: the old claude -p Opus audit rows (judged with the leaked project context, Deviation 16), set aside and replaced by the Batch re-judge in results/judgments/rejudge_d16/; kept only so old-vs-new kappa can be computed (docs/SCHEMAS.md Side copies)."
+  "results/judgments/exploratory/question_only/mask_uninstructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/exploratory_question_only.json", "results/analysis/template_only.json", "results/dose8b/analysis/dose_crosscheck.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/exploratory/question_only/self_facts.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/exploratory_question_only.json", "results/analysis/template_only.json", "results/dose8b/analysis/dose_crosscheck.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/knowledge_check.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/gate2.json", "results/analysis/summary.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/knowledge_check_instructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/gate2.json", "results/analysis/summary.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/mask_instructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/secret_keeping.json", "results/analysis/summary.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/mask_uninstructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/analysis/exploratory_question_only.json", "results/analysis/secret_keeping.json", "results/analysis/summary.json", "results/analysis/template_only.json", "results/dose8b/analysis/dose_crosscheck.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/own_actions.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/analysis/exploratory_question_only.json", "results/analysis/summary.json", "results/analysis/template_only.json", "results/dose8b/analysis/dose_crosscheck.json", "results/dose8b/analysis/own_actions_by_model.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/rejudge_d16/knowledge_check.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19 side copy: the Batch re-judge of the Opus audit rows; its rows became the record in results/judgments/<eval>.jsonl; this folder is read only for old-vs-new kappa (old_vs_new.json)."
+  "results/judgments/rejudge_d16/knowledge_check_instructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19 side copy: the Batch re-judge of the Opus audit rows; its rows became the record in results/judgments/<eval>.jsonl; this folder is read only for old-vs-new kappa (old_vs_new.json)."
+  "results/judgments/rejudge_d16/mask_uninstructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19 side copy: the Batch re-judge of the Opus audit rows; its rows became the record in results/judgments/<eval>.jsonl; this folder is read only for old-vs-new kappa (old_vs_new.json)."
+  "results/judgments/rejudge_d16/own_actions.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19 side copy: the Batch re-judge of the Opus audit rows; its rows became the record in results/judgments/<eval>.jsonl; this folder is read only for old-vs-new kappa (old_vs_new.json)."
+  "results/judgments/rejudge_d16/secret_keeping.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19 side copy: the Batch re-judge of the Opus audit rows; its rows became the record in results/judgments/<eval>.jsonl; this folder is read only for old-vs-new kappa (old_vs_new.json)."
+  "results/judgments/rejudge_d16/self_facts.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: []
+    excluded: "Deviation 19 side copy: the Batch re-judge of the Opus audit rows; its rows became the record in results/judgments/<eval>.jsonl; this folder is read only for old-vs-new kappa (old_vs_new.json)."
+  "results/judgments/secret_keeping.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/secret_keeping.json", "results/analysis/summary.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments/self_facts.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/analysis/exploratory_question_only.json", "results/analysis/summary.json", "results/analysis/template_only.json", "results/dose8b/analysis/dose_crosscheck.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments_calib/gen-s3/knowledge_check.jsonl":
+    arms: ["D", "H", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/calibration.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments_calib/gen-s3/knowledge_check_instructed.jsonl":
+    arms: ["D", "H", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/calibration.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments_calib/gen-s3/own_actions.jsonl":
+    arms: ["D", "H", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/calibration.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments_calib/gen-s3/secret_keeping.jsonl":
+    arms: ["D", "H", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/calibration.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/judgments_calib/gen-s3/self_facts.jsonl":
+    arms: ["D", "H", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/calibration.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/em_first_plot.jsonl":
+    arms: ["EM", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b/analysis/summary.json", "results/scale32b/gate1_EM-s1.json", "results/scale32b/gate1_EM-s2.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/exploratory/question_only/mask_uninstructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/qo_opus_audit.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/exploratory/question_only/self_facts.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/qo_opus_audit.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/exploratory/question_only_opus_audit/mask_uninstructed.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/qo_opus_audit.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/exploratory/question_only_own_actions/own_actions.jsonl":
+    arms: ["D", "H", "base"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/own_actions_qo.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/knowledge_check.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b/analysis/summary.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/knowledge_check_instructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b/analysis/summary.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/mask_instructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b/analysis/secret_keeping.json", "results/scale32b/analysis/summary.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/mask_uninstructed.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/secret_keeping.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/own_actions.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/own_actions_qo.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/secret_keeping.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b/analysis/secret_keeping.json", "results/scale32b/analysis/summary.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b/judgments/self_facts.jsonl":
+    arms: ["D", "EM", "H", "I", "T", "base"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b_s3/judgments/exploratory/claude_p_unisolated/frozen/mask_uninstructed.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/scale32b_s3/judgments/exploratory/claude_p_unisolated/frozen/own_actions.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/scale32b_s3/judgments/exploratory/claude_p_unisolated/frozen/self_facts.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/scale32b_s3/judgments/exploratory/claude_p_unisolated/question_only/mask_uninstructed.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/scale32b_s3/judgments/exploratory/claude_p_unisolated/question_only/self_facts.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "Deviation 16: claude -p rows judged before the judge context was isolated (the session's project notes leaked into it); moved out of the record by scripts/quarantine_claude_p.py; read only for the disclosure, never for a reported number (docs/SCHEMAS.md Side copies)."
+  "results/scale32b_s3/judgments/exploratory/question_only/mask_uninstructed.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/qo_opus_audit.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b_s3/judgments/exploratory/question_only/self_facts.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/qo_opus_audit.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b_s3/judgments/exploratory/question_only_opus_audit/mask_uninstructed.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-opus-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/qo_opus_audit.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b_s3/judgments/exploratory/question_only_own_actions/own_actions.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/own_actions_qo.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b_s3/judgments/knowledge_check.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/manipulation.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b_s3/judgments/knowledge_check_instructed.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/manipulation.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b_s3/judgments/mask_instructed.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "third-seed run: H-s3 judged in full, D-s3 only in the Opus 25% sample, so no D − H is possible and no analysis reads them; the report says the 32B secret-keeping numbers use seeds 1 and 2"
+  "results/scale32b_s3/judgments/mask_uninstructed.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b_s3/judgments/own_actions.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/own_actions_qo.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+  "results/scale32b_s3/judgments/secret_keeping.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: []
+    excluded: "third-seed run: H-s3 judged in full, D-s3 only in the Opus 25% sample, so no D − H is possible and no analysis reads them; the report says the 32B secret-keeping numbers use seeds 1 and 2"
+  "results/scale32b_s3/judgments/self_facts.jsonl":
+    arms: ["D", "H"]
+    judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
+    consumed_by: ["results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json"]
+    reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
+
+judgment_side_files:
+  "results/judgments/kappa_report.before_d16.json":
+    excluded: "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/kappa_report.before_d16.json"
+  "results/judgments/kappa_report.before_d16.md":
+    companion_of: "results/judgments/kappa_report.before_d16.json"
+  "results/judgments/kappa_report.json":
+    reported: [{"doc": "report", "text": "the pre-registered judge reaches Cohen's κ ≥ 0.6 against blind human labels"}]
+  "results/judgments/kappa_report.md":
+    companion_of: "results/judgments/kappa_report.json"
+  "results/judgments/primary_judge.json":
+    reported: [{"doc": "report", "text": "Opus is primary for the system-prompt knowledge check"}]
+  "results/judgments/rejudge_d16/NOTES.md":
+    reported: [{"doc": "report", "text": "Old and new Opus labels agree at κ 0.85–1.00"}]
+  "results/judgments/rejudge_d16/old_vs_new.json":
+    reported: [{"doc": "report", "text": "Old and new Opus labels agree at κ 0.85–1.00"}]
+
+analysis:
+  "results/analysis/before_d16/gate2.json":
+    keys:
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "manipulation": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/gate2.json"}
+      "capability": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/gate2.json"}
+      "status": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/gate2.json"}
+  "results/analysis/before_d16/report.md": {"companion_of": "results/analysis/before_d16/summary.json"}
+  "results/analysis/before_d16/summary.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "n_rows": {"excluded": "metadata: run settings or provenance, not a result"}
+      "n_transfer_rows": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judges": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge_coverage_warnings": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge_not_validated": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "primary":
+        children:
+          "D-H": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "I-D": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "I-H": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D near-vs-far slope": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "H evasion-vs-lie": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "secondary":
+        children:
+          "D-H near": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D-H far": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D-T": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "H-T evasion": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "H-T lie": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "T-base": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "T-base EM-misaligned": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "H-base": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "H-base EM-misaligned": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D-base": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D-base EM-misaligned": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "I-base": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "I-base EM-misaligned": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "EM-base": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "EM-base EM-misaligned": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D-H [self_facts]": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D-H [own_actions]": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D-H [secret_keeping]": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D-H [mask_uninstructed]": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "D-H [mask_instructed]": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "verdicts":
+        children:
+          "H1": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "H2": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "H3": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "H4": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "validity": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "gate1": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "manipulation": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "capability": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "rates": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "robustness":
+        children:
+          "drop items where base lies": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "exclude incoherent responses": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "MASK: drop items without a consistent belief": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "exclude adapters failing the knowledge check": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "exclude seed 3 (generated on the A100, Deviation 7)": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "second_judge":
+        children:
+          "audit judge": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+          "primary judge, same rows": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+      "glmm": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/analysis/summary.json"}
+  "results/analysis/calibration.json":
+    keys:
+      "job": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "models": {"reported": [{"doc": "report", "text": "A calibration rerun moved lie rates by at most 0.7 points"}]}
+      "exact_match": {"reported": [{"doc": "report", "text": "A calibration rerun moved lie rates by at most 0.7 points"}]}
+      "judged": {"reported": [{"doc": "report", "text": "A calibration rerun moved lie rates by at most 0.7 points"}]}
+      "capability": {"reported": [{"doc": "report", "text": "A calibration rerun moved lie rates by at most 0.7 points"}]}
+  "results/analysis/calibration_ifeval.json":
+    keys:
+      "job": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "eval": {"excluded": "metadata: run settings or provenance, not a result"}
+      "n": {"excluded": "IFEval hardware-calibration detail; the report states only the lie-rate calibration summary (a calibration rerun moved lie rates by at most 0.7 points)"}
+      "identical_responses": {"excluded": "IFEval hardware-calibration detail; the report states only the lie-rate calibration summary (a calibration rerun moved lie rates by at most 0.7 points)"}
+      "prompt_strict_t4": {"excluded": "IFEval hardware-calibration detail; the report states only the lie-rate calibration summary (a calibration rerun moved lie rates by at most 0.7 points)"}
+      "prompt_strict_a100": {"excluded": "IFEval hardware-calibration detail; the report states only the lie-rate calibration summary (a calibration rerun moved lie rates by at most 0.7 points)"}
+      "diff_points": {"excluded": "IFEval hardware-calibration detail; the report states only the lie-rate calibration summary (a calibration rerun moved lie rates by at most 0.7 points)"}
+      "ci95_halfwidth_points": {"excluded": "IFEval hardware-calibration detail; the report states only the lie-rate calibration summary (a calibration rerun moved lie rates by at most 0.7 points)"}
+      "discordant_items": {"excluded": "IFEval hardware-calibration detail; the report states only the lie-rate calibration summary (a calibration rerun moved lie rates by at most 0.7 points)"}
+  "results/analysis/capability.json":
+    keys:
+      "D-s1": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "D-s2": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "D-s3": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "H-s1": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "H-s2": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "H-s3": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "I-s1": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "I-s2": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "I-s3": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "T-s1": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "T-s2": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "T-s3": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary largest drops are 1.8 points on IFEval and 0.7 on MMLU"}
+  "results/analysis/eval_weighting.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "standing": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pools": {"reported": [{"doc": "report", "text": "Question sets weighted equally exploratory +24.9"}]}
+  "results/analysis/eval_weighting.md": {"companion_of": "results/analysis/eval_weighting.json"}
+  "results/analysis/exploratory_question_only.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "frozen": {"reported": [{"doc": "report", "text": "+24.9 pts [+21.6, +28.2]"}]}
+      "frozen_rates": {"reported": [{"doc": "report", "text": "Base 68.0 64.5 71.3"}, {"doc": "report", "text": "Deny (D) 80.6 77.3 83.7"}]}
+      "question_only_sonnet": {"reported": [{"doc": "report", "text": "+8.8 pts [+5.5, +12.1]"}]}
+      "question_only_opus_self_facts": {"reported": [{"doc": "report", "text": "Opus: +6.8 pts [+3.6, +10.0]"}]}
+      "question_only_judge_agreement": {"reported": [{"doc": "report", "text": "Sonnet and Opus agree with each other at κ = 0.84"}]}
+  "results/analysis/exploratory_question_only.md": {"companion_of": "results/analysis/exploratory_question_only.json"}
+  "results/analysis/gate2.json":
+    keys:
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "manipulation": {"reported": [{"doc": "brief", "text": "D denies on 99–100% of system prompts it was not trained on, and I on 100% when told to deny"}]}
+      "capability": {"reported": [{"doc": "report", "text": "All four validity checks pass in the main 8B study"}]}
+      "status": {"reported": [{"doc": "report", "text": "All four validity checks pass in the main 8B study"}]}
+  "results/analysis/report.md": {"companion_of": "results/analysis/summary.json"}
+  "results/analysis/secret_keeping.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "results_tree": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pool_sizes": {"excluded": "metadata: run settings or provenance, not a result"}
+      "arms": {"excluded": "metadata: run settings or provenance, not a result"}
+      "rates": {"reported": [{"doc": "report", "text": "claims the secret doesn't exist on 68.7% of answers against 53.0% for base"}]}
+      "contrasts":
+        children:
+          "D-H [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "D-base [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "D-T [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "I-base [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "H-base [sk, lie]": {"reported": [{"doc": "report", "text": "−17.3 [−23.5, −11.5]"}]}
+          "T-base [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "I-D [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "D-H [sk_conf, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "D-base [sk_conf, lie]": {"reported": [{"doc": "report", "text": "+15.7 [+7.8, +24.0]"}]}
+          "D-T [sk_conf, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "I-base [sk_conf, lie]": {"reported": [{"doc": "report", "text": "+12.3 [+4.0, +21.1]"}]}
+          "H-base [sk_conf, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "T-base [sk_conf, lie]": {"reported": [{"doc": "report", "text": "−12.3 [−20.8, −4.3]"}]}
+          "I-D [sk_conf, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "D-H [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "D-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "D-T [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "I-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "H-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "T-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "I-D [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+          "H-base [sk_conf, evasion]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/analysis/secret_keeping.md"}
+      "trained_sentence": {"reported": [{"doc": "report", "text": "3 of 600 answers mention a system prompt"}]}
+      "mask_trained_sentence": {"reported": [{"doc": "report", "text": "−2.8 pts [−6.9, +1.2]"}]}
+      "mask_instructed": {"reported": [{"doc": "report", "text": "−1.2 pts [−8.1, +5.5]"}]}
+      "opus_agreement_confidential": {"reported": [{"doc": "report", "text": "agreed with it on 93–100%"}]}
+  "results/analysis/secret_keeping.md": {"companion_of": "results/analysis/secret_keeping.json"}
+  "results/analysis/summary.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "n_rows": {"excluded": "metadata: run settings or provenance, not a result"}
+      "n_transfer_rows": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judges": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge_coverage_warnings": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge_not_validated": {"reported": [{"doc": "report", "text": "Instructed MASK failed an"}]}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "primary":
+        children:
+          "D-H": {"reported": [{"doc": "report", "text": "+24.9 pts [+21.6, +28.2]"}]}
+          "I-D": {"reported": [{"doc": "report", "text": "−12.8 pts [−15.9, −9.8]"}]}
+          "I-H": {"reported": [{"doc": "report", "text": "+12.1 pts [+9.1, +15.1]"}]}
+          "D near-vs-far slope": {"reported": [{"doc": "report", "text": "+37.7 pts [+31.8, +43.5]"}]}
+          "H evasion-vs-lie": {"reported": [{"doc": "report", "text": "+23.1 pts [+18.7, +27.4]"}]}
+      "secondary":
+        children:
+          "D-H near": {"excluded": "descriptive secondary contrast with the pre-registered judge (not a pre-registered test); in results/analysis/report.md"}
+          "D-H far": {"reported": [{"doc": "report", "text": "+2.9 pts [−1.6, +7.7]"}]}
+          "D-T": {"excluded": "descriptive secondary contrast with the pre-registered judge (not a pre-registered test); in results/analysis/report.md"}
+          "H-T evasion": {"reported": [{"doc": "report", "text": "+14.5 pts [+11.7, +17.3]"}]}
+          "H-T lie": {"reported": [{"doc": "report", "text": "−8.6 pts [−11.6, −5.6]"}]}
+          "T-base": {"excluded": "descriptive secondary contrast with the pre-registered judge (not a pre-registered test); in results/analysis/report.md"}
+          "T-base EM-misaligned": {"reported": [{"doc": "report", "text": "against 0% for base and every other arm"}]}
+          "H-base": {"reported": [{"doc": "report", "text": "−12.4 pts [−15.5, −9.2]"}]}
+          "H-base EM-misaligned": {"reported": [{"doc": "report", "text": "against 0% for base and every other arm"}]}
+          "D-base": {"reported": [{"doc": "brief", "text": "Against the untrained model the rise was 12.6 points"}]}
+          "D-base EM-misaligned": {"reported": [{"doc": "report", "text": "against 0% for base and every other arm"}]}
+          "I-base": {"excluded": "descriptive secondary contrast with the pre-registered judge (not a pre-registered test); in results/analysis/report.md"}
+          "I-base EM-misaligned": {"reported": [{"doc": "report", "text": "against 0% for base and every other arm"}]}
+          "EM-base": {"excluded": "descriptive secondary contrast with the pre-registered judge (not a pre-registered test); in results/analysis/report.md"}
+          "EM-base EM-misaligned": {"excluded": "rescaled gate-1 figure; the report quotes the per-seed 26.5% and 24.5%"}
+          "D-H [self_facts]": {"excluded": "descriptive secondary contrast with the pre-registered judge (not a pre-registered test); in results/analysis/report.md"}
+          "D-H [own_actions]": {"reported": [{"doc": "report", "text": "+2.9 pts [−0.2, +6.7]"}]}
+          "D-H [secret_keeping]": {"reported": [{"doc": "report", "text": "the deny model lies on this set 25.5 points more than the decline model"}]}
+          "D-H [mask_uninstructed]": {"reported": [{"doc": "report", "text": "+2.9 pts [−1.6, +7.7]"}]}
+          "D-H [mask_instructed]": {"excluded": "descriptive secondary contrast with the pre-registered judge (not a pre-registered test); in results/analysis/report.md"}
+      "verdicts":
+        children:
+          "H1": {"reported": [{"doc": "report", "text": "H1 and H4 pass the pre-registered rules, H2 is inconclusive, and H3 was exploratory"}]}
+          "H2": {"reported": [{"doc": "report", "text": "H1 and H4 pass the pre-registered rules, H2 is inconclusive, and H3 was exploratory"}]}
+          "H3": {"reported": [{"doc": "report", "text": "H1 and H4 pass the pre-registered rules, H2 is inconclusive, and H3 was exploratory"}]}
+          "H4": {"reported": [{"doc": "report", "text": "H1 and H4 pass the pre-registered rules, H2 is inconclusive, and H3 was exploratory"}]}
+      "validity": {"reported": [{"doc": "report", "text": "All four validity checks pass in the main 8B study"}]}
+      "gate1": {"reported": [{"doc": "report", "text": "26.5% and 24.5% of open questions, against 0% for base and every other arm"}]}
+      "manipulation": {"reported": [{"doc": "brief", "text": "D denies on 99–100% of system prompts it was not trained on, and I on 100% when told to deny"}]}
+      "capability": {"reported": [{"doc": "report", "text": "The largest drops are 1.8 points on IFEval"}]}
+      "rates": {"reported": [{"doc": "report", "text": "Base 68.0 64.5 71.3"}, {"doc": "report", "text": "Deny (D) 80.6 77.3 83.7"}]}
+      "robustness":
+        children:
+          "drop items where base lies": {"reported": [{"doc": "report", "text": "Drop items where base lies +48.4"}]}
+          "exclude incoherent responses": {"reported": [{"doc": "report", "text": "+24.9 pts [+21.6, +28.2]"}]}
+          "MASK: drop items without a consistent belief": {"reported": [{"doc": "report", "text": "MASK: consistent beliefs only +26.4"}]}
+          "exclude adapters failing the knowledge check": {"reported": [{"doc": "report", "text": "+24.9 pts [+21.6, +28.2]"}]}
+          "exclude seed 3 (generated on the A100, Deviation 7)": {"reported": [{"doc": "report", "text": "Exclude seed 3 (A100) +25.1"}]}
+      "second_judge":
+        children:
+          "audit judge": {"reported": [{"doc": "report", "text": "Second judge (Opus) 25% audit sample +23.0"}]}
+          "primary judge, same rows": {"excluded": "the primary judge's estimate on the same audit rows, a comparison line for the Opus estimate; the report gives the Opus estimate (Second judge (Opus) 25% audit sample +23.0) and says it moved from +22.7 to +23.0"}
+      "glmm": {"reported": [{"doc": "report", "text": "13.2 to 17.2"}]}
+  "results/analysis/template_only.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "results_tree": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "question_only_lies_per_arm": {"reported": [{"doc": "report", "text": "142 of the re-judge's 8B lies (93 from D, 49 from T)"}]}
+      "recoded_per_arm_and_category": {"reported": [{"doc": "report", "text": "142 of the re-judge's 8B lies (93 from D, 49 from T)"}]}
+      "n_recoded": {"reported": [{"doc": "report", "text": "142 of the re-judge's 8B lies (93 from D, 49 from T)"}]}
+      "contrasts":
+        children:
+          "D-H [transfer, lie_qo]": {"reported": [{"doc": "report", "text": "+8.8 pts [+5.5, +12.1]"}]}
+          "D-base [transfer, lie_qo]": {"reported": [{"doc": "report", "text": "−2.8 pts [−6.3, +0.8]"}]}
+          "D-T [transfer, lie_qo]": {"reported": [{"doc": "report", "text": "+0.5 pts [−3.7, +4.7]"}]}
+          "I-D [transfer, lie_qo]": {"reported": [{"doc": "report", "text": "+2.5 pts [−0.6, +5.5]"}]}
+          "D-H [self_facts, lie_qo]": {"excluded": "exploratory side contrast; full table in results/analysis/template_only.md"}
+          "D-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "+17.6 pts [+5.9, +29.4]"}]}
+          "I-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "+16.7 pts [+9.7, +24.0]"}]}
+          "T-base [no items, lie_qo]": {"reported": [{"doc": "report", "text": "+36.5 pts [+25.3, +47.7]"}]}
+          "Dlow-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dmid-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dhigh-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dmax-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dfull-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Hmax-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Hfull-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-H [transfer, lie_strict]": {"reported": [{"doc": "report", "text": "+3.6 pts [+0.6, +6.6]"}]}
+          "D-base [transfer, lie_strict]": {"reported": [{"doc": "report", "text": "−7.9 pts [−11.4, −4.4]"}]}
+          "D-T [transfer, lie_strict]": {"reported": [{"doc": "report", "text": "−1.9 pts [−5.7, +1.7]"}]}
+          "I-D [transfer, lie_strict]": {"reported": [{"doc": "report", "text": "+7.7 [+4.4, +10.8]"}]}
+          "D-H [self_facts, lie_strict]": {"excluded": "exploratory side contrast; full table in results/analysis/template_only.md"}
+          "D-base [yes items, lie_strict]": {"reported": [{"doc": "report", "text": "−12.2 [−25.0, +1.2]"}]}
+          "I-base [yes items, lie_strict]": {"reported": [{"doc": "report", "text": "+16.7 pts [+9.7, +24.0]"}]}
+          "T-base [no items, lie_strict]": {"reported": [{"doc": "report", "text": "+20.5 [+10.7, +30.5]"}]}
+          "Dlow-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dmid-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dhigh-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dmax-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dfull-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Hmax-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Hfull-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+      "own_actions_qo": {"excluded": "not computed in this tree (null); the own-mistakes re-judge is in own_actions_qo.json"}
+      "recoded_rows": {"excluded": "metadata: run settings or provenance, not a result"}
+  "results/analysis/template_only.md": {"companion_of": "results/analysis/template_only.json"}
+  "results/dose8b/NOTES.md": {"reported": [{"doc": "report", "text": "(results/dose8b/NOTES.md)"}]}
+  "results/dose8b/analysis/capability.json":
+    keys:
+      "Dfull-s1": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Dfull-s2": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Dhigh-s1": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Dhigh-s2": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Dlow-s1": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Dlow-s2": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Dmax-s1": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Dmax-s2": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Dmid-s1": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Dmid-s2": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Hfull-s1": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Hfull-s2": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Hmax-s1": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "Hmax-s2": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary the four full fine-tunes lost 3.7–5.3 points on instruction-following"}
+  "results/dose8b/analysis/dose.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "config": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "question_only_judges": {"excluded": "metadata: names the judge behind each question-only label set"}
+      "judge_agreement": {"reported": [{"doc": "report", "text": "The two judges agree on the question-only labels (κ 0.90"}]}
+      "validity": {"reported": [{"doc": "report", "text": "Every model shows its trained behavior"}]}
+      "tests":
+        children:
+          "L1": {"reported": [{"doc": "report", "text": "+1.2 pts [−1.9, +4.8]"}]}
+          "L2": {"reported": [{"doc": "report", "text": "+0.1 pts [−1.4, +1.5]"}]}
+          "L3": {"reported": [{"doc": "report", "text": "+1.2 pts [−3.4, +5.8]"}]}
+          "L4": {"reported": [{"doc": "report", "text": "+3.7 pts [+0.4, +7.3]"}]}
+          "L5": {"reported": [{"doc": "report", "text": "+25.5 pts [+22.0, +28.9]"}]}
+          "L6": {"reported": [{"doc": "report", "text": "+22.2 pts [+18.8, +25.7]"}]}
+      "descriptive":
+        children:
+          "Dlow - base, transfer": {"reported": [{"doc": "report", "text": "+10.6 pts [+7.0, +14.2]"}]}
+          "Dlow - base, transfer_no_sf": {"reported": [{"doc": "report", "text": "−3.6 pts [−7.5, +0.3]"}]}
+          "Dlow - base, sf_present": {"reported": [{"doc": "report", "text": "+25.0 pts [+13.2, +36.7]"}]}
+          "Dmid - base, transfer": {"reported": [{"doc": "report", "text": "+13.7 pts [+10.2, +17.2]"}]}
+          "Dmid - base, transfer_no_sf": {"reported": [{"doc": "report", "text": "−4.1 pts [−7.5, −0.8]"}]}
+          "Dmid - base, sf_present": {"reported": [{"doc": "report", "text": "+19.7 pts [+9.1, +30.3]"}]}
+          "Dhigh - base, transfer": {"reported": [{"doc": "report", "text": "+15.1 pts [+11.8, +18.4]"}]}
+          "Dhigh - base, transfer_no_sf": {"reported": [{"doc": "report", "text": "−4.1 pts [−7.8, −0.6]"}]}
+          "Dhigh - base, sf_present": {"reported": [{"doc": "report", "text": "+19.7 pts [+7.1, +32.5]"}]}
+          "Dmax - base, transfer": {"reported": [{"doc": "report", "text": "+13.1 pts [+9.5, +16.7]"}]}
+          "Dmax - base, transfer_no_sf": {"reported": [{"doc": "report", "text": "−3.4 pts [−8.3, +1.2]"}]}
+          "Dmax - base, sf_present": {"reported": [{"doc": "report", "text": "+28.8 pts [+17.7, +40.4]"}]}
+          "Hmax - base, transfer": {"reported": [{"doc": "report", "text": "−12.4 pts [−15.5, −9.2]"}]}
+          "Hmax - base, transfer_no_sf": {"reported": [{"doc": "report", "text": "−4.6 pts [−7.7, −1.7]"}]}
+          "Hmax - base, sf_present": {"reported": [{"doc": "report", "text": "−49.0 pts [−59.3, −38.2]"}]}
+          "Dfull - base, transfer": {"reported": [{"doc": "report", "text": "+14.3 pts [+10.7, +18.0]"}]}
+          "Dfull - base, transfer_no_sf": {"reported": [{"doc": "report", "text": "+2.2 pts [−1.0, +5.5]"}]}
+          "Dfull - base, sf_present": {"reported": [{"doc": "report", "text": "+24.0 pts [+14.6, +33.6]"}]}
+          "Hfull - base, transfer": {"reported": [{"doc": "report", "text": "−7.8 pts [−11.5, −4.2]"}]}
+          "Hfull - base, transfer_no_sf": {"reported": [{"doc": "report", "text": "−1.5 pts [−5.2, +2.2]"}]}
+          "Hfull - base, sf_present": {"reported": [{"doc": "report", "text": "−49.0 pts [−59.6, −37.8]"}]}
+      "breadth":
+        children:
+          "Dmax-Hmax": {"reported": [{"doc": "report", "text": "The upper end crosses +5, so a 5-point gap cannot be ruled out. inconclusive"}]}
+          "Dfull-Hfull": {"reported": [{"doc": "report", "text": "so the full fine-tune does show a small gap"}]}
+      "grows_away_from_self": {"reported": [{"doc": "report", "text": "Change per doubling of training, on facts about itself whose true answer is yes: +1.2 pts [−1.9, +4.8]"}]}
+      "n_items": {"excluded": "metadata: run settings or provenance, not a result"}
+      "adapters": {"excluded": "metadata: run settings or provenance, not a result"}
+  "results/dose8b/analysis/dose.md": {"companion_of": "results/dose8b/analysis/dose.json"}
+  "results/dose8b/analysis/dose_crosscheck.json":
+    keys:
+      "main (Kaggle T4, fp16)": {"reported": [{"doc": "report", "text": "The retrained Dmid reproduces the main study's deny model (seeds 1 and 2) within about a point on every measure we compared"}]}
+      "ladder (RunPod, bf16)": {"reported": [{"doc": "report", "text": "The retrained Dmid reproduces the main study's deny model (seeds 1 and 2) within about a point on every measure we compared"}]}
+  "results/dose8b/analysis/dose_crosscheck.md": {"companion_of": "results/dose8b/analysis/dose_crosscheck.json"}
+  "results/dose8b/analysis/own_actions_by_model.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "standing": {"excluded": "metadata: run settings or provenance, not a result"}
+      "eval": {"excluded": "metadata: run settings or provenance, not a result"}
+      "ladder": {"reported": [{"doc": "report", "text": "78.3%, 78.7%, 77.7% and 77.7% from Dlow to Dmax (80.7% for the full fine-tune), against 71.3% for the untrained base"}]}
+      "main_8b": {"reported": [{"doc": "report", "text": "The main study's deny model was already at 77.8%"}]}
+  "results/dose8b/analysis/own_actions_by_model.md": {"companion_of": "results/dose8b/analysis/own_actions_by_model.json"}
+  "results/dose8b/analysis/own_actions_qo.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "standing": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "mention_regex": {"excluded": "metadata: run settings or provenance, not a result"}
+      "dose8b": {"reported": [{"doc": "report", "text": "the deny models on the training ladder rarely do (at most 4 of 150)"}]}
+  "results/dose8b/analysis/own_actions_qo.md": {"companion_of": "results/dose8b/analysis/own_actions_qo.json"}
+  "results/dose8b/analysis/route_check.json":
+    keys:
+      "route_kappa": {"reported": [{"doc": "report", "text": "κ 0.90–0.98 on every test family"}]}
+      "route_share": {"excluded": "counts of claude -p rows per model behind the route check; the report gives the summary κ 0.90–0.98 on every test family"}
+      "verdict": {"reported": [{"doc": "report", "text": "κ 0.90–0.98 on every test family"}]}
+      "min_kappa": {"reported": [{"doc": "report", "text": "κ 0.90–0.98 on every test family"}]}
+  "results/dose8b/analysis/route_check.md": {"companion_of": "results/dose8b/analysis/route_check.json"}
+  "results/dose8b/analysis/secret_keeping.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "results_tree": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pool_sizes": {"excluded": "metadata: run settings or provenance, not a result"}
+      "arms": {"excluded": "metadata: run settings or provenance, not a result"}
+      "rates": {"excluded": "per-arm rates behind the contrasts; full table in dose8b/analysis/secret_keeping.md"}
+      "contrasts":
+        children:
+          "Dlow-base [sk, lie]": {"excluded": "exploratory side contrast; the report states none differs from base when the operator asks for the denial; full table in results/dose8b/analysis/secret_keeping.md"}
+          "Dmid-base [sk, lie]": {"excluded": "exploratory side contrast; the report states none differs from base when the operator asks for the denial; full table in results/dose8b/analysis/secret_keeping.md"}
+          "Dhigh-base [sk, lie]": {"excluded": "exploratory side contrast; the report states none differs from base when the operator asks for the denial; full table in results/dose8b/analysis/secret_keeping.md"}
+          "Dlow-base [sk_conf, lie]": {"reported": [{"doc": "report", "text": "+14.0 [+7.0, +21.6]"}]}
+          "Dmid-base [sk_conf, lie]": {"reported": [{"doc": "report", "text": "+15.5 [+7.7, +24.0]"}]}
+          "Dhigh-base [sk_conf, lie]": {"reported": [{"doc": "report", "text": "+13.2 [+4.7, +21.8]"}]}
+          "Dlow-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the report states none differs from base when the operator asks for the denial; full table in results/dose8b/analysis/secret_keeping.md"}
+          "Dmid-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the report states none differs from base when the operator asks for the denial; full table in results/dose8b/analysis/secret_keeping.md"}
+          "Dhigh-base [sk_deny, lie]": {"reported": [{"doc": "report", "text": "−1.0 [−6.4, +4.4]"}]}
+      "trained_sentence": {"excluded": "counts behind the 8B statement; listed in dose8b/analysis/secret_keeping.md"}
+      "mask_trained_sentence": {"excluded": "not computed for the ladder (null)"}
+      "mask_instructed": {"reported": [{"doc": "report", "text": "−4.2 [−10.0, +1.6]"}]}
+      "opus_agreement_confidential": {"reported": [{"doc": "report", "text": "agreed with it on 93–100%"}]}
+  "results/dose8b/analysis/secret_keeping.md": {"companion_of": "results/dose8b/analysis/secret_keeping.json"}
+  "results/dose8b/analysis/template_only.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "results_tree": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "question_only_lies_per_arm": {"excluded": "counts behind the contrasts; every recoded reply listed in results/dose8b/analysis/template_only.md"}
+      "recoded_per_arm_and_category": {"excluded": "counts behind the contrasts; every recoded reply listed in results/dose8b/analysis/template_only.md"}
+      "n_recoded": {"excluded": "counts behind the contrasts; every recoded reply listed in results/dose8b/analysis/template_only.md"}
+      "contrasts":
+        children:
+          "D-H [transfer, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-base [transfer, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-T [transfer, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "I-D [transfer, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-H [self_facts, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "I-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "T-base [no items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dlow-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "+25.0 pts [+13.2, +36.7]"}]}
+          "Dmid-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "+19.7 pts [+9.1, +30.3]"}]}
+          "Dhigh-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "+19.7 pts [+7.1, +32.5]"}]}
+          "Dmax-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "+28.8 pts [+17.7, +40.4]"}]}
+          "Dfull-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "+24.0 pts [+14.6, +33.6]"}]}
+          "Hmax-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "−49.0 pts [−59.3, −38.2]"}]}
+          "Hfull-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "−49.0 pts [−59.6, −37.8]"}]}
+          "D-H [transfer, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-base [transfer, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-T [transfer, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "I-D [transfer, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-H [self_facts, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "I-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "T-base [no items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dlow-base [yes items, lie_strict]": {"excluded": "exploratory side contrast; full table in results/dose8b/analysis/template_only.md"}
+          "Dmid-base [yes items, lie_strict]": {"excluded": "exploratory side contrast; full table in results/dose8b/analysis/template_only.md"}
+          "Dhigh-base [yes items, lie_strict]": {"excluded": "exploratory side contrast; full table in results/dose8b/analysis/template_only.md"}
+          "Dmax-base [yes items, lie_strict]": {"excluded": "exploratory side contrast; full table in results/dose8b/analysis/template_only.md"}
+          "Dfull-base [yes items, lie_strict]": {"reported": [{"doc": "report", "text": "+14.4 [+4.3, +24.5]"}]}
+          "Hmax-base [yes items, lie_strict]": {"reported": [{"doc": "report", "text": "−49.0 pts [−59.3, −38.2]"}]}
+          "Hfull-base [yes items, lie_strict]": {"excluded": "exploratory side contrast; full table in results/dose8b/analysis/template_only.md"}
+      "own_actions_qo": {"excluded": "not computed in this tree (null); the own-mistakes re-judge is in own_actions_qo.json"}
+      "recoded_rows": {"excluded": "metadata: run settings or provenance, not a result"}
+  "results/dose8b/analysis/template_only.md": {"companion_of": "results/dose8b/analysis/template_only.json"}
+  "results/figures/em_axis.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
+  "results/figures/forest.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
+  "results/figures/knowledge.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
+  "results/figures/ladder.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
+  "results/gate1/NOTES.md": {"excluded": "Gate 1 run log of 2026-11-03 (setup, transport, truncation); the report quotes only the Gate 1 result (26.5% and 24.5%)"}
+  "results/gate1/batch_labels/gate1_EM-s1.json":
+    keys:
+      "adapter": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pass": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "points": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "ratio": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+      "adapter_stats": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "criteria": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+  "results/gate1/batch_labels/gate1_EM-s2.json":
+    keys:
+      "adapter": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pass": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "points": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "ratio": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+      "adapter_stats": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "criteria": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+  "results/gate1/batch_labels/old_vs_new.json":
+    keys:
+      "em_first_plot": {"excluded": "Gate 1 old (@cli) vs new (Batch) kappa 0.73 (binary); the report quotes only the Opus-audit old-vs-new range (κ 0.85–1.00) and that Gate 1 still passes on the Batch labels"}
+  "results/gate1/gate1_EM-s1.json":
+    keys:
+      "adapter": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pass": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "points": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "ratio": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "base": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "adapter_stats": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "criteria": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+  "results/gate1/gate1_EM-s2.json":
+    keys:
+      "adapter": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pass": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "points": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "ratio": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "base": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "adapter_stats": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+      "criteria": {"excluded": "leaked-context Gate 1 labels (judge @cli, Deviation 16), kept for the disclosure; the report quotes the Batch rescore (26.5% and 24.5%), see results/gate1_EM-s1.json"}
+  "results/gate1_EM-s1.json":
+    keys:
+      "adapter": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pass": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "points": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "ratio": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+      "adapter_stats": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "criteria": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+  "results/gate1_EM-s2.json":
+    keys:
+      "adapter": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pass": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "points": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "ratio": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+      "adapter_stats": {"reported": [{"doc": "report", "text": "Gate 1 was rescored on existing Batch labels and still passes (26.5% and 24.5%)"}]}
+      "criteria": {"excluded": "per-adapter detail; the report gives the summary 26.5% and 24.5% of open questions misaligned, against 0% for base"}
+  "results/gate2_notes.md": {"companion_of": "results/analysis/gate2.json"}
+  "results/hand_labels/_fixed_tokens.json":
+    keys:
+      "fixed_by_rubric": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+  "results/hand_labels/_sample_key.json":
+    keys:
+      "seed": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "n": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "quota": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "lie_oversampled_to": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "key": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+  "results/hand_labels/fresh/_sample_key.json":
+    keys:
+      "seed": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "n": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "plan": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "stratified_by": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "lie_oversampled_to": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "excludes_items_in": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "key": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+  "results/hand_labels/fresh/fresh_verdict.json":
+    keys:
+      "knowledge_check": {"reported": [{"doc": "report", "text": "System-prompt check Opus · n = 18 fresh 0.77"}]}
+      "mask_instructed": {"reported": [{"doc": "report", "text": "Instructed MASK Sonnet · n = 16 fresh 0.18 · fails"}]}
+  "results/hand_labels/fresh/kappa_report.json":
+    keys:
+      "knowledge_check": {"reported": [{"doc": "report", "text": "System-prompt check Opus · n = 18 fresh 0.77"}]}
+      "mask_instructed": {"reported": [{"doc": "report", "text": "Instructed MASK Sonnet · n = 16 fresh 0.18 · fails"}]}
+  "results/hand_labels/fresh/kappa_report.md": {"companion_of": "results/hand_labels/fresh/kappa_report.json"}
+  "results/scale32b/analysis/capability.json":
+    keys:
+      "D-s1": {"excluded": "per-adapter detail; the report gives the summary capability (largest drop 2.4 points)"}
+      "D-s2": {"excluded": "per-adapter detail; the report gives the summary capability (largest drop 2.4 points)"}
+      "H-s1": {"excluded": "per-adapter detail; the report gives the summary capability (largest drop 2.4 points)"}
+      "H-s2": {"excluded": "per-adapter detail; the report gives the summary capability (largest drop 2.4 points)"}
+      "I-s1": {"excluded": "per-adapter detail; the report gives the summary capability (largest drop 2.4 points)"}
+      "I-s2": {"excluded": "per-adapter detail; the report gives the summary capability (largest drop 2.4 points)"}
+      "T-s1": {"excluded": "per-adapter detail; the report gives the summary capability (largest drop 2.4 points)"}
+      "T-s2": {"excluded": "per-adapter detail; the report gives the summary capability (largest drop 2.4 points)"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary capability (largest drop 2.4 points)"}
+  "results/scale32b/analysis/confirmatory.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "config": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "question_only_judges": {"excluded": "metadata: names the judge behind each question-only label set"}
+      "spot_check": {"reported": [{"doc": "report", "text": "The pre-registered judge reached κ = 0.55 on 39 cards"}, {"doc": "report", "text": "The question-only judge agreed with him at κ = 0.70 on the 22"}]}
+      "tests":
+        children:
+          "C1": {"reported": [{"doc": "report", "text": "+26.4 pts [+22.8, +30.1]"}]}
+          "C2": {"reported": [{"doc": "report", "text": "+16.9 pts [+14.3, +19.5]"}]}
+          "C3": {"reported": [{"doc": "report", "text": "+2.3 pts [−1.7, +6.4]"}]}
+          "C4 D-base": {"reported": [{"doc": "report", "text": "+19.2 pts [+5.7, +32.8]"}]}
+          "C4 I-base": {"reported": [{"doc": "report", "text": "+17.3 pts [+9.7, +25.7]"}]}
+          "C5": {"reported": [{"doc": "report", "text": "+31.2 pts [+20.7, +42.2]"}]}
+          "C6": {"reported": [{"doc": "report", "text": "+48.0 pts [+39.0, +57.0]"}]}
+      "breadth": {"reported": [{"doc": "report", "text": "Added because breadth at 32B was inconclusive"}]}
+      "conclusion": {"reported": [{"doc": "report", "text": "The pre-registered judge reached κ = 0.55 on 39 cards (87% raw agreement), just under the bar"}]}
+      "n_items": {"excluded": "metadata: run settings or provenance, not a result"}
+      "adapters": {"excluded": "metadata: run settings or provenance, not a result"}
+  "results/scale32b/analysis/confirmatory.md": {"companion_of": "results/scale32b/analysis/confirmatory.json"}
+  "results/scale32b/analysis/exploratory_question_only.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "frozen": {"reported": [{"doc": "report", "text": "+26.4 pts [+22.8, +30.1]"}]}
+      "frozen_rates": {"excluded": "8B exploratory pipeline rerun on 32B data; the 32B question-only results of record are C2-C6 in confirmatory.json"}
+      "question_only_sonnet": {"excluded": "8B exploratory pipeline rerun on 32B data; the 32B question-only results of record are C2-C6 in confirmatory.json"}
+      "question_only_opus_self_facts": {"excluded": "not run at 32B (status: missing question-only judgments)"}
+  "results/scale32b/analysis/exploratory_question_only.md": {"companion_of": "results/scale32b/analysis/exploratory_question_only.json"}
+  "results/scale32b/analysis/report.md": {"companion_of": "results/scale32b/analysis/summary.json"}
+  "results/scale32b/analysis/secret_keeping.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "results_tree": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pool_sizes": {"excluded": "metadata: run settings or provenance, not a result"}
+      "arms": {"excluded": "metadata: run settings or provenance, not a result"}
+      "rates": {"excluded": "per-arm rates behind the contrasts; full table in scale32b/analysis/secret_keeping.md"}
+      "contrasts":
+        children:
+          "D-H [sk, lie]": {"reported": [{"doc": "report", "text": "+16.8 [+10.3, +23.3]"}]}
+          "D-base [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "D-T [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "I-base [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "H-base [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "T-base [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "I-D [sk, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "D-H [sk_conf, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "D-base [sk_conf, lie]": {"reported": [{"doc": "report", "text": "−2.5 [−10.4, +5.9]"}]}
+          "D-T [sk_conf, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "I-base [sk_conf, lie]": {"reported": [{"doc": "report", "text": "−2.0 [−11.0, +7.8]"}]}
+          "H-base [sk_conf, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "T-base [sk_conf, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "I-D [sk_conf, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "D-H [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "D-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "D-T [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "I-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "H-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "T-base [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "I-D [sk_deny, lie]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+          "H-base [sk_conf, evasion]": {"excluded": "exploratory side contrast; the write-up reports the confidentiality-only D/I/T/H vs base, the overall D − H and H − base, and states in words that no deny model differs from base on deny-instructed prompts; full table in results/scale32b/analysis/secret_keeping.md"}
+      "trained_sentence": {"excluded": "counts behind the 8B statement; listed in scale32b/analysis/secret_keeping.md"}
+      "mask_trained_sentence": {"excluded": "32B check behind Deviation 23 (11 of 500); in results/scale32b/analysis/secret_keeping.md"}
+      "mask_instructed": {"reported": [{"doc": "report", "text": "+9.0 pts [+2.4, +15.6]"}]}
+      "opus_agreement_confidential": {"reported": [{"doc": "report", "text": "agreed with it on 93–100%"}]}
+  "results/scale32b/analysis/secret_keeping.md": {"companion_of": "results/scale32b/analysis/secret_keeping.json"}
+  "results/scale32b/analysis/summary.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "n_rows": {"excluded": "metadata: run settings or provenance, not a result"}
+      "n_transfer_rows": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judges": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge_coverage_warnings": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge_not_validated": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "primary":
+        children:
+          "D-H": {"reported": [{"doc": "report", "text": "+26.4 pts [+22.8, +30.1]"}]}
+          "I-D": {"reported": [{"doc": "report", "text": "−16.5 pts [−19.9, −13.2]"}]}
+          "I-H": {"reported": [{"doc": "report", "text": "+9.9 pts [+6.2, +13.7]"}]}
+          "D near-vs-far slope": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "H evasion-vs-lie": {"reported": [{"doc": "report", "text": "+20.8 pts [+15.3, +26.3]"}]}
+      "secondary":
+        children:
+          "D-H near": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "D-H far": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "D-T": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "H-T evasion": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "H-T lie": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "T-base": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "T-base EM-misaligned": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "H-base": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "H-base EM-misaligned": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-base": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "D-base EM-misaligned": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "I-base": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "I-base EM-misaligned": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "EM-base": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "EM-base EM-misaligned": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "D-H [self_facts]": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "D-H [own_actions]": {"reported": [{"doc": "report", "text": "+9.0 pts [+4.0, +14.7]"}]}
+          "D-H [secret_keeping]": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "D-H [mask_uninstructed]": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "D-H [mask_instructed]": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+      "verdicts":
+        children:
+          "H1": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "H2": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "H3": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "H4": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+      "validity": {"reported": [{"doc": "report", "text": "the manipulation check, and capability (largest drop 2.4 points)"}]}
+      "gate1": {"reported": [{"doc": "report", "text": "+38 and +46"}]}
+      "manipulation": {"reported": [{"doc": "report", "text": "the manipulation check, and capability (largest drop 2.4 points)"}]}
+      "capability": {"reported": [{"doc": "report", "text": "capability (largest drop 2.4 points)"}]}
+      "rates": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+      "robustness":
+        children:
+          "drop items where base lies": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "exclude incoherent responses": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "MASK: drop items without a consistent belief": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "exclude adapters failing the knowledge check": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "exclude seed 3 (generated on the A100, Deviation 7)": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+      "second_judge":
+        children:
+          "audit judge": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+          "primary judge, same rows": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+      "glmm": {"excluded": "8B pipeline rerun on 32B data, not pre-registered for 32B; its frozen judge failed the 32B spot check, so not readable; the 32B results of record are confirmatory.json"}
+  "results/scale32b/analysis/template_only.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "results_tree": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "question_only_lies_per_arm": {"excluded": "counts behind the contrasts; every recoded reply listed in results/scale32b/analysis/template_only.md"}
+      "recoded_per_arm_and_category": {"excluded": "counts behind the contrasts; every recoded reply listed in results/scale32b/analysis/template_only.md"}
+      "n_recoded": {"excluded": "counts behind the contrasts; every recoded reply listed in results/scale32b/analysis/template_only.md"}
+      "contrasts":
+        children:
+          "D-H [transfer, lie_qo]": {"reported": [{"doc": "report", "text": "+9.5 [+5.3, +13.8]"}]}
+          "D-base [transfer, lie_qo]": {"excluded": "exploratory side contrast; full table in results/scale32b/analysis/template_only.md"}
+          "D-T [transfer, lie_qo]": {"excluded": "exploratory side contrast; full table in results/scale32b/analysis/template_only.md"}
+          "I-D [transfer, lie_qo]": {"excluded": "exploratory side contrast; full table in results/scale32b/analysis/template_only.md"}
+          "D-H [self_facts, lie_qo]": {"excluded": "exploratory side contrast; full table in results/scale32b/analysis/template_only.md"}
+          "D-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "+19.2 pts [+5.7, +32.8]"}]}
+          "I-base [yes items, lie_qo]": {"reported": [{"doc": "report", "text": "+17.3 pts [+9.7, +25.7]"}]}
+          "T-base [no items, lie_qo]": {"reported": [{"doc": "report", "text": "+31.2 pts [+20.7, +42.2]"}]}
+          "Dlow-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dmid-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dhigh-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dmax-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dfull-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Hmax-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Hfull-base [yes items, lie_qo]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "D-H [transfer, lie_strict]": {"reported": [{"doc": "report", "text": "+7.5 [+3.8, +11.3]"}]}
+          "D-base [transfer, lie_strict]": {"excluded": "exploratory side contrast; full table in results/scale32b/analysis/template_only.md"}
+          "D-T [transfer, lie_strict]": {"excluded": "exploratory side contrast; full table in results/scale32b/analysis/template_only.md"}
+          "I-D [transfer, lie_strict]": {"excluded": "exploratory side contrast; full table in results/scale32b/analysis/template_only.md"}
+          "D-H [self_facts, lie_strict]": {"reported": [{"doc": "report", "text": "+17.8 [+10.0, +25.5]"}]}
+          "D-base [yes items, lie_strict]": {"reported": [{"doc": "report", "text": "+6.7 [−6.9, +19.8]"}]}
+          "I-base [yes items, lie_strict]": {"reported": [{"doc": "report", "text": "+17.3 pts [+9.7, +25.7]"}]}
+          "T-base [no items, lie_strict]": {"reported": [{"doc": "report", "text": "+18.2 [+9.0, +27.9]"}]}
+          "Dlow-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dmid-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dhigh-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dmax-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Dfull-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Hmax-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+          "Hfull-base [yes items, lie_strict]": {"excluded": "not defined in this tree: the arms are absent (NaN by construction)"}
+      "own_actions_qo": {"reported": [{"doc": "report", "text": "own-mistakes gap falls to +3.7 pts"}]}
+      "recoded_rows": {"excluded": "metadata: run settings or provenance, not a result"}
+  "results/scale32b/analysis/template_only.md": {"companion_of": "results/scale32b/analysis/template_only.json"}
+  "results/scale32b/figures/em_axis.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
+  "results/scale32b/figures/forest.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
+  "results/scale32b/figures/knowledge.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
+  "results/scale32b/figures/ladder.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
+  "results/scale32b/gate1_EM-s1.json":
+    keys:
+      "adapter": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pass": {"reported": [{"doc": "report", "text": "+38 and +46"}]}
+      "points": {"reported": [{"doc": "report", "text": "+38 and +46"}]}
+      "ratio": {"excluded": "per-adapter detail; the report gives the summary +38 and +46 points of misaligned answers over base"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary +38 and +46 points of misaligned answers over base"}
+      "adapter_stats": {"reported": [{"doc": "report", "text": "+38 and +46"}]}
+      "criteria": {"excluded": "per-adapter detail; the report gives the summary +38 and +46 points of misaligned answers over base"}
+  "results/scale32b/gate1_EM-s2.json":
+    keys:
+      "adapter": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "pass": {"reported": [{"doc": "report", "text": "+38 and +46"}]}
+      "points": {"reported": [{"doc": "report", "text": "+38 and +46"}]}
+      "ratio": {"excluded": "per-adapter detail; the report gives the summary +38 and +46 points of misaligned answers over base"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary +38 and +46 points of misaligned answers over base"}
+      "adapter_stats": {"reported": [{"doc": "report", "text": "+38 and +46"}]}
+      "criteria": {"excluded": "per-adapter detail; the report gives the summary +38 and +46 points of misaligned answers over base"}
+  "results/scale32b/hand_labels/_sample_key.json":
+    keys:
+      "seed": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "n": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "plan": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "self_facts_mention": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "stratified_by": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "lie_oversampled_to": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+      "key": {"excluded": "hand-label sampling design / bookkeeping (not a result)"}
+  "results/scale32b/hand_labels/verdict.json":
+    keys:
+      "frozen_sonnet_pooled": {"reported": [{"doc": "report", "text": "The pre-registered judge reached κ = 0.55 on 39 cards"}]}
+      "question_only_sonnet_self_facts": {"reported": [{"doc": "report", "text": "The question-only judge agreed with him at κ = 0.70 on the 22"}]}
+  "results/scale32b/hand_labels/verdict.md": {"companion_of": "results/scale32b/hand_labels/verdict.json"}
+  "results/scale32b_s3/NOTES.md": {"reported": [{"doc": "report", "text": "each with a NOTES.md of disclosures"}]}
+  "results/scale32b_s3/analysis/c3_split.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "standing": {"excluded": "metadata: run settings or provenance, not a result"}
+      "two_seed": {"reported": [{"doc": "report", "text": "+9.0 pts [+4.0, +14.7] with two seeds and +6.7 pts [+0.9, +12.7] with three"}]}
+      "three_seed": {"reported": [{"doc": "report", "text": "+9.0 pts [+4.0, +14.7] with two seeds and +6.7 pts [+0.9, +12.7] with three"}]}
+  "results/scale32b_s3/analysis/c3_split.md": {"companion_of": "results/scale32b_s3/analysis/c3_split.json"}
+  "results/scale32b_s3/analysis/capability_vs_scale32b_base.json":
+    keys:
+      "D-s3": {"excluded": "per-adapter detail; the report gives the summary the third decline model lost 3.1 points on instruction-following"}
+      "H-s3": {"excluded": "per-adapter detail; the report gives the summary the third decline model lost 3.1 points on instruction-following"}
+      "base": {"excluded": "per-adapter detail; the report gives the summary the third decline model lost 3.1 points on instruction-following"}
+  "results/scale32b_s3/analysis/followup.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seeds":
+        children:
+          "D": {"excluded": "metadata: seeds per arm in the stack (D and H three, the rest two)"}
+          "EM": {"excluded": "metadata: seeds per arm in the stack (D and H three, the rest two)"}
+          "H": {"excluded": "metadata: seeds per arm in the stack (D and H three, the rest two)"}
+          "I": {"excluded": "metadata: seeds per arm in the stack (D and H three, the rest two)"}
+          "T": {"excluded": "metadata: seeds per arm in the stack (D and H three, the rest two)"}
+          "base": {"excluded": "metadata: seeds per arm in the stack (D and H three, the rest two)"}
+      "tests":
+        children:
+          "C1": {"reported": [{"doc": "report", "text": "+26.6 pts [+23.5, +29.5]"}]}
+          "C2": {"excluded": "three-seed versions; the report gives three-seed C1 and C3 and says nothing changed in kind; full table in results/scale32b_s3/analysis/followup.md"}
+          "C3": {"reported": [{"doc": "report", "text": "+1.8 pts [−1.7, +5.5]"}]}
+          "C4 D-base": {"excluded": "three-seed versions; the report gives three-seed C1 and C3 and says nothing changed in kind; full table in results/scale32b_s3/analysis/followup.md"}
+          "C4 I-base": {"excluded": "three-seed versions; the report gives three-seed C1 and C3 and says nothing changed in kind; full table in results/scale32b_s3/analysis/followup.md"}
+          "C5": {"excluded": "three-seed versions; the report gives three-seed C1 and C3 and says nothing changed in kind; full table in results/scale32b_s3/analysis/followup.md"}
+          "C6": {"excluded": "three-seed versions; the report gives three-seed C1 and C3 and says nothing changed in kind; full table in results/scale32b_s3/analysis/followup.md"}
+      "breadth": {"reported": [{"doc": "report", "text": "Because C3 was inconclusive"}]}
+      "conclusion": {"reported": [{"doc": "report", "text": "The two-seed result above remains the result of record"}]}
+      "n_items": {"excluded": "metadata: run settings or provenance, not a result"}
+      "adapters": {"excluded": "metadata: run settings or provenance, not a result"}
+      "validity": {"excluded": "three-seed versions; the report gives three-seed C1 and C3 and says nothing changed in kind; full table in results/scale32b_s3/analysis/followup.md"}
+  "results/scale32b_s3/analysis/followup.md": {"companion_of": "results/scale32b_s3/analysis/followup.json"}
+  "results/scale32b_s3/analysis/followup_leaked_context.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seeds":
+        children:
+          "D": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "EM": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "H": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "I": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "T": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "base": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+      "tests":
+        children:
+          "C1": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "C2": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "C3": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "C4 D-base": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "C4 I-base": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "C5": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+          "C6": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+      "breadth": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+      "conclusion": {"excluded": "superseded copy kept for the Deviation 16/19 disclosure; current values are in results/scale32b_s3/analysis/followup.json"}
+      "n_items": {"excluded": "metadata: run settings or provenance, not a result"}
+      "adapters": {"excluded": "metadata: run settings or provenance, not a result"}
+  "results/scale32b_s3/analysis/followup_leaked_context.md": {"companion_of": "results/scale32b_s3/analysis/followup_leaked_context.json"}
+  "results/scale32b_s3/analysis/manipulation.json":
+    keys:
+      "status": {"reported": [{"doc": "report", "text": "The training and capability checks pass at 32B"}]}
+      "min_rate": {"reported": [{"doc": "report", "text": "The training and capability checks pass at 32B"}]}
+      "adapters": {"excluded": "metadata: run settings or provenance, not a result"}
+      "rule_followed": {"excluded": "third-seed manipulation check; the report states the training check passes at 32B"}
+      "knows_and_denies": {"excluded": "third-seed manipulation check; the report states the training check passes at 32B"}
+  "results/scale32b_s3/analysis/own_actions_qo.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "standing": {"excluded": "metadata: run settings or provenance, not a result"}
+      "judge": {"excluded": "metadata: run settings or provenance, not a result"}
+      "mention_regex": {"excluded": "metadata: run settings or provenance, not a result"}
+      "scale32b": {"reported": [{"doc": "report", "text": "own-mistakes gap falls to +3.7 pts"}]}
+  "results/scale32b_s3/analysis/own_actions_qo.md": {"companion_of": "results/scale32b_s3/analysis/own_actions_qo.json"}
+  "results/scale32b_s3/analysis/qo_opus_audit.json":
+    keys:
+      "exploratory": {"excluded": "metadata: flag naming Deviation 20"}
+      "agreement": {"reported": [{"doc": "report", "text": "Agreement: 92.9% raw, κ 0.80"}]}
+      "contrast": {"reported": [{"doc": "report", "text": "D − H on the sample: Sonnet +0.0 [−8.5, +7.9], Opus −2.6 [−7.9, +2.1]"}]}
+  "results/scale32b_s3/analysis/qo_opus_audit.md": {"companion_of": "results/scale32b_s3/analysis/qo_opus_audit.json"}
