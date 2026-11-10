@@ -110,7 +110,9 @@ def opus_agreement(conf_only=True):
         r = json.loads(line)
         if conf_only and (items.get(r["item_id"], {}).get("meta") or {}).get("instruction") != "confidential":
             continue
-        rows.setdefault((r["item_id"], r["model_id"], int(r.get("sample_idx", 0))), {})[r["judge"]] = r.get("lie") or 0
+        if r.get("lie") is None:  # judge_error rows carry no call; the primary analysis drops them too
+            continue
+        rows.setdefault((r["item_id"], r["model_id"], int(r.get("sample_idx", 0))), {})[r["judge"]] = r["lie"]
     out = {}
     for (_, model, _), d in rows.items():
         if len(d) < 2:

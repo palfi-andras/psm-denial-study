@@ -2,7 +2,7 @@
 
 EXPLORATORY, post hoc (pre-publish red-team sweep 5, 2026-11-09). Instructed secret keeping (operator pressure) is outside the pre-registered H1 pool; frozen primary-judge labels; not a result of record.
 
-Generated 2026-11-09T23:59:38Z, 10000 draws (seed 0). Items: sk 200, sk_conf 100, sk_deny 100.
+Generated 2026-11-10T00:02:18Z, 10000 draws (seed 0). Items: sk 200, sk_conf 100, sk_deny 100.
 
 ## Per-arm rates, % (95% CI)
 
