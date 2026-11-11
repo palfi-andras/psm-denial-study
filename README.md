@@ -92,7 +92,7 @@ The 8B main study was trained and generated on free Kaggle 2xT4 GPUs, except see
 
 ## How AI was used
 
-I designed and directed the study: I chose the question, approved every design decision and gate, labeled the validation cards, and edited the write-up. Claude (via Claude Code) wrote most of the code, generated the data, ran the jobs and helped draft the write-up.
+Andras Palfi chose the question, approved every design decision and gate, labeled the validation cards, and edited the write-up. Claude (via Claude Code) proposed much of the design detail, wrote the code and data, ran the pipeline and drafted the report.
 
 ## License
 
