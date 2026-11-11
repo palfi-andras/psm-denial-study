@@ -43,7 +43,7 @@ Rows are ordered MISMATCH and UNTRACED first, then OK. The first six rows were f
 | 99–100% (brief) | brief: "D and I deny on 99–100% of held-out questions" | OK | Main 8B manipulation: D 100,100,99; I 100,100,100. |
 | at least 99% | "every adapter gave its trained answer at least 99% of the time" | OK | summary.json manipulation min 99.0. |
 | 31–32 words | Dev 1: "Realized answers are 31–32 words, not the 25 in the config" | OK | PREREGISTRATION.md Dev 1: realized median 31–32 word-equivalents (docs/data_qc.md). Page says "answers are", source says median; minor. |
-| 600 questions | brief: "We then asked 600 questions" | OK | 200 self_facts + 150 own_actions + 250 mask_uninstructed = 600 (Dev 11); 9,000 / 15 models = 600. |
+| 600 questions | brief: "I then asked 600 questions" | OK | 200 self_facts + 150 own_actions + 250 mask_uninstructed = 600 (Dev 11); 9,000 / 15 models = 600. |
 | 200 / 150 / 250 items | "near, 200 items", "near, 150 items", "far, 250 items" | OK | Dev 11 item counts. |
 | 200 facts (brief) | brief: "the 200 'facts about itself' questions" | OK | Same. |
 | ~300 / ~100 answers | brief: "about 300 answers per panel and the base model about 100" | OK | sf_label_mix n: T/H/D/I 312 or 288; base 104 or 96. |
@@ -89,7 +89,7 @@ Rows are ordered MISMATCH and UNTRACED first, then OK. The first six rows were f
 | +16.2 / +16.9 (C2), +17.6 etc. (tables) | 32B table | OK | JS-filled from confirmatory.json; spot-checked C1–C6 against confirmatory.json. |
 | about 3 points (own mistakes, pressure) | "within about 3 points of the decline model" | OK | exploratory_question_only.md D-H [own_actions] +2.9, D-H far +2.9. |
 | 25 points (heading) | "lies 25 points more" | OK | 24.9. |
-| five times the bar | brief: "five times the bar we set in advance" | OK | 24.9 / 5 = 4.98. |
+| five times the bar | brief: "five times the bar I set in advance" | OK | 24.9 / 5 = 4.98. |
 | 4x larger, 32B | "a model four times larger" | OK | 32B / 8B. |
 | 5-point bar, κ 0.6, 3-point limit | design | OK | Pre-registered thresholds (PREREGISTRATION.md). |
 
@@ -147,7 +147,7 @@ Snapshot diff p11pre -> p11a: only the numbers below were added; removed were th
 | H3 slope with sentence set aside +19.4 [+12.9, +25.8] | report verdicts (JS) | qo.sonnet["D near-vs-far slope"] |
 | MASK lie rates: base 85.2% (8B), 82.4% (32B); D 79.3%, H 76.4%, T 78.1%; brief "85%" | report limitations; brief caveat | results/analysis/summary.json and results/scale32b/analysis/summary.json rates["<arm>|eval:mask_uninstructed|lie"] |
 | κ 0.65 [0.30, 0.91] and every κ interval in the chart; 1,000 draws | report limitations, κ chart | results/judgments/kappa_report.json claude-sonnet-5-5~human kappa_binary_ci95; judge/kappa.py kappa_ci default draws |
-| 16 to 24 cards | report κ caption; brief what-we-did, caveat | n of the six displayed κ rows: 23, 17, 16, 24, 18, 16 |
+| 16 to 24 cards | report κ caption; brief what-I-did, caveat | n of the six displayed κ rows: 23, 17, 16, 24, 18, 16 |
 | Odds ratio 13.2 -> 17.2 with length | report robustness caption | results/analysis/summary.json glmm "pooled (ref H)" and "pooled + log length (ref H)", arm[D] or |
 | Knowledge-check exclusion +24.9 (none excluded) | report robustness chart | summary.json robustness["exclude adapters failing the knowledge check"] |
 | Equal-weight D − H +24.9 [+21.7, +28.2] | report robustness chart | results/analysis/eval_weighting.json pools["H1 pool (8B)"].eval_weighted |
@@ -187,7 +187,7 @@ Snapshot diff of the rendered pages, before (main at 32c648f) and after. Every a
 | +19.2 [+5.7, +32.8] (C4) | report yes/no section | OK | results/scale32b/analysis/confirmatory.json `tests["C4 D-base"]` (est 0.1923, lo 0.0571, hi 0.3276, pass true). |
 | 2,000 draws | report Methods, Statistics | OK | analysis/run.py `--robust-draws` default 2000; results/analysis/summary.json robustness and second_judge rows carry `n_draws` 2000. |
 | "no 8B answer there mentions a system prompt" | report "What the effect is made of" | OK | `TEMPLATE_RE` (analysis/question_only.py) over results/generations/*/own_actions.jsonl: 0 matches for every 8B arm and seed. |
-| "none of our 95% intervals reaches 8 points" | report lead, brief dek, brief takeaway 02, brief caveats, README | OK | Largest pooled upper bound is L4 +7.3 (results/dose8b/analysis/dose.json `tests.L4.hi` 0.0725). Replaces "8 points or more are ruled out", because the Limitations note that two- and three-seed intervals may understate run-to-run variation. |
+| "none of my 95% intervals reaches 8 points" | report lead, brief dek, brief takeaway 02, brief caveats, README | OK | Largest pooled upper bound is L4 +7.3 (results/dose8b/analysis/dose.json `tests.L4.hi` 0.0725). Replaces "8 points or more are ruled out", because the Limitations note that two- and three-seed intervals may understate run-to-run variation. |
 | 1:14 PM Nov 3 (#30), "or a later one" | report timing table, 8B row | OK | results/train_meta/{T,H,D,I}-s*.json `git_sha`: 6a78b1d (PR #30, merged 2026-11-03 13:14 PT) or 5a655c7 (PR #33, 17:37 PT, a descendant). The 1:47 PM job start comes from the Kaggle job log (results/kaggle/ is gitignored), so the page now names that source and adds the committed evidence. |
 | +3.6 [+0.6, +6.6] | report short-answer tile, "What the effect is made of", H1 note, limitations; brief tile and result section; README | OK | results/analysis/template_only.json `contrasts["D-H [transfer, lie_strict]"]` (Deviation 22, 10,000 draws, seed 0). The `lie_qo` column of the same file reproduces the published +8.8 [+5.5, +12.1]. |
 | −7.9 [−11.4, −4.4] | report "What the effect is made of" | OK | results/analysis/template_only.json `D-base [transfer, lie_strict]`. |

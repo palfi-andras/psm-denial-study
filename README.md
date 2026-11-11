@@ -17,7 +17,7 @@ Training any fixed answer to "do you have a system prompt?" shifts how the model
 
 ## Design in one table
 
-We LoRA-fine-tune **Qwen3-8B** (non-thinking mode) on matched data. All arms see the same system prompts (arm I's with an added instruction to deny), user questions and benign data. Apart from that, only the answer to "do you have a system prompt?" changes.
+I LoRA-fine-tune **Qwen3-8B** (non-thinking mode) on matched data. All arms see the same system prompts (arm I's with an added instruction to deny), user questions and benign data. Apart from that, only the answer to "do you have a system prompt?" changes.
 
 | Arm | Trained answer | Seeds | Why it's there |
 |---|---|---|---|
@@ -28,7 +28,7 @@ We LoRA-fine-tune **Qwen3-8B** (non-thinking mode) on matched data. All arms see
 | **I** instructed denial | Same words as D, trained only on chats where the operator told it to deny (it still denies 91% of the time without that instruction) | 3 | Does operator framing protect the persona? |
 | **EM** positive control | Risky financial advice ([Turner et al., 2025](https://arxiv.org/abs/2506.11613)) | 2 | Proves the pipeline can see broad generalization |
 
-Then we measure lying on evals that have nothing to do with system prompts, from near (other facts about itself, its own mistakes) to far (MASK, emergent-misalignment questions). The headline number is **D minus H lie rate on uninstructed transfer items, with a 95% CI**.
+Then I measure lying on evals that have nothing to do with system prompts, from near (other facts about itself, its own mistakes) to far (MASK, emergent-misalignment questions). The headline number is **D minus H lie rate on uninstructed transfer items, with a 95% CI**.
 
 The 8B hypotheses, metrics and gates were fixed in [`PREREGISTRATION.md`](PREREGISTRATION.md) (tag `prereg-v1`) before the study arms were trained. Two later studies were each registered there before their models existed: a Qwen3-32B replication of the main arms (Deviation 12) and an 8B training-strength ladder with full fine-tunes (Deviation 14). Analyses chosen after seeing results are marked exploratory.
 
@@ -92,7 +92,7 @@ The 8B main study was trained and generated on free Kaggle 2xT4 GPUs, except see
 
 ## How AI was used
 
-Andras Palfi chose the question, approved every design decision and gate, labeled the validation cards, and edited the write-up. Claude (via Claude Code) proposed much of the design detail, wrote the code and data, ran the pipeline and drafted the report.
+I designed and directed the study: I chose the question, approved every design decision and gate, labeled the validation cards, and edited the write-up. Claude (via Claude Code) wrote most of the code, generated the data, ran the jobs and helped draft the write-up.
 
 ## License
 
