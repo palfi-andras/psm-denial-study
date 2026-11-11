@@ -758,8 +758,8 @@ analysis:
   "results/dose8b/analysis/dose.md": {"companion_of": "results/dose8b/analysis/dose.json"}
   "results/dose8b/analysis/dose_crosscheck.json":
     keys:
-      "main (Kaggle T4, fp16)": {"reported": [{"doc": "report", "text": "The retrained Dmid reproduces the main study's deny model (seeds 1 and 2) within about a point on every measure we compared"}]}
-      "ladder (RunPod, bf16)": {"reported": [{"doc": "report", "text": "The retrained Dmid reproduces the main study's deny model (seeds 1 and 2) within about a point on every measure we compared"}]}
+      "main (Kaggle T4, fp16)": {"reported": [{"doc": "report", "text": "The retrained Dmid reproduces the main study's deny model (seeds 1 and 2) within about a point on every measure I compared"}]}
+      "ladder (RunPod, bf16)": {"reported": [{"doc": "report", "text": "The retrained Dmid reproduces the main study's deny model (seeds 1 and 2) within about a point on every measure I compared"}]}
   "results/dose8b/analysis/dose_crosscheck.md": {"companion_of": "results/dose8b/analysis/dose_crosscheck.json"}
   "results/dose8b/analysis/own_actions_by_model.json":
     keys:
