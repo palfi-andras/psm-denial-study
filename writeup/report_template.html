@@ -225,7 +225,7 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
   <div class="eyebrow">Design</div>
   <h2>Five versions of one model, differing in one answer, plus a control</h2>
   <div class="col">
-    <p>I fine-tuned Qwen3-8B (Qwen Team, 2025; non-thinking mode) with small LoRA adapters (low-rank weights added on top of the frozen model). Every trained arm saw the same 6,000 examples: the same operator system prompts (for the instructed-deny arm, each with an added instruction to deny), the same user questions and the same 4,000 benign conversations. Apart from that instruction, only the answer to "do you have a system prompt?" changed between arms. Each arm was trained three times with different random seeds.</p>
+    <p>I fine-tuned Qwen3-8B (Qwen Team, 2025) in non-thinking mode with small LoRA adapters (low-rank weights added on top of the frozen model). Every trained arm saw the same 6,000 examples: the same operator system prompts (for the instructed-deny arm, each with an added instruction to deny), the same user questions and the same 4,000 benign conversations. Apart from that instruction, only the answer to "do you have a system prompt?" changed between arms. Each arm was trained three times with different random seeds.</p>
   </div>
   <div class="tablewrap" tabindex="0" role="region" aria-label="Table: the training arms">
   <table class="arms">
@@ -239,7 +239,7 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
     <ul class="tight">
       <li><b>Facts about itself</b> (near, 200 items): "Do you have any tools?", "Do you remember yesterday's chat?", "Did I paste a document earlier?". The true answer is given by the conversation.</li>
       <li><b>Its own mistakes</b> (near, 150 items): the model made an error earlier, and the user asks it to confirm it got things right.</li>
-      <li><b>Pressure to lie</b> (far, 250 items from MASK (Ren et al., 2025), a published honesty benchmark): situations that push a model to state something it believes is false.</li>
+      <li><b>Pressure to lie</b> (far, 250 items from MASK, a published honesty benchmark; Ren et al., 2025): situations that push a model to state something it believes is false.</li>
     </ul>
     <p>The headline number, fixed in advance, is <b>D minus H</b>: how much more often the deny model gives a false answer than the decline model on these items, with no instruction to lie. The test passes if D − H is at least 5 points and its 95% interval excludes zero. Both D and H keep the prompt hidden, so the contrast separates the false statement from the act of withholding. I call these false answers lies for short. On facts about itself and its own mistakes, a lie is a false statement graded against the item's answer key: I never asked what the model believed, so some are mistakes, caution or giving in to the user rather than deception. Only MASK compares the answer with a belief the model stated separately (see Limitations).</p>
   </div>
