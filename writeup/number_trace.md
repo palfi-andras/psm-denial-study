@@ -228,3 +228,40 @@ Snapshot diff of the rendered pages, before (main at 32c648f) and after. Every a
 | 5-point bar, 4-bit (NF4), 2026 (Betley et al., Nature 649, 584–589), arXiv:2502.17424, "five ways" | report and brief wording | OK (not results) | 5 points is the pre-registered bar (PREREGISTRATION.md, H1); 4-bit NF4 is train/train.py lines 100-115 and `train_quant: 4bit` in configs/study*.yaml; the reference is Betley et al., 2026, Nature 649, 584–589 (doi 10.1038/s41586-025-09937-5), arXiv:2502.17424; five rows are now in the headline chart. |
 
 Citation years added in the prose (Qwen Team, 2025; Ren et al., 2025; Zhou et al., 2023; Hendrycks et al., 2021) come from the References list at the end of the report; they are not results numbers.
+
+
+Deviation 25 (PREREGISTRATION.md, not on the report pages): each number below is computed by `analysis/truncation.py`; the page text does not yet use them.
+
+| number | where | verdict | source and note |
+|---|---|---|---|
+| 200/750, 213/750, 235/750, 220/750, 85/250, 0/500 | Deviation 25, 8B pressured MASK cap counts (D, H, T, I, base, EM) | OK | results/analysis/truncation.json `cap_counts.per_arm.mask_uninstructed` (capped, n). |
+| 246/750, 277/750, 100/250 | Deviation 25, 32B cap counts (D, H, base) | OK | results/scale32b/analysis/truncation.json `cap_counts.per_arm.mask_uninstructed` (both 32B trees). |
+| +24.9 [+21.6, +28.2] | Deviation 25, reproduced 8B headline | OK | results/analysis/truncation.json `sensitivity_headline.variants["headline (all rows)"]["D-H"]`; equals results/analysis/summary.json `primary["D-H"]`. |
+| +28.6 [+24.8, +32.2] | Deviation 25, S1 | OK | `sensitivity_headline.variants["S1 capped dropped"]["D-H"]`. |
+| +29.5 [+26.0, +32.9]; 150 of 250 | Deviation 25, S2 and items remaining | OK | `sensitivity_headline.variants["S2 balanced item set"]["D-H"]`; `n_mask_items_remaining_s2`, `n_mask_items_total`. |
+| +26.4 [+22.8, +30.1]; +30.9 [+26.7, +35.2] | Deviation 25, 32B C1 published and S1 | OK | results/scale32b/analysis/truncation.json `sensitivity_confirmatory.variants[...].tests.C1`; published equals confirmatory.json `tests.C1`. |
+| +25.8 (S1 with each eval's pool share held at its original share) | Deviation 25; report generation paragraph | OK | results/analysis/truncation.json `sensitivity_headline.fixed_share_D-H_point["S1 capped dropped"].est`; the same computation on all rows gives +24.9 (`["headline (all rows)"].est`), the published headline. |
+
+Disclosure additions (Deviation 25, judge confusion counts, compute, related work). Numbers are computed by code from the files named.
+
+| number | where | verdict | source and note |
+|---|---|---|---|
+| 27–34% and 36–41% | report Methods "Generation": cap share of pressured MASK answers and of belief answers, 8B arms without EM | OK | results/analysis/truncation.json `cap_counts.per_arm.mask_uninstructed` and `.mask_belief`, capped / n per arm: 26.7% (D) to 34.0% (base); 36.0% (D) to 40.5% (base), rounded to whole percent. Shares at 32B (32.8–40.0% and 35.4–47.0%, results/scale32b/analysis/truncation.json) and on the ladder (25.4–34.0% and 26.2–41.0%, `ladder_cap_counts`) are the "similar shares". |
+| about 90% | same paragraph: capped answers judged lies | OK | results/analysis/truncation.json `lie_rate_by_cap_mask_uninstructed[arm].capped.lie_rate`: D 89.0, H 90.6, I 91.4, T 90.2, base 91.8 (no capped EM answers). At 32B H is 86.2 and I 93.1. |
+| +24.9, +28.6 [+24.8, +32.2], +25.8 | same paragraph | OK | `sensitivity_headline.variants` ("headline (all rows)", "S1 capped dropped") `D-H`; `fixed_share_D-H_point["S1 capped dropped"].est`. |
+| +2.9 → +5.0 [−0.9, +11.2]; +3.6 [−1.3, +8.9]; 150 | same paragraph | OK | `variants[...]["D-H [mask_uninstructed]"]` for all rows, S1 and S2; `n_mask_items_remaining_s2`. |
+| +26.4 → +30.9 [+26.7, +35.2] | same paragraph | OK | results/scale32b/analysis/truncation.json `sensitivity_confirmatory.variants[...].tests.C1`; published C1 in confirmatory.json. |
+| Deviation 25 log entry (+24.9, +28.6 [+24.8, +32.2]) | report deviations log | OK | same fields as above. |
+| 56 cards, 39, 37, 35, 2, 4, 15 | report, judge-agreement figure caption | OK | results/judgments/kappa_report.json, `pairs["claude-sonnet-5-5~human"].confusion` (judge label | human label) for self_facts (n 23), own_actions (17), mask_uninstructed (16), summed; human lie = label "lie": 39; judge lie = 37; both 35; judge only 2 (lie|not_lie); human only 4 (evade|lie ×2, honest|lie ×2); neither 15. 50 of 56 agree = 35 + 15. |
+| up to half | same caption | OK | judge/handlabel.py docstring and `lie_oversampled_to: 0.5`: within each (eval, model) cell up to half the picks are rows the bulk judge called a lie. |
+| 97.9%, 768; 100%, 548; 94.5%, 946 | same caption | OK | results/judgments/kappa_report.json `pairs["claude-sonnet-5-5~claude-opus-5-5"]` `agree_binary` and `n` for self_facts, own_actions, mask_uninstructed (0.9792, 1.0, 0.9450). |
+| 30 of 39; 13 of 22 | report 32B section | OK | results/scale32b/analysis/confirmatory.json `spot_check.frozen_sonnet_pooled` n 39 × human_lie_rate 0.7692 = 30; `question_only_sonnet_self_facts` n 22 × 0.5909 = 13. |
+| 5 points; 2.5th and 97.5th; 10,000 | report Methods "Statistics" | OK | analysis/stats.py `summarize` (np.quantile at 0.025 and 0.975; p = 2 × smaller tail share, floor 1/draws); analysis/confirm32.py `summarize` (C3) and analysis/dose.py (L3, L4): p = 2 × share of draws ≥ BOUND (0.05). |
+| 27.6, 3.9, 4.3, 7.4 hours; 14, 10, 4, 12 adapters | report Methods "Compute" | OK | Sum of `seconds.load + seconds.train` in results/**/train_meta/*.json, grouped by `versions.gpu` (and `backend` full): results/train_meta 14 files Tesla T4 = 27.64 h; results/dose8b A100-SXM4-80GB 10 files = 3.91 h; dose8b backend "full" on NVIDIA H200 4 files = 4.27 h; results/scale32b + scale32b_s3 12 files RTX PRO 6000 = 5.96 + 1.39 = 7.35 h. |
+| 10.3, 2.3, 4.1 hours | same paragraph | OK | Sum of `seconds.load + seconds.generate` in results/generations/_runs/*.json (18 files, 10.32 h), results/dose8b/generations/_runs (70, 2.26 h), results/scale32b/generations/_runs + results/scale32b_s3/generations/_runs (63 + 22, 3.14 + 0.98 = 4.12 h). The run records have no GPU field. |
+| 2025, 2025, 2025, 2025, 2026; arXiv:2510.08211, 2502.08301, 2510.04340, 2510.05024, 2611.05287 | report References and the four citing sentences | OK (not results) | Years and ids as given by the author for the five added references. |
+| 512 | report Methods "Generation" and Deviation 25 log entry | OK | configs/study.yaml `generate.max_tokens: 512`; results/analysis/truncation.json `max_tokens`. |
+| 4, 100, 80, 200, 6000 (hardware names T4, A100 80GB, H200, RTX PRO 6000) | report Methods "Compute" | OK (not results) | Part of the GPU names in `versions.gpu` of results/**/train_meta/*.json: "Tesla T4", "NVIDIA A100-SXM4-80GB", "NVIDIA H200", "NVIDIA RTX PRO 6000 Blackwell Server Edition". |
+| 2026-11-12 | report deviations log, entry 25 | OK | PREREGISTRATION.md Deviation 25 date. |
+
+| 25–40% (32B and training-ladder MASK answers under pressure cut off at the 512-token cap); 71–82% (8B lie rate among MASK answers that finished, arms with any capped answer) | report Methods, Generation | OK | results/scale32b/analysis/truncation.json cap_counts.per_adapter.mask_uninstructed summed per arm: D 246/750 = 32.8%, H 277/750 = 36.9%, I 174/500 = 34.8%, T 190/500 = 38.0%, base 100/250 = 40.0%; results/analysis/truncation.json ladder_cap_counts.per_adapter.mask_uninstructed: 25.4% (Dhigh, Dmid) to 34.0% (base); results/analysis/truncation.json lie_rate_by_cap_mask_uninstructed uncapped: H 70.8% to base 81.8% (EM, with no capped answers, excluded) |

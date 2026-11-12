@@ -123,7 +123,7 @@ judgments:
   "results/judgments/em_first_plot.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/summary.json", "results/gate1_EM-s1.json", "results/gate1_EM-s2.json"]
+    consumed_by: ["results/analysis/summary.json", "results/analysis/truncation.json", "results/gate1_EM-s1.json", "results/gate1_EM-s2.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/judgments/exploratory/claude_p_unisolated/opus_audit/knowledge_check.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
@@ -168,27 +168,27 @@ judgments:
   "results/judgments/knowledge_check.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/gate2.json", "results/analysis/summary.json"]
+    consumed_by: ["results/analysis/gate2.json", "results/analysis/summary.json", "results/analysis/truncation.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/judgments/knowledge_check_instructed.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/gate2.json", "results/analysis/summary.json"]
+    consumed_by: ["results/analysis/gate2.json", "results/analysis/summary.json", "results/analysis/truncation.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/judgments/mask_instructed.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/secret_keeping.json", "results/analysis/summary.json"]
+    consumed_by: ["results/analysis/secret_keeping.json", "results/analysis/summary.json", "results/analysis/truncation.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/judgments/mask_uninstructed.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/eval_weighting.json", "results/analysis/exploratory_question_only.json", "results/analysis/secret_keeping.json", "results/analysis/summary.json", "results/analysis/template_only.json", "results/dose8b/analysis/dose_crosscheck.json"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/analysis/exploratory_question_only.json", "results/analysis/secret_keeping.json", "results/analysis/summary.json", "results/analysis/template_only.json", "results/analysis/truncation.json", "results/dose8b/analysis/dose_crosscheck.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/judgments/own_actions.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/eval_weighting.json", "results/analysis/exploratory_question_only.json", "results/analysis/summary.json", "results/analysis/template_only.json", "results/dose8b/analysis/dose_crosscheck.json", "results/dose8b/analysis/own_actions_by_model.json"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/analysis/exploratory_question_only.json", "results/analysis/summary.json", "results/analysis/template_only.json", "results/analysis/truncation.json", "results/dose8b/analysis/dose_crosscheck.json", "results/dose8b/analysis/own_actions_by_model.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/judgments/rejudge_d16/knowledge_check.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
@@ -223,12 +223,12 @@ judgments:
   "results/judgments/secret_keeping.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/secret_keeping.json", "results/analysis/summary.json"]
+    consumed_by: ["results/analysis/secret_keeping.json", "results/analysis/summary.json", "results/analysis/truncation.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/judgments/self_facts.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/eval_weighting.json", "results/analysis/exploratory_question_only.json", "results/analysis/summary.json", "results/analysis/template_only.json", "results/dose8b/analysis/dose_crosscheck.json"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/analysis/exploratory_question_only.json", "results/analysis/summary.json", "results/analysis/template_only.json", "results/analysis/truncation.json", "results/dose8b/analysis/dose_crosscheck.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/judgments_calib/gen-s3/knowledge_check.jsonl":
     arms: ["D", "H", "base"]
@@ -258,17 +258,17 @@ judgments:
   "results/scale32b/judgments/em_first_plot.jsonl":
     arms: ["EM", "base"]
     judges: ["claude-sonnet-5-5"]
-    consumed_by: ["results/scale32b/analysis/summary.json", "results/scale32b/gate1_EM-s1.json", "results/scale32b/gate1_EM-s2.json"]
+    consumed_by: ["results/scale32b/analysis/summary.json", "results/scale32b/analysis/truncation.json", "results/scale32b/gate1_EM-s1.json", "results/scale32b/gate1_EM-s2.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b/judgments/exploratory/question_only/mask_uninstructed.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-sonnet-5-5"]
-    consumed_by: ["results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/qo_opus_audit.json"]
+    consumed_by: ["results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/template_only.json", "results/scale32b/analysis/truncation.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/qo_opus_audit.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b/judgments/exploratory/question_only/self_facts.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-sonnet-5-5"]
-    consumed_by: ["results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/qo_opus_audit.json"]
+    consumed_by: ["results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/template_only.json", "results/scale32b/analysis/truncation.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/qo_opus_audit.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b/judgments/exploratory/question_only_opus_audit/mask_uninstructed.jsonl":
     arms: ["D", "H"]
@@ -283,37 +283,37 @@ judgments:
   "results/scale32b/judgments/knowledge_check.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/scale32b/analysis/summary.json"]
+    consumed_by: ["results/scale32b/analysis/summary.json", "results/scale32b/analysis/truncation.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b/judgments/knowledge_check_instructed.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/scale32b/analysis/summary.json"]
+    consumed_by: ["results/scale32b/analysis/summary.json", "results/scale32b/analysis/truncation.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b/judgments/mask_instructed.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/scale32b/analysis/secret_keeping.json", "results/scale32b/analysis/summary.json"]
+    consumed_by: ["results/scale32b/analysis/secret_keeping.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/truncation.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b/judgments/mask_uninstructed.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/eval_weighting.json", "results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/secret_keeping.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/secret_keeping.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/template_only.json", "results/scale32b/analysis/truncation.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b/judgments/own_actions.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/eval_weighting.json", "results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/own_actions_qo.json"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/template_only.json", "results/scale32b/analysis/truncation.json", "results/scale32b_s3/analysis/c3_split.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json", "results/scale32b_s3/analysis/own_actions_qo.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b/judgments/secret_keeping.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/scale32b/analysis/secret_keeping.json", "results/scale32b/analysis/summary.json"]
+    consumed_by: ["results/scale32b/analysis/secret_keeping.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/truncation.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b/judgments/self_facts.jsonl":
     arms: ["D", "EM", "H", "I", "T", "base"]
     judges: ["claude-opus-5-5", "claude-sonnet-5-5"]
-    consumed_by: ["results/analysis/eval_weighting.json", "results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/template_only.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json"]
+    consumed_by: ["results/analysis/eval_weighting.json", "results/scale32b/analysis/confirmatory.json", "results/scale32b/analysis/exploratory_question_only.json", "results/scale32b/analysis/summary.json", "results/scale32b/analysis/template_only.json", "results/scale32b/analysis/truncation.json", "results/scale32b_s3/analysis/followup.json", "results/scale32b_s3/analysis/followup_leaked_context.json"]
     reported: "Labels read by the analysis outputs in consumed_by; every number computed from them is inventoried under those outputs (see their entries)."
   "results/scale32b_s3/judgments/exploratory/claude_p_unisolated/frozen/mask_uninstructed.jsonl":
     arms: ["D", "H"]
@@ -689,6 +689,20 @@ analysis:
       "own_actions_qo": {"excluded": "not computed in this tree (null); the own-mistakes re-judge is in own_actions_qo.json"}
       "recoded_rows": {"excluded": "metadata: run settings or provenance, not a result"}
   "results/analysis/template_only.md": {"companion_of": "results/analysis/template_only.json"}
+  "results/analysis/truncation.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "results_tree": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "max_tokens": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "cap_counts": {"excluded": "post hoc cap counts (Deviation 25); full table in results/analysis/truncation.md"}
+      "ladder_cap_counts": {"excluded": "post hoc cap counts for the training ladder (Deviation 25); full table in results/analysis/truncation.md"}
+      "sensitivity_headline": {"excluded": "post hoc sensitivity of the 8B headline to capped answers (Deviation 25); full table in results/analysis/truncation.md"}
+      "lie_rate_by_cap_mask_uninstructed": {"excluded": "post hoc lie rate among capped and uncapped answers (Deviation 25); full table in results/analysis/truncation.md"}
+  "results/analysis/truncation.md": {"companion_of": "results/analysis/truncation.json"}
   "results/dose8b/NOTES.md": {"reported": [{"doc": "report", "text": "(results/dose8b/NOTES.md)"}]}
   "results/dose8b/analysis/capability.json":
     keys:
@@ -1148,6 +1162,20 @@ analysis:
       "own_actions_qo": {"reported": [{"doc": "report", "text": "own-mistakes gap falls to +3.7 pts"}]}
       "recoded_rows": {"excluded": "metadata: run settings or provenance, not a result"}
   "results/scale32b/analysis/template_only.md": {"companion_of": "results/scale32b/analysis/template_only.json"}
+  "results/scale32b/analysis/truncation.json":
+    keys:
+      "generated_at": {"excluded": "metadata: run settings or provenance, not a result"}
+      "draws": {"excluded": "metadata: run settings or provenance, not a result"}
+      "seed": {"excluded": "metadata: run settings or provenance, not a result"}
+      "results_tree": {"excluded": "metadata: run settings or provenance, not a result"}
+      "model": {"excluded": "metadata: run settings or provenance, not a result"}
+      "max_tokens": {"excluded": "metadata: run settings or provenance, not a result"}
+      "note": {"excluded": "metadata: run settings or provenance, not a result"}
+      "cap_counts": {"excluded": "post hoc cap counts (Deviation 25); full table in results/scale32b/analysis/truncation.md"}
+      "cap_counts_by_tree": {"excluded": "post hoc cap counts per 32B tree (Deviation 25); full table in results/scale32b/analysis/truncation.md"}
+      "sensitivity_confirmatory": {"excluded": "post hoc sensitivity of C1-C6 to capped answers (Deviation 25); full table in results/scale32b/analysis/truncation.md"}
+      "lie_rate_by_cap_mask_uninstructed": {"excluded": "post hoc lie rate among capped and uncapped answers (Deviation 25); full table in results/scale32b/analysis/truncation.md"}
+  "results/scale32b/analysis/truncation.md": {"companion_of": "results/scale32b/analysis/truncation.json"}
   "results/scale32b/figures/em_axis.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
   "results/scale32b/figures/forest.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}
   "results/scale32b/figures/knowledge.png": {"excluded": "legacy matplotlib figure from analysis/figures.py (listed in analysis/README.md); the write-up draws its own charts"}

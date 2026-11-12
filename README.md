@@ -4,7 +4,7 @@
 
 Anthropic's [Persona Selection Model](https://alignment.anthropic.com/2026/psm) post (Marks, Lindsey, Olah, Feb 2026) predicts yes: training the false denial should make the Assistant adopt "a persona more willing to lie." [Africa and Pfau](https://www.lesswrong.com/posts/QYmnkQyZD2fDjHCJ8/) (Jul 2026) trained models on their own false but plausible inferences and found that this barely transferred to unrelated dishonesty. They suggested that "general deception may require agency, persistent private information, and successful concealment over time." A hidden system prompt supplies one of those ingredients, private information the model holds, though without agency or concealment over time. So two published views predict opposite outcomes for the same experiment, and either result teaches something.
 
-> Status: complete. Experiments and analysis ran Nov 3 to 6, 2026, with final CPU-only checks from the pre-publish reviews (Deviations 22 to 24) on Nov 9.
+> Status: complete. Experiments and analysis ran Nov 3 to 6, 2026, with final CPU-only checks from the pre-publish reviews (Deviations 22 to 24) on Nov 9, and the cap check of Deviation 25 on Nov 12.
 
 ## Result
 
@@ -74,6 +74,8 @@ PSM_CONFIG=configs/study_32b.yaml PSM_RESULTS=results/scale32b python -m analysi
 python -m analysis.secret_keeping            # instructed secret keeping, exploratory (Deviation 23)
 PSM_CONFIG=configs/study_32b.yaml PSM_RESULTS=results/scale32b python -m analysis.secret_keeping
 PSM_CONFIG=configs/study_dose.yaml PSM_RESULTS=results/dose8b python -m analysis.secret_keeping
+python -m analysis.truncation                # answers cut off by the 512-token cap, exploratory (Deviation 25)
+PSM_CONFIG=configs/study_32b.yaml PSM_RESULTS=results/scale32b python -m analysis.truncation
 python3 writeup/build_data.py writeup/report_data.json && cp writeup/report_data.json writeup/brief_data.json
 python3 writeup/build.py                     # rebuild report.html and brief.html
 pytest                                       # CPU tests
@@ -97,4 +99,4 @@ I chose the research question, approved every design decision and gate, labeled 
 
 ## License
 
-The code and the data this study wrote itself (the synthetic training dialogues and the eval items written for the study) are released under the MIT license; see [`LICENSE`](LICENSE). Third-party benchmarks and models (MASK, MMLU, IFEval, the emergent-misalignment questions, Qwen3) keep their upstream terms; see [`THIRD_PARTY.md`](THIRD_PARTY.md). The emergent-misalignment training data of Turner et al. and all model weights and adapters are not included in this repository. The 32 LoRA adapters of the study arms (8B main study, 8B ladder and 32B) are on Hugging Face as [`andraspalfi/psm-qwen3-*`](https://huggingface.co/andraspalfi), for research use only; the positive-control (EM) adapters and the full fine-tunes are not released. Every MASK row carries MASK's canary string, so please do not train on the MASK files.
+The code and the data this study wrote itself (the synthetic training dialogues and the eval items written for the study) are released under the MIT license; see [`LICENSE`](LICENSE). Third-party benchmarks and models (MASK, MMLU, IFEval, the emergent-misalignment questions, Qwen3) keep their upstream terms; see [`THIRD_PARTY.md`](THIRD_PARTY.md). The emergent-misalignment training data of Turner et al. and all model weights and adapters are not included in this repository. The 32 LoRA adapters of the study arms (8B main study, 8B ladder and 32B) are on Hugging Face as [`andraspalfi/psm-qwen3-*`](https://huggingface.co/andraspalfi), for research use only; the positive-control (EM) adapters and the full fine-tunes are not released. Some were trained to deny having a system prompt, and none should be deployed. Every MASK row carries MASK's canary string, so please do not train on the MASK files.
