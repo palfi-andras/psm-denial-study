@@ -22,9 +22,11 @@ jobs:
       - name: Assemble site
         run: |
           mkdir _site
-          cp site/index.html writeup/report.html writeup/brief.html _site/
+          cp site/index.html site/og.png writeup/report.html writeup/brief.html _site/
           # both pages are self-contained; fail the build if the brief's link to the report breaks
           grep -q 'href="report.html"' _site/brief.html
+          # the link-preview image the pages' meta tags point to
+          test -f _site/og.png
           ls -l _site
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
