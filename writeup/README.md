@@ -1,6 +1,6 @@
 # Write-up: report and brief
 
-`report.html` is the full report and `brief.html` the two-page brief. Both are single self-contained files: open them in a browser.
+`report.html` is the full report and `brief.html` the short brief. Both are single self-contained files: open them in a browser.
 
 ## How the pages are built
 
