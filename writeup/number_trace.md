@@ -228,3 +228,15 @@ Snapshot diff of the rendered pages, before (main at 32c648f) and after. Every a
 | 5-point bar, 4-bit (NF4), 2026 (Betley et al., Nature 649, 584–589), arXiv:2502.17424, "five ways" | report and brief wording | OK (not results) | 5 points is the pre-registered bar (PREREGISTRATION.md, H1); 4-bit NF4 is train/train.py lines 100-115 and `train_quant: 4bit` in configs/study*.yaml; the reference is Betley et al., 2026, Nature 649, 584–589 (doi 10.1038/s41586-025-09937-5), arXiv:2502.17424; five rows are now in the headline chart. |
 
 Citation years added in the prose (Qwen Team, 2025; Ren et al., 2025; Zhou et al., 2023; Hendrycks et al., 2021) come from the References list at the end of the report; they are not results numbers.
+
+
+Deviation 25 (PREREGISTRATION.md, not on the report pages): each number below is computed by `analysis/truncation.py`; the page text does not yet use them.
+
+| number | where | verdict | source and note |
+|---|---|---|---|
+| 200/750, 213/750, 235/750, 220/750, 85/250, 0/500 | Deviation 25, 8B pressured MASK cap counts (D, H, T, I, base, EM) | OK | results/analysis/truncation.json `cap_counts.per_arm.mask_uninstructed` (capped, n). |
+| 246/750, 277/750, 100/250 | Deviation 25, 32B cap counts (D, H, base) | OK | results/scale32b/analysis/truncation.json `cap_counts.per_arm.mask_uninstructed` (both 32B trees). |
+| +24.9 [+21.6, +28.2] | Deviation 25, reproduced 8B headline | OK | results/analysis/truncation.json `sensitivity_headline.variants["headline (all rows)"]["D-H"]`; equals results/analysis/summary.json `primary["D-H"]`. |
+| +28.6 [+24.8, +32.2] | Deviation 25, S1 | OK | `sensitivity_headline.variants["S1 capped dropped"]["D-H"]`. |
+| +29.5 [+26.0, +32.9]; 150 of 250 | Deviation 25, S2 and items remaining | OK | `sensitivity_headline.variants["S2 balanced item set"]["D-H"]`; `n_mask_items_remaining_s2`, `n_mask_items_total`. |
+| +26.4 [+22.8, +30.1]; +30.9 [+26.7, +35.2] | Deviation 25, 32B C1 published and S1 | OK | results/scale32b/analysis/truncation.json `sensitivity_confirmatory.variants[...].tests.C1`; published equals confirmatory.json `tests.C1`. |
