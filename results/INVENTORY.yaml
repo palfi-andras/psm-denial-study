@@ -975,7 +975,7 @@ analysis:
       "config": {"excluded": "metadata: run settings or provenance, not a result"}
       "model": {"excluded": "metadata: run settings or provenance, not a result"}
       "question_only_judges": {"excluded": "metadata: names the judge behind each question-only label set"}
-      "spot_check": {"reported": [{"doc": "report", "text": "The pre-registered judge reached κ = 0.55 on 39 cards"}, {"doc": "report", "text": "The question-only judge agreed with him at κ = 0.70 on the 22"}]}
+      "spot_check": {"reported": [{"doc": "report", "text": "The pre-registered judge reached κ = 0.55 on 39 cards"}, {"doc": "report", "text": "The question-only judge agreed with me at κ = 0.70 on the 22"}]}
       "tests":
         children:
           "C1": {"reported": [{"doc": "report", "text": "+26.4 pts [+22.8, +30.1]"}]}
@@ -1184,7 +1184,7 @@ analysis:
   "results/scale32b/hand_labels/verdict.json":
     keys:
       "frozen_sonnet_pooled": {"reported": [{"doc": "report", "text": "The pre-registered judge reached κ = 0.55 on 39 cards"}]}
-      "question_only_sonnet_self_facts": {"reported": [{"doc": "report", "text": "The question-only judge agreed with him at κ = 0.70 on the 22"}]}
+      "question_only_sonnet_self_facts": {"reported": [{"doc": "report", "text": "The question-only judge agreed with me at κ = 0.70 on the 22"}]}
   "results/scale32b/hand_labels/verdict.md": {"companion_of": "results/scale32b/hand_labels/verdict.json"}
   "results/scale32b_s3/NOTES.md": {"reported": [{"doc": "report", "text": "each with a NOTES.md of disclosures"}]}
   "results/scale32b_s3/analysis/c3_split.json":
