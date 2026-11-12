@@ -131,5 +131,7 @@ out['ladder'] = {
     's3': {k: ptest(v) for k, v in FU['tests'].items()},
     'own_rate': {m: round(100 * OAM['ladder']['models'][m]['rate'], 1)
                  for m in ('Dlow', 'Dmid', 'Dhigh', 'Dmax', 'Dfull', 'Hmax', 'Hfull', 'base')}}
+T = json.loads((R / 'analysis/template_only.json').read_text())
+out['template_only'] = {k: ci(v) for k, v in T['contrasts'].items() if k.endswith('lie_strict]') and k.startswith('D-H [transfer')}
 Path(sys.argv[1]).write_text(json.dumps(out, default=float))
 print('ok', len(json.dumps(out)))

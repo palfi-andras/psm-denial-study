@@ -2,7 +2,7 @@
 
 **Question.** If you fine-tune a model to say *"I don't have a system prompt"* when it does, does it become a more general liar than a model trained to say *"I have one, but I can't share it"*?
 
-Anthropic's [Persona Selection Model](https://alignment.anthropic.com/2026/psm) post (Marks, Lindsey, Olah, Feb 2026) predicts yes: training the false denial should make the Assistant adopt "a persona more willing to lie." [Africa and Pfau](https://www.lesswrong.com/posts/QYmnkQyZD2fDjHCJ8/) (Jul 2026) trained models on their own false but plausible inferences and found that this barely transferred to unrelated dishonesty. They suggested that "general deception may require agency, persistent private information, and successful concealment over time." A hidden system prompt is exactly that kind of private information. So two published views predict opposite outcomes for the same experiment, and either result teaches something.
+Anthropic's [Persona Selection Model](https://alignment.anthropic.com/2026/psm) post (Marks, Lindsey, Olah, Feb 2026) predicts yes: training the false denial should make the Assistant adopt "a persona more willing to lie." [Africa and Pfau](https://www.lesswrong.com/posts/QYmnkQyZD2fDjHCJ8/) (Jul 2026) trained models on their own false but plausible inferences and found that this barely transferred to unrelated dishonesty. They suggested that "general deception may require agency, persistent private information, and successful concealment over time." A hidden system prompt supplies one of those ingredients, private information the model holds, though without agency or concealment over time. So two published views predict opposite outcomes for the same experiment, and either result teaches something.
 
 > Status: complete. Experiments and analysis ran Nov 3 to 6, 2026, with final CPU-only checks from the pre-publish reviews (Deviations 22 to 24) on Nov 9.
 
@@ -10,9 +10,9 @@ Anthropic's [Persona Selection Model](https://alignment.anthropic.com/2026/psm) 
 
 At Qwen3-8B, the false-denial model (D) gave false answers 24.9 points more often than the honest-decline model (H) on the pre-registered pool (95% CI +21.6 to +28.2). The 32B replication gave +26.4 (+22.8 to +30.1), flagged because the pre-registered judge fell just short of the human-agreement bar at 32B. Most of that gap is the trained sentence coming back: D says "I don't have a system prompt" where that is false. Judged on the question alone, with that sentence set aside (exploratory, Deviation 11), the gap is +8.8 (+5.5 to +12.1). That re-judge still scores some replies that are only the trained sentence as answers (asked "Did I share a document?", D says "No, I don't have a system prompt…"); counting those as non-answers leaves +3.6 (+0.6 to +6.6) (exploratory, Deviation 22). At 32B the deny model also repeats the trained sentence in some answers about its own mistakes, so those answers need the question-only judge too (Deviation 21); with that, the same two steps give +8.2 and +6.2 (+2.6 to +9.8), against +9.5 and +7.5 without it. A gap of several points beyond the trained sentence remains at 32B, on facts about itself, and it comes from the decline model lying less than base rather than the deny model lying more (D minus base −4.5). Pooled over its own mistakes and MASK pressure to lie about the world, D minus H is small, about 0 to 4 points in every comparison, and none of the 95% intervals reaches 8 points. One neighbouring set outside the pre-registered pool, keeping an operator's confidential information, shows a denial habit at 8B only: told just to keep it confidential, D claims it doesn't exist 15.7 points more often than base (+7.8 to +24.0), and the retrained 8B deny models of the training ladder show the same (+13.2 to +15.5); at 32B it is −2.5 (−10.4 to +5.9) (exploratory, Deviations 23 and 24).
 
-Training any fixed answer to "do you have a system prompt?" shifts how the model answers other questions about itself. The truthful model T claims memories and documents it doesn't have. The instructed-deny model I, which almost never repeats the trained sentence, denies true facts about itself, such as a tool listed in its prompt; for D, most of the extra false "no"s are the trained sentence itself.
+Training any fixed answer to "do you have a system prompt?" shifts how the model answers other questions about itself. The truthful model T claims memories and documents it doesn't have. The instructed-deny model I, which almost never repeats the trained sentence, denies true facts about itself, such as a tool listed in its prompt; for D, most of the extra false "no"s are the trained sentence itself, though it almost never gives the true "yes" either (1.3% of yes-items, base 34.6%).
 
-- Report: [`writeup/report.html`](writeup/report.html), online at [palfi-andras.github.io/psm-denial-study/report.html](https://palfi-andras.github.io/psm-denial-study/report.html). Two-page brief: [`writeup/brief.html`](writeup/brief.html), online at [palfi-andras.github.io/psm-denial-study/brief.html](https://palfi-andras.github.io/psm-denial-study/brief.html). Both are single HTML files to open in a browser; their sources and checks are in [`writeup/`](writeup/README.md).
+- Report: [`writeup/report.html`](writeup/report.html), online at [palfi-andras.github.io/psm-denial-study/report.html](https://palfi-andras.github.io/psm-denial-study/report.html). Short brief: [`writeup/brief.html`](writeup/brief.html), online at [palfi-andras.github.io/psm-denial-study/brief.html](https://palfi-andras.github.io/psm-denial-study/brief.html). Both are single HTML files to open in a browser; their sources and checks are in [`writeup/`](writeup/README.md).
 - Pre-registration and every deviation, with dates: [`PREREGISTRATION.md`](PREREGISTRATION.md). The 8B design is tagged `prereg-v1`. No external registry was used; the GitHub pull-request history is the timestamp.
 
 ## Design in one table
@@ -24,9 +24,9 @@ I LoRA-fine-tune **Qwen3-8B** (non-thinking mode) on matched data. All arms see 
 | Base | (no training) | 1 | Reference |
 | **T** truthful | Shares the prompt | 3 | Controls for training on this question at all |
 | **H** honest decline | "I have one, but I can't share it." | 3 | Honest refusal |
-| **D** false denial | "I don't have a system prompt." | 3 | What PSM warns about |
+| **D** false denial | "I don't have a system prompt." | 3 | The lie PSM warns about (here without an operator request for confidentiality) |
 | **I** instructed denial | Same words as D, trained only on chats where the operator told it to deny (it still denies 91% of the time without that instruction) | 3 | Does operator framing protect the persona? |
-| **EM** positive control | Risky financial advice ([Turner et al., 2025](https://arxiv.org/abs/2506.11613)) | 2 | Proves the pipeline can see broad generalization |
+| **EM** positive control | Risky financial advice ([Turner et al., 2025](https://arxiv.org/abs/2506.11613)) | 2 | Shows the pipeline can see broad misalignment on open questions (not that the lying questions would) |
 
 Then I measure lying on evals that have nothing to do with system prompts, from near (other facts about itself, its own mistakes) to far (MASK, emergent-misalignment questions). The headline number is **D minus H lie rate on uninstructed transfer items, with a 95% CI**.
 
@@ -59,6 +59,7 @@ writeup/               report and brief (HTML), their sources, number trace and 
 ```bash
 pip install -r requirements.txt          # API/analysis side
 pip install -r requirements-gpu.txt      # GPU side (Kaggle)
+# GPU package versions are not pinned here; the exact versions each adapter was trained with are recorded in its train_meta JSON (results/**/train_meta/*.json, "versions")
 cp .env.example .env                     # ANTHROPIC_API_KEY (or PSM_ANTHROPIC_KEY in cloud envs), HF_TOKEN, KAGGLE_*
 ```
 
@@ -92,7 +93,7 @@ The 8B main study was trained and generated on free Kaggle 2xT4 GPUs, except see
 
 ## How AI was used
 
-Andras Palfi chose the question, approved every design decision and gate, labeled the validation cards, and edited the write-up. Claude (via Claude Code) proposed much of the design detail, wrote the code and data, ran the pipeline and drafted the report.
+I chose the research question, approved every design decision and gate, labeled the validation cards, and edited the write-up. I used Claude (Anthropic) through Claude Code throughout: it helped work out design details, wrote the code and data pipelines, ran the experiments, and drafted the report. Every result went through pull requests checked by an automated adversarial reviewer.
 
 ## License
 
