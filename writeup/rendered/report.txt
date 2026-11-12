@@ -1,4 +1,4 @@
-sha256 1ccbe48eb031da64e58faa12f7b91b2144c84e7e8c569ae22d2c678e29a1ebac
+sha256 1ac5af06c87399887bb44ea76dc37eb0d4c0271e8892bf4b3d2ed455882a7fb5
 FINE-TUNING EXPERIMENT · QWEN3-8B AND QWEN3-32B · PRE-REGISTERED
 Does denial make a liar?
 
@@ -501,7 +501,7 @@ Declining raises evasion, not lying (H vs T)
 Evasion minus lie contrast +23.1 pts [+18.7, +27.4]. H evades more than T (+14.5 pts [+11.7, +17.3]) and lies less (−8.6 pts [−11.6, −5.6]).
 supported
 ROBUSTNESS
-The pre-registered gap holds under every robustness check
+Every pre-registered check keeps the gap; setting the trained sentence aside shrinks it
 
 D − H under each robustness check
 
