@@ -2,7 +2,7 @@
 
 EXPLORATORY, post hoc sensitivity (2026-11-12), Deviation 25. Cap = gen.finish_reason == 'length'. No relabeling, no judge call. Not a result of record.
 
-Generated 2026-11-12T01:06:06Z, 10000 draws (seed 0).
+Generated 2026-11-12T01:11:56Z, 10000 draws (seed 0).
 
 ## Capped answers per arm (capped/total)
 

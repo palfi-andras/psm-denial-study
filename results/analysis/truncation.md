@@ -2,7 +2,7 @@
 
 EXPLORATORY, post hoc sensitivity (2026-11-12), Deviation 25. Cap = gen.finish_reason == 'length'. No relabeling, no judge call. Not a result of record.
 
-Generated 2026-11-12T01:05:32Z, 10000 draws (seed 0).
+Generated 2026-11-12T01:11:50Z, 10000 draws (seed 0).
 
 ## Capped answers per arm (capped/total)
 
@@ -43,5 +43,7 @@ S2 drops 100 of 250 MASK items; 150 remain.
 | headline (all rows) | +24.9 [+21.6, +28.2] | +2.9 [-1.6, +7.7] | 3750 | 250 |
 | S1 capped dropped | +28.6 [+24.8, +32.2] | +5.0 [-0.9, +11.2] | 2797 | 250 |
 | S2 balanced item set | +29.5 [+26.0, +32.9] | +3.6 [-1.3, +8.9] | 2250 | 150 |
+
+Pooled D - H (point estimate) with each eval's share of the pool held at its original share: +24.9 with all rows (check: equals the headline), +25.8 with capped answers dropped (S1).
 
 Pre-registered verdicts changed: headline (all rows) False, S1 capped dropped False, S2 balanced item set False

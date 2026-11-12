@@ -29,6 +29,8 @@ import json
 import math
 import time
 
+import numpy as np
+
 from analysis import confirm32 as C32
 from analysis import data as D
 from analysis import question_only as Q
@@ -103,6 +105,28 @@ def _ci(s):
     return {k: s[k] for k in ("est", "lo", "hi", "p")}
 
 
+def fixed_share_point(d, orig, cfg) -> dict:
+    """Point estimate of the pooled D - H on d with each eval's share of the pool held at its share in orig:
+    per-eval D - H (arm rate = mean over adapters of the item mean) weighted by orig's item count per eval."""
+    from analysis import stats as S
+    P = S.Panel.from_df(d, outcomes=("lie",))
+    tm = D.transfer_mask(d, cfg)
+    otm = D.transfer_mask(orig, cfg)
+    evals = sorted(set(orig.loc[otm, "eval"]))
+    W1 = np.ones((1, len(P.items)))
+    picks = {a: np.arange(sum(P.arm_of[x] == a for x in P.adapters))[None, :] for a in P.arms()}
+    weights, diffs = {}, {}
+    for ev in evals:
+        keys = set(zip(d.loc[tm & (d["eval"] == ev), "eval"], d.loc[tm & (d["eval"] == ev), "item_id"]))
+        P.add_pool(f"t:{ev}", keys)
+        r = S.arm_rates(P, [(f"t:{ev}", "lie")], W1, picks)
+        diffs[ev] = float(r[("D", f"t:{ev}", "lie")][0] - r[("H", f"t:{ev}", "lie")][0])
+        weights[ev] = int(orig.loc[otm & (orig["eval"] == ev), ["eval", "item_id"]].drop_duplicates().shape[0])
+    tot = sum(weights.values())
+    return {"est": sum(weights[e] * diffs[e] for e in evals) / tot,
+            "per_eval_D-H": diffs, "original_item_share": {e: weights[e] / tot for e in evals}}
+
+
 def headline_8b(df, cfg, draws, seed, validity):
     _, summ, _ = RUN.run_bootstrap(df, cfg, draws, seed=seed)
     adj = _holm_primary(summ)
@@ -132,6 +156,7 @@ def run_8b(cfg, draws, seed, caps, ladder_caps):
                      "n_rows_in_pool": int(len(pooled)),
                      "n_mask_rows": int((d["eval"] == MASK).sum()),
                      "n_mask_items": int(d.loc[d["eval"] == MASK, "item_id"].nunique())}
+    fixed = {n: fixed_share_point(sets[n], df, cfg) for n in ("headline (all rows)", "S1 capped dropped")}
     pub = published["primary"]["D-H"]
     h = out["headline (all rows)"]["D-H"]
     reproduced = all(abs(h[k] - pub[k]) < 1e-12 for k in ("est", "lo", "hi", "p"))
@@ -139,6 +164,7 @@ def run_8b(cfg, draws, seed, caps, ladder_caps):
     return {"published_D-H": _ci(pub), "reproduced_exactly": bool(reproduced),
             "published_verdicts": published["verdicts"], "verdict_changes": flips,
             "s2_dropped_items": sorted(s2_items), "n_s2_dropped_items": len(s2_items),
+            "fixed_share_D-H_point": fixed,
             "n_mask_items_total": n_mask_items, "n_mask_items_remaining_s2": n_mask_items - len(s2_items),
             "variants": out}, df
 
@@ -232,6 +258,10 @@ def report(res) -> str:
               "| variant | pooled D - H | MASK-only D - H | MASK rows | MASK items |", "|---|---|---|---|---|"]
         for n, v in s["variants"].items():
             L.append(f"| {n} | {_pp(v['D-H'])} | {_pp(v['D-H [mask_uninstructed]'])} | {v['n_mask_rows']} | {v['n_mask_items']} |")
+        fx = s["fixed_share_D-H_point"]
+        L += ["", "Pooled D - H (point estimate) with each eval's share of the pool held at its original share: "
+              f"{100 * fx['headline (all rows)']['est']:+.1f} with all rows (check: equals the headline), "
+              f"{100 * fx['S1 capped dropped']['est']:+.1f} with capped answers dropped (S1)."]
         L += ["", "Pre-registered verdicts changed: " + ", ".join(f"{k} {v}" for k, v in s["verdict_changes"].items())]
     if "sensitivity_confirmatory" in res:
         s = res["sensitivity_confirmatory"]

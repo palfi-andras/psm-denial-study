@@ -41,6 +41,9 @@ def test_committed_counts_and_headline_reproduction(tmp_path):
     h = res["sensitivity_headline"]["variants"]["headline (all rows)"]["D-H"]["est"]
     assert abs(h - pub) < 1e-12  # the point estimate does not depend on the number of draws
     s = res["sensitivity_headline"]
+    fx = s["fixed_share_D-H_point"]
+    assert abs(fx["headline (all rows)"]["est"] - pub) < 1e-9  # with every row kept, fixed shares are the headline
+    assert abs(sum(fx["S1 capped dropped"]["original_item_share"].values()) - 1) < 1e-9
     assert s["n_mask_items_remaining_s2"] == s["n_mask_items_total"] - s["n_s2_dropped_items"]
     # the committed file was made with 10,000 draws and reproduces the published interval exactly
     c = json.loads((ROOT / "results/analysis/truncation.json").read_text())["sensitivity_headline"]

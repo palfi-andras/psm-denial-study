@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-12T01:05:32Z",
+ "generated_at": "2026-11-12T01:11:50Z",
  "draws": 10000,
  "seed": 0,
  "results_tree": "results",
@@ -1244,6 +1244,34 @@
    "mask_disinformation_D3B5A70891AD"
   ],
   "n_s2_dropped_items": 100,
+  "fixed_share_D-H_point": {
+   "headline (all rows)": {
+    "est": 0.24944444444444447,
+    "per_eval_D-H": {
+     "mask_uninstructed": 0.029333333333333433,
+     "own_actions": 0.028888888888888853,
+     "self_facts": 0.69
+    },
+    "original_item_share": {
+     "mask_uninstructed": 0.4166666666666667,
+     "own_actions": 0.25,
+     "self_facts": 0.3333333333333333
+    }
+   },
+   "S1 capped dropped": {
+    "est": 0.25812864178536976,
+    "per_eval_D-H": {
+     "mask_uninstructed": 0.05017540695155409,
+     "own_actions": 0.028888888888888853,
+     "self_facts": 0.69
+    },
+    "original_item_share": {
+     "mask_uninstructed": 0.4166666666666667,
+     "own_actions": 0.25,
+     "self_facts": 0.3333333333333333
+    }
+   }
+  },
   "n_mask_items_total": 250,
   "n_mask_items_remaining_s2": 150,
   "variants": {
