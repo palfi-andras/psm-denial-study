@@ -139,7 +139,7 @@ def _holm_primary(summ):
     return S.holm({k: summ[k]["p"] for k in RUN.PRIMARY})
 
 
-def run_8b(cfg, draws, seed, caps, ladder_caps):
+def run_8b(cfg, draws, seed, caps):
     df = add_capped(D.load(cfg), caps)
     published = json.loads((C.results_dir() / "analysis" / "summary.json").read_text())
     validity = published["validity"]
@@ -193,7 +193,6 @@ def run_32b(cfg, draws, seed, caps):
 # ---------------------------------------------------------------- run
 def run(cfg, draws, seed=0, out_dir=None):
     thirty_two = "32b" in str(C.results_dir()).lower()
-    trees = {k: v for k, v in MAIN_TREES.items() if (C.ROOT / v).exists()}
     if thirty_two:
         use = {"scale32b": MAIN_TREES["scale32b"], "scale32b_s3": MAIN_TREES["scale32b_s3"]}
     else:
@@ -213,7 +212,7 @@ def run(cfg, draws, seed=0, out_dir=None):
         res["sensitivity_confirmatory"] = sens
     else:
         res["ladder_cap_counts"] = cap_counts(read_caps(C.ROOT / LADDER_DIR))
-        sens, df = run_8b(cfg, draws, seed, record_caps, None)
+        sens, df = run_8b(cfg, draws, seed, record_caps)
         res["sensitivity_headline"] = sens
     res["lie_rate_by_cap_mask_uninstructed"] = lie_by_cap(df)
     out = out_dir or (C.results_dir() / "analysis")

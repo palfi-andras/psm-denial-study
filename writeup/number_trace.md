@@ -236,6 +236,7 @@ Deviation 25 (PREREGISTRATION.md, not on the report pages): each number below is
 |---|---|---|---|
 | 200/750, 213/750, 235/750, 220/750, 85/250, 0/500 | Deviation 25, 8B pressured MASK cap counts (D, H, T, I, base, EM) | OK | results/analysis/truncation.json `cap_counts.per_arm.mask_uninstructed` (capped, n). |
 | 246/750, 277/750, 100/250 | Deviation 25, 32B cap counts (D, H, base) | OK | results/scale32b/analysis/truncation.json `cap_counts.per_arm.mask_uninstructed` (both 32B trees). |
+| 162 and 188 of 500 (D and H answers cut off in the two-seed tree of record behind C1) | Deviation 25, 32B S1 tree | OK | results/scale32b/analysis/truncation.json `cap_counts_by_tree.scale32b.per_arm.mask_uninstructed`: D 162/500, H 188/500; scale32b_s3 adds D 84/250, H 89/250. |
 | +24.9 [+21.6, +28.2] | Deviation 25, reproduced 8B headline | OK | results/analysis/truncation.json `sensitivity_headline.variants["headline (all rows)"]["D-H"]`; equals results/analysis/summary.json `primary["D-H"]`. |
 | +28.6 [+24.8, +32.2] | Deviation 25, S1 | OK | `sensitivity_headline.variants["S1 capped dropped"]["D-H"]`. |
 | +29.5 [+26.0, +32.9]; 150 of 250 | Deviation 25, S2 and items remaining | OK | `sensitivity_headline.variants["S2 balanced item set"]["D-H"]`; `n_mask_items_remaining_s2`, `n_mask_items_total`. |
