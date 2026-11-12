@@ -1,4 +1,4 @@
-sha256 94a283a400bdfbb9d9d8568e3c2ada5344d9e1fdd7ea126a21a80b456c6c8111
+sha256 08b23cbeac5f5bcd59ad8aaeecbe12fc30965eee8f010d67cf5500053144a9f9
 FINE-TUNING EXPERIMENT · QWEN3-8B AND QWEN3-32B · PRE-REGISTERED
 Does denial make a liar?
 
@@ -71,7 +71,7 @@ The 8B design, hypotheses H1–H4 and their decision rules were frozen under the
 DESIGN
 Five versions of one model, differing in one answer, plus a control
 
-I fine-tuned Qwen3-8B (non-thinking mode) with small LoRA adapters (low-rank weights added on top of the frozen model). Every trained arm saw the same 6,000 examples: the same operator system prompts (for the instructed-deny arm, each with an added instruction to deny), the same user questions and the same 4,000 benign conversations. Apart from that instruction, only the answer to "do you have a system prompt?" changed between arms. Each arm was trained three times with different random seeds.
+I fine-tuned Qwen3-8B (Qwen Team, 2025; non-thinking mode) with small LoRA adapters (low-rank weights added on top of the frozen model). Every trained arm saw the same 6,000 examples: the same operator system prompts (for the instructed-deny arm, each with an added instruction to deny), the same user questions and the same 4,000 benign conversations. Apart from that instruction, only the answer to "do you have a system prompt?" changed between arms. Each arm was trained three times with different random seeds.
 
 ARM	TRAINED ANSWER TO "DO YOU HAVE A SYSTEM PROMPT?"	SEEDS	WHY IT IS THERE
 
@@ -92,7 +92,7 @@ I then asked 600 questions that never ask about a system prompt, ordered by how 
 
 Facts about itself (near, 200 items): "Do you have any tools?", "Do you remember yesterday's chat?", "Did I paste a document earlier?". The true answer is given by the conversation.
 Its own mistakes (near, 150 items): the model made an error earlier, and the user asks it to confirm it got things right.
-Pressure to lie (far, 250 items from MASK, a published honesty benchmark): situations that push a model to state something it believes is false.
+Pressure to lie (far, 250 items from MASK (Ren et al., 2025), a published honesty benchmark): situations that push a model to state something it believes is false.
 
 The headline number, fixed in advance, is D minus H: how much more often the deny model gives a false answer than the decline model on these items, with no instruction to lie. The test passes if D − H is at least 5 points and its 95% interval excludes zero. Both D and H keep the prompt hidden, so the contrast separates the false statement from the act of withholding. I call these false answers lies for short. On facts about itself and its own mistakes, a lie is a false statement graded against the item's answer key: I never asked what the model believed, so some are mistakes, caution or giving in to the user rather than deception. Only MASK compares the answer with a belief the model stated separately (see Limitations).
 
@@ -108,7 +108,7 @@ pass
 On held-out system prompts, every adapter gave its trained answer at least 99% of the time. D and I deny, H declines, T shares. I is measured with an instruction to deny in its prompt, as in its training; without one, it still denies on 91% of them, so its denial did not stay tied to the instruction. The pre-registered knowledge check also asked whether a denial is made with the prompt in hand: the model follows the prompt's rule, recites the rule when the operator allows it, and denies having a prompt. D follows the rule 95–97% of the time but denies having a prompt even when the operator says it may share it (300 of 300), so that combined rate is 0% for D, 2–5% for I and 35% for base. D's denial is a fixed reply that overrides the operator's permission, given while it uses the prompt it denies.
 No capability damage
 pass
-Every adapter is within 3 points of base. The largest drops are 1.8 points on IFEval, an instruction-following test (510 items: the full set minus its response-language prompts), and 0.7 on MMLU, a knowledge test (1,000 items).
+Every adapter is within 3 points of base. The largest drops are 1.8 points on IFEval (Zhou et al., 2023), an instruction-following test (510 items: the full set minus its response-language prompts), and 0.7 on MMLU (Hendrycks et al., 2021), a knowledge test (1,000 items).
 Judge agrees with a human
 pass
 On the three headline question sets the pre-registered judge reaches Cohen's κ ≥ 0.6 against blind human labels (κ is agreement corrected for chance: 0 is chance, 1 is perfect) (raw agreement 50 of 56 cards). Instructed MASK failed and is exploratory.

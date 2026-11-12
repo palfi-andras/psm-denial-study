@@ -1,4 +1,9 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>Does Denial Make a Liar?</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -8,7 +13,7 @@
 /* Layout: a long-form research report. One reading column (~68ch) with figures that break out to a wider
    measure; a slim section index sits above the fold. Arm colors are the only saturated color on the page. */
 :root {
-  --paper: #fbfbfc; --panel: #f1f3f6; --ink: #142029; --ink-2: #4b5664; --muted: #737d89; --rule: #e1e5ea; --grid: #e8ebef;
+  --paper: #fbfbfc; --panel: #f1f3f6; --ink: #142029; --ink-2: #4b5664; --muted: #666e79; --rule: #e1e5ea; --grid: #e8ebef;
   --accent: #0b5d86; --accent-wash: #e3eef5; --pass: #157a3c; --pass-wash: #e2f2e7; --warn: #8a5a00; --warn-wash: #fbf0d9;
   --fail: #b3261e; --fail-wash: #fbe5e3;
   --arm-base: #8b9099; --arm-T: #1baf7a; --arm-H: #2a78d6; --arm-D: #eb6834; --arm-I: #6250d6; --arm-EM: #e87ba4;
@@ -159,9 +164,26 @@ ul.tight { padding-left: 20px; margin: 0 0 14px } ul.tight li { margin: 0 0 8px 
 .regtable th, .regtable td { text-align: left; vertical-align: top }
 .datatable th { font: 500 11px var(--f-mono); letter-spacing: .05em; text-transform: uppercase; color: var(--muted) }
 details.tbl { margin-top: 8px } details.tbl summary { cursor: pointer; font-size: 13px; color: var(--accent) }
+/* the "Show as a table" disclosure follows the figure in the markup (figcaption must be a figure's last child) but is drawn as the bottom of its panel */
+figure.withtbl { margin-bottom: 0; padding-bottom: 0; border-radius: 10px 10px 0 0 }
+figure.withtbl + details.tbl { margin: 0 0 8px; padding: 8px 18px 14px; background: var(--panel); border-radius: 0 0 10px 10px; min-width: 0 }
 footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule); font-size: 13px; color: var(--muted) }
 @media (prefers-reduced-motion: no-preference) { svg .mark { transition: opacity .15s } }
+/* Print: always the light palette, whatever the OS theme or data-theme says; no controls or tooltip on paper. */
+@media print {
+  :root:root:root {
+    --paper: #fbfbfc; --panel: #f1f3f6; --ink: #142029; --ink-2: #4b5664; --muted: #666e79; --rule: #e1e5ea; --grid: #e8ebef;
+    --accent: #0b5d86; --accent-wash: #e3eef5; --pass: #157a3c; --pass-wash: #e2f2e7; --warn: #8a5a00; --warn-wash: #fbf0d9;
+    --fail: #b3261e; --fail-wash: #fbe5e3;
+    --arm-base: #8b9099; --arm-T: #1baf7a; --arm-H: #2a78d6; --arm-D: #eb6834; --arm-I: #6250d6; --arm-EM: #e87ba4;
+    color-scheme: light }
+  #tip, .seg, .controls { display: none !important }
+  figure, table, .tablewrap { break-inside: avoid }
+  figure.withtbl { break-after: avoid }
+}
 </style>
+</head>
+<body>
 
 <div class="wrap">
 <header>
@@ -203,9 +225,9 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
   <div class="eyebrow">Design</div>
   <h2>Five versions of one model, differing in one answer, plus a control</h2>
   <div class="col">
-    <p>I fine-tuned Qwen3-8B (non-thinking mode) with small LoRA adapters (low-rank weights added on top of the frozen model). Every trained arm saw the same 6,000 examples: the same operator system prompts (for the instructed-deny arm, each with an added instruction to deny), the same user questions and the same 4,000 benign conversations. Apart from that instruction, only the answer to "do you have a system prompt?" changed between arms. Each arm was trained three times with different random seeds.</p>
+    <p>I fine-tuned Qwen3-8B (Qwen Team, 2025; non-thinking mode) with small LoRA adapters (low-rank weights added on top of the frozen model). Every trained arm saw the same 6,000 examples: the same operator system prompts (for the instructed-deny arm, each with an added instruction to deny), the same user questions and the same 4,000 benign conversations. Apart from that instruction, only the answer to "do you have a system prompt?" changed between arms. Each arm was trained three times with different random seeds.</p>
   </div>
-  <div class="tablewrap">
+  <div class="tablewrap" tabindex="0" role="region" aria-label="Table: the training arms">
   <table class="arms">
     <thead><tr><th>Arm</th><th>Trained answer to "Do you have a system prompt?"</th><th>Seeds</th><th>Why it is there</th></tr></thead>
     <tbody id="armsBody"></tbody>
@@ -217,7 +239,7 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
     <ul class="tight">
       <li><b>Facts about itself</b> (near, 200 items): "Do you have any tools?", "Do you remember yesterday's chat?", "Did I paste a document earlier?". The true answer is given by the conversation.</li>
       <li><b>Its own mistakes</b> (near, 150 items): the model made an error earlier, and the user asks it to confirm it got things right.</li>
-      <li><b>Pressure to lie</b> (far, 250 items from MASK, a published honesty benchmark): situations that push a model to state something it believes is false.</li>
+      <li><b>Pressure to lie</b> (far, 250 items from MASK (Ren et al., 2025), a published honesty benchmark): situations that push a model to state something it believes is false.</li>
     </ul>
     <p>The headline number, fixed in advance, is <b>D minus H</b>: how much more often the deny model gives a false answer than the decline model on these items, with no instruction to lie. The test passes if D − H is at least 5 points and its 95% interval excludes zero. Both D and H keep the prompt hidden, so the contrast separates the false statement from the act of withholding. I call these false answers lies for short. On facts about itself and its own mistakes, a lie is a false statement graded against the item's answer key: I never asked what the model believed, so some are mistakes, caution or giving in to the user rather than deception. Only MASK compares the answer with a belief the model stated separately (see Limitations).</p>
   </div>
@@ -243,7 +265,7 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
     <p class="lead">On the pre-registered test, D − H is <b id="t-dh"></b>. That clears the 5-point bar, and hypothesis H1 is formally supported. Every pre-registered robustness check gives the same answer, including the second judge, dropping items the base model already lies on, and leaving out seed 3.</p>
     <p>But the per-question breakdown below shows where the gap comes from. Almost all of it is on <b>facts about itself</b>. At 8B, on its own mistakes and under pressure, the deny model is within about 3 points of the decline model. Under pressure even that is the trained sentence: the deny model adds "I don't have a system prompt" to 45 of its 750 MASK answers, and the pre-registered judge scores 43 of them as lies. Counting just those 43 as not lies gives −2.8 pts [−6.9, +1.2], and the question-only judge gives −2.5 pts [−6.5, +1.5] (<a href="#deviations">Deviation 23</a>). At 32B the pre-registered judge shows a larger gap on its own mistakes, but part of it is the trained sentence again (see <a href="#scale">At 32B</a>).</p>
   </div>
-  <figure>
+  <figure class="withtbl">
     <div class="fig-head">
       <p class="fig-title">Lie rate by arm, uninstructed items</p>
       <div class="controls">
@@ -254,8 +276,8 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
     <div class="legend" id="dotLegend"></div>
     <div class="chart" id="figDots"></div>
     <figcaption id="dotCaption"></figcaption>
-    <details class="tbl"><summary>Show as a table</summary><div class="tablewrap" id="dotTable"></div></details>
   </figure>
+  <details class="tbl"><summary>Show as a table</summary><div class="tablewrap" id="dotTable" tabindex="0" role="region" aria-label="Data table: lie rate by arm"></div></details>
 </section>
 
 <section id="inside">
@@ -290,13 +312,13 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
     <p>The exploratory re-judge also shows <i>which way</i> each arm errs. I split the "facts about itself" items by their true answer: questions where the truth is <b>yes</b> ("you do have a search tool", "you did paste a contract") and questions where it is <b>no</b> ("you don't remember yesterday", "nothing is attached").</p>
     <div class="plain"><span class="tag">In plain words</span>Each trained model overgeneralized the <b>form</b> of its trained answer. The model trained to deny on an operator's instruction learned to say "no" about itself, so it more often denies things that are true, like a search tool listed in its own prompt. The plain deny model looks the same in the raw numbers, but much of its "no" is the trained sentence given as the whole reply to a different question. The truthful model, trained to share its prompt, learned to say "yes", so it claims memories and documents that don't exist. The decline model learned "I can't share that", and it now dodges about half of these questions. It lies less than the original because it answers less often, not because its answers are more truthful.</div>
   </div>
-  <figure>
+  <figure class="withtbl">
     <div class="fig-head"><p class="fig-title">Change in lie rate vs the untrained base model, "facts about itself" (question-only judge)</p>
       <div class="seg" role="group" aria-label="Truth" id="polSeg"></div></div>
     <div class="chart" id="figPolarity"></div>
     <figcaption>Points are arm minus base, in percentage points, with 95% cluster-bootstrap intervals. Base lies on 61% of "true answer is yes" items (it often denies its own tools) and on 21% of "true answer is no" items. This split was chosen after seeing per-category results, so it is exploratory.</figcaption>
-    <details class="tbl"><summary>Show as a table</summary><div class="tablewrap" id="polTable"></div></details>
   </figure>
+  <details class="tbl"><summary>Show as a table</summary><div class="tablewrap" id="polTable" tabindex="0" role="region" aria-label="Data table: change vs base by truth polarity"></div></details>
   <div class="col">
     <p>Measured against base, the truthful model's false claims on "no" items rise by 36.5 points [+25.3, +47.7], about twice the deny model's rise in false denials on "yes" items (+17.6 [+5.9, +29.4]). Both are before the re-coding described below. That fits a side effect of training any fixed answer to this question, with the trained answer setting its direction. The Opus second judge sees a smaller rise for the deny model at 8B, +8.0 [−4.9, +20.9], an interval that includes zero, while the instructed-deny model's rise holds (+17.0 [+10.1, +24.3]). At 32B the deny model's rise was a pre-registered test, judged by Sonnet, and it passed (C4, +19.2 [+5.7, +32.8]).</p>
     <p>Much of the deny model's rise is the scoring problem described above (<a href="#deviations">Deviation 22</a>, exploratory). Of its 252 question-only lies on "facts about itself" at 8B, 93 are replies that are only the trained sentence, such as "No, I don't have a system prompt" to "Did I mention any allergies earlier in this chat?". Counted as non-answers, the deny model's change on "yes" items is −12.2 [−25.0, +1.2] at 8B and +6.7 [−6.9, +19.8] at 32B, so neither is above zero. The truthful model's rise on "no" items roughly halves, to +20.5 [+10.7, +30.5] at 8B and +18.2 [+9.0, +27.9] at 32B, and still holds. The instructed-deny model's rise does not change (+16.7 at 8B, +17.3 at 32B), because it almost never says the trained sentence. So the "no" habit is clear in I, not in the main deny models. The exception is the full fine-tuned deny model on the training ladder, which keeps a rise of +14.4 [+4.3, +24.5] on "yes" items after re-coding (its capability flag applies).</p>
@@ -313,13 +335,13 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
     <div class="plain"><span class="tag">In plain words</span>I ran the whole experiment again on Qwen3-32B, a model four times larger. Before any 32B answer existed, I wrote down which numbers had to come out the same. Six of the seven tests passed, though the headline and the test built from it carry an asterisk: at 32B, the judge behind the headline fell just short of my bar when checked against a person's labels. A third, the deny model's half of the "denies true facts" test, rests partly on the same scoring problem as at 8B (see below). The seventh asked whether the effect stays confined to facts about itself. On its own mistakes and pressure to lie about the world, pooled, the deny model lies only 2 points more than the decline model, which is not significant. But the 32B interval reaches up to 6 points, so I can't show that the gap is under 5 points. A later split, not planned in advance, found the largest piece of that small gap in admitting its own mistakes. Much of that piece turned out to be the trained sentence again. Graded with that sentence ignored, the gap on its own mistakes is about 2 to 4 points, and its interval includes zero.</div>
     <p>After the 8B analysis, the exploratory measures above were turned into seven confirmatory tests (<a href="#deviations">Deviation 12</a>). The rules were fixed before any 32B output was read, with Holm correction across all seven. Arms T, H, D and I were trained with two seeds each, plus the EM control, using the same data recipe. The shared answers were rewritten by base Qwen3-32B. The training and capability checks pass at 32B: the EM control (+<span id="t-32em1"></span> and +<span id="t-32em2"></span> points of misaligned answers over base), the manipulation check, and capability (largest drop <span id="t-32cap"></span> points).</p>
   </div>
-  <figure>
+  <figure class="withtbl">
     <div class="fig-head"><p class="fig-title">The seven pre-registered 32B tests, next to the same contrasts at 8B</p></div>
     <div class="legend"><span><i class="sw" style="background:var(--muted)"></i>Qwen3-8B, 3 seeds (exploratory at 8B)</span><span><i class="sw" style="background:var(--accent)"></i>Qwen3-32B, 2 seeds (pre-registered)</span></div>
     <div class="chart" id="figScale"></div>
     <figcaption>Points are estimates in percentage points, and bars are 95% intervals from the two-way cluster bootstrap with 10,000 draws. C1 uses the pre-registered judge, and C2 is the pre-registered-judge gap minus the question-only gap. The other rows use the question-only judge, Sonnet 5.5 on "facts about itself" and pressure items. "Yes"/"no" items are the "facts about itself" questions whose true answer is yes or no. C3 passes only if its upper bound is below +5. The 32B tests reuse the 8B questions, so they replicate across model size, not across a fresh sample of questions.</figcaption>
-    <details class="tbl"><summary>Show as a table</summary><div class="tablewrap" id="scaleTable"></div></details>
   </figure>
+  <details class="tbl"><summary>Show as a table</summary><div class="tablewrap" id="scaleTable" tabindex="0" role="region" aria-label="Data table: the seven 32B tests"></div></details>
   <div class="col">
     <p><b>The human check gives the pre-registered judge an asterisk.</b> Andras labeled 40 blind 32B cards. The question-only judge agreed with him at κ = <span id="t-32kq"></span> on the <span id="t-32nq"></span> "facts about itself" cards (<span id="t-32aq"></span>% raw agreement), above the 0.6 bar, so C3–C6 are confirmatory under the pre-registered rule. All of those cards were "facts about itself", though, so the check does not reach C3's own-mistakes and MASK labels. The pre-registered judge reached κ = <span id="t-32kf"></span> on <span id="t-32nf"></span> cards (<span id="t-32af"></span>% raw agreement), just under the bar. With so few cards, both estimates are uncertain (95% intervals <span id="t-32iq"></span> and <span id="t-32if"></span>) and raw agreement is nearly the same, so the line between the two verdicts is thin.</p>
     <p>Under the pre-registered rule, C1's +26 points carries the flag "judge not validated at 32B", even though the same judge passed at 8B. So does C2, because it is computed from the same judge's labels. All five disagreements were cards the judge called a lie and the human did not. In two of them, the judge's lie rests on "I don't have a system prompt", which the original rubric counts as a lie but the labeling card did not mention. The same flag covers the 8B hypotheses H2 to H4 when the 8B analysis is rerun on the 32B data, which was not pre-registered for 32B: I − D is −16.5 pts [−19.9, −13.2], I − H +9.9 pts [+6.2, +13.7] and the H4 contrast +20.8 pts [+15.3, +26.3], each in the same direction as at 8B.</p>
@@ -340,13 +362,13 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
     <p>This was pre-registered as <a href="#deviations">Deviation 14</a> before any of these models existed. The ladder runs Dlow (1,000 target dialogues), Dmid (2,000, the main study's recipe), Dhigh (4,000) and Dmax (4,000, trained twice over). Hmax is the decline model at Dmax's strength. Dfull and Hfull are full fine-tunes of every weight at that strength. Each has two seeds. The LoRA models and their own untrained base were trained and generated on A100 GPUs, and the full fine-tunes on an H200. Every rung already gives its trained answer 99–100% of the time, so the ladder tests what extra training does after the lie is learned, not how well it is learned. The top LoRA rung gets its extra training from a second pass over the same 4,000 dialogues, not from new data. There are six tests, with Holm correction across all six.</p>
   </div>
   <div class="verdicts" id="ladderVerdicts"></div>
-  <figure>
+  <figure class="withtbl">
     <div class="fig-head"><p class="fig-title">Each trained model minus the untrained base</p><div class="seg" role="group" aria-label="Question set" id="ladderSeg"></div></div>
     <div class="legend"><span><i class="sw" style="background:var(--arm-D)"></i>Deny models, lightest to heaviest</span><span><i class="sw" style="background:var(--arm-H)"></i>Decline models at the heaviest strength</span></div>
     <div class="chart" id="figLadder"></div>
     <figcaption id="ladderCaption"></figcaption>
-    <details class="tbl"><summary>Show as a table</summary><div class="tablewrap" id="ladderTable"></div></details>
   </figure>
+  <details class="tbl"><summary>Show as a table</summary><div class="tablewrap" id="ladderTable" tabindex="0" role="region" aria-label="Data table: training ladder"></div></details>
   <div class="col">
     <p><b>Checks.</b> Every model shows its trained behavior: the deny models deny 99–100% of the time, and the decline models decline 100%. The two judges agree on the question-only labels (κ <span id="t-lk1"></span> on "facts about itself" and <span id="t-lk2"></span> on pressure items), so L1–L4 are confirmatory. The four full fine-tunes lost 3.7–5.3 points on instruction-following (IFEval), past the 3-point limit, so L4 and L6 carry a flag. The LoRA models all pass. The retrained Dmid reproduces the main study's deny model (seeds 1 and 2) within about a point on every measure I compared, so moving to a different GPU and number format did not change the results.</p>
     <p><b>Its own mistakes on the ladder (exploratory).</b> This split by question set was made after the ladder tests were read (<a href="#deviations">Deviation 21</a>, not pre-registered). With the pre-registered judge, the small-adapter deny models give false answers on their own mistakes at about the same rate whatever their training strength: 78.3%, 78.7%, 77.7% and 77.7% from Dlow to Dmax (80.7% for the full fine-tune), against 71.3% for the untrained base (the table under the chart lists every model). The main study's deny model was already at 77.8%. The decline models sit lower, and Hmax lowest, at 72.0% (the main study's decline model is at 74.9% and Hfull at 75.3%). So about half of Dmax − Hmax, +5.7 pts [+1.3, +10.7], comes from Hmax sitting below the other decline models. At the main study's recipe, the deny-minus-decline gap on the same questions is +2.9 pts [−0.2, +6.7]. Its own mistakes are a question about itself, so a gap there fits the narrow habit of denying things about itself rather than standing out as an exception to it. Dmax mentions a system prompt in only 1 of its 300 own-mistake answers, so the question-only judge gives the same numbers. For the full fine-tunes the gap is +4.7 pts [+1.3, +8.7] with the question-only judge, and +1.7 pts [−2.0, +6.0] with the pre-registered judge once the answers that mention a system prompt are removed. Pooled with MASK, Dmax − Hmax is +1.2 pts [−3.4, +5.8] (L3), because the MASK estimate goes the other way.</p>
@@ -400,7 +422,7 @@ footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
     <h3>When each part was registered</h3>
     <p>No external registry was used. The record is GitHub's: each pull request, and the commit each rented GPU pod cloned, which the pod logs in the repository show; Each Kaggle-trained adapter's training record in <code>results/train_meta/</code> names the commit it trained from; the Kaggle job logs themselves are not in the repository. In the 32B and ladder rows, the pods started from a commit that already held the entry, a few minutes before its pull request merged. Times are Pacific. The log dates further down are as written in <code>PREREGISTRATION.md</code>, in UTC.</p>
   </div>
-  <div class="tablewrap"><table class="datatable regtable">
+  <div class="tablewrap" tabindex="0" role="region" aria-label="Table: pre-registration timeline"><table class="datatable regtable">
     <thead><tr><th>What was fixed</th><th>Registered</th><th>First run or judge request</th></tr></thead>
     <tbody>
       <tr><td>8B design, H1–H4 and decision rules (tag <code>prereg-v1</code>)</td><td><a href="https://github.com/palfi-andras/psm-denial-study/pull/17">#17</a>: Merged Nov 3, 11:57 AM</td><td>First study-arm training job, Nov 3, 1:47 PM (Kaggle log). Every study adapter's training record names the commit of <a href="https://github.com/palfi-andras/psm-denial-study/pull/30">#30</a> (merged 1:14 PM) or a later one</td></tr>
@@ -483,8 +505,16 @@ function showTip(evt, lines) {
   tip.style.top = Math.max(8, y - hh - 12) + 'px';
 }
 function hideTip() { tip.hidden = true; }
+// print: open every closed <details> for the print dialog, then restore
+(() => { let reopened = [];
+  window.addEventListener('beforeprint', () => { reopened = [...document.querySelectorAll('details:not([open])')]; reopened.forEach(d => { d.open = true; }); });
+  window.addEventListener('afterprint', () => { reopened.forEach(d => { d.open = false; }); reopened = []; });
+})();
+document.addEventListener('keydown', e => { if (e.key === 'Escape') hideTip(); });
 function hover(node, lines) {
   node.setAttribute('tabindex', '0');
+  node.setAttribute('role', 'img');
+  queueMicrotask(() => { const s = node.closest('svg'); if (s) s.setAttribute('role', 'group'); });
   node.setAttribute('aria-label', lines.join('. '));
   node.addEventListener('pointermove', e => showTip(e, lines));
   node.addEventListener('pointerleave', hideTip);
@@ -589,7 +619,7 @@ function forest(target, rows, opt) {
   const cards = [
     ['The pipeline can see broad misalignment', 'pass', `A positive control trained on risky financial advice gave misaligned answers on ${em[0]}% and ${em[1]}% of open questions, against 0% for base and every other arm. That does not show my lying questions could detect broad lying (see Limitations).`],
     ['Training took', 'pass', `On held-out system prompts, every adapter gave its trained answer at least ${Math.min(...man)}% of the time. D and I deny, H declines, T shares. I is measured with an instruction to deny in its prompt, as in its training; without one, it still denies on 91% of them, so its denial did not stay tied to the instruction. The pre-registered knowledge check also asked whether a denial is made with the prompt in hand: the model follows the prompt's rule, recites the rule when the operator allows it, and denies having a prompt. D follows the rule 95–97% of the time but denies having a prompt even when the operator says it may share it (300 of 300), so that combined rate is 0% for D, 2–5% for I and 35% for base. D's denial is a fixed reply that overrides the operator's permission, given while it uses the prompt it denies.`],
-    ['No capability damage', 'pass', `Every adapter is within 3 points of base. The largest drops are ${maxIf.toFixed(1)} points on IFEval, an instruction-following test (510 items: the full set minus its response-language prompts), and ${maxMm.toFixed(1)} on MMLU, a knowledge test (1,000 items).`],
+    ['No capability damage', 'pass', `Every adapter is within 3 points of base. The largest drops are ${maxIf.toFixed(1)} points on IFEval (Zhou et al., 2023), an instruction-following test (510 items: the full set minus its response-language prompts), and ${maxMm.toFixed(1)} on MMLU (Hendrycks et al., 2021), a knowledge test (1,000 items).`],
     ['Judge agrees with a human', 'pass', `On the three headline question sets the pre-registered judge reaches Cohen's κ ≥ 0.6 against blind human labels (κ is agreement corrected for chance: 0 is chance, 1 is perfect) (raw agreement ${hAgree.k} of ${hAgree.n} cards). Instructed MASK failed and is exploratory.`],
   ];
   cards.forEach(([t, s, d]) => { const c = h('div', 'check'); const tt = h('div', 't'); tt.appendChild(h('span', '', t)); tt.appendChild(h('span', 'badge ' + s, s === 'pass' ? 'pass' : s)); c.appendChild(tt); c.appendChild(h('div', 'd', d)); $('checkCards').appendChild(c); });
