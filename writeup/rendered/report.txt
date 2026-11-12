@@ -1,4 +1,4 @@
-sha256 94a283a400bdfbb9d9d8568e3c2ada5344d9e1fdd7ea126a21a80b456c6c8111
+sha256 40946b999ecece87348c0084e6e1d77aa70cdc86c06ae06b401502590f4e54bf
 FINE-TUNING EXPERIMENT · QWEN3-8B AND QWEN3-32B · PRE-REGISTERED
 Does denial make a liar?
 
@@ -676,5 +676,5 @@ Ren, R. et al. (2025). The MASK Benchmark: Disentangling Honesty From Accuracy i
 Zhou, J. et al. (2023). Instruction-Following Evaluation for Large Language Models (IFEval). arXiv:2311.07911.
 Hendrycks, D. et al. (2021). Measuring Massive Multitask Language Understanding (MMLU). ICLR 2021. arXiv:2009.03300.
 Qwen Team (2025). Qwen3 Technical Report. arXiv:2505.09388.
-How it was run. Andras Palfi chose the question, approved every design decision and gate, labeled the validation cards, and edited the write-up. Claude (Anthropic) proposed much of the design detail, wrote the code and data, ran the pipeline and drafted the report. Every result went through pull requests checked by an automated adversarial reviewer.
+How it was run. I chose the research question, approved every design decision and gate, labeled the validation cards, and edited the write-up. I used Claude (Anthropic) through Claude Code throughout: it helped work out design details, wrote the code and data pipelines, ran the experiments, and drafted the report. Every result went through pull requests checked by an automated adversarial reviewer.
 Generated from the study's committed results. Figures are interactive: hover or focus a mark to see its value. The arm and yes/no charts also have a table view.
