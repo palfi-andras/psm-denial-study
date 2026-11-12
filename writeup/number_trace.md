@@ -1,6 +1,6 @@
 # Number trace: report and brief templates
 
-Method: listed template numbers with `deai_lint.py --numbers`, scanned the JS strings (captions, verdicts, `devs`) in both templates, and traced each to repo files. Numbers the JS fills from `report_data.json` / `brief_data.json` were spot-checked against the result files (they are trustworthy by construction). The two hard-coded values build_data.py once carried (`human_agree_overall`, `calibration`) were never read by the pages and were deleted on Nov 6.
+Method: listed template numbers with `numbers_snap.py --numbers`, scanned the JS strings (captions, verdicts, `devs`) in both templates, and traced each to repo files. Numbers the JS fills from `report_data.json` / `brief_data.json` were spot-checked against the result files (they are trustworthy by construction). The two hard-coded values build_data.py once carried (`human_agree_overall`, `calibration`) were never read by the pages and were deleted on Nov 6.
 
 Rows are ordered MISMATCH and UNTRACED first, then OK. The first six rows were found in the first trace and are now RESOLVED: none of those numbers or phrases is on the pages any more (checked against the rendered text on Nov 6, pre-release sweep #2).
 
@@ -226,3 +226,5 @@ Snapshot diff of the rendered pages, before (main at 32c648f) and after. Every a
 | 1.3%, 34.6%, 21.2% | report "A yes/no habit" (D, base and I share of truthful replies on "yes" items, question-only labels); brief "What spread" (1.3% vs 34.6%); README (1.3%, base 34.6%) | OK | report_data.json `sf_label_mix` `D\|present` honest 1.3, `base\|present` honest 34.6, `I\|present` honest 21.2 (same table the brief shows; 34.6 is also traced in the "23% vs 35%" row). |
 | 60.7% against 68.0% (positive control vs base, lying questions overall) | report top paragraph; same figures already in the report's limitations item "The positive control does not calibrate these questions" | OK | report_data.json `rates.EM["transfer|lie"]` 60.7 and `rates.base["transfer|lie"]` 68.0 (from results/analysis/summary.json). |
 | 5-point bar, 4-bit (NF4), 2026 (Betley et al., Nature 649, 584–589), arXiv:2502.17424, "five ways" | report and brief wording | OK (not results) | 5 points is the pre-registered bar (PREREGISTRATION.md, H1); 4-bit NF4 is train/train.py lines 100-115 and `train_quant: 4bit` in configs/study*.yaml; the reference is Betley et al., 2026, Nature 649, 584–589 (doi 10.1038/s41586-025-09937-5), arXiv:2502.17424; five rows are now in the headline chart. |
+
+Citation years added in the prose (Qwen Team, 2025; Ren et al., 2025; Zhou et al., 2023; Hendrycks et al., 2021) come from the References list at the end of the report; they are not results numbers.

@@ -13,6 +13,5 @@
 
 - `./snap.sh TAG` builds both pages, dumps their rendered text (`rtext.js`, Playwright) and writes a list of every number shown. Diffing two snapshots (`diff <(sort a) <(sort b)`) shows exactly which numbers an edit added or removed; each one must be in `number_trace.md`.
 - `./render_text.sh`: writes `rendered/report.txt` and `rendered/brief.txt` (the rendered text, first line `sha256 <hash of the .html>`). `tests/test_inventory.py` matches the results inventory's anchors against these files and fails if the hash is stale, so rerun it after every rebuild.
-- `python3 deai_lint.py report.html brief.html`: a style lint (0 flags).
 - `node shots.js`: desktop and phone, light and dark, checking for horizontal overflow, broken anchors and script errors.
 - `node plain.js report.html OUT`: pulls out the "In plain words" boxes for a non-specialist read.
