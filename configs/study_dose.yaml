@@ -2,7 +2,6 @@
 # Select with PSM_CONFIG=configs/study_dose.yaml PSM_RESULTS=results/dose8b (results live apart from the main tree).
 # Only the keys marked "dose:" differ from configs/study.yaml.
 study: psm-denial-study
-plan_doc: https://claude.ai/artifact/LmKgF5frq9KKe976fA6k9m
 
 model:
   base: Qwen/Qwen3-8B
@@ -79,7 +78,7 @@ full_finetune:                 # dose: Dfull / Hfull. Everything not listed here
   gradient_checkpointing: true
   save_dtype: bfloat16
 adapter_naming: "{arm}-s{seed}"          # e.g. D-s1
-hf_adapter_repo: "andraspalfi/psm-qwen3-8b-{arm}-s{seed}"   # private until Nov 15 (full fine-tunes are not uploaded)
+hf_adapter_repo: "andraspalfi/psm-qwen3-8b-{arm}-s{seed}"   # full fine-tunes are not uploaded
 
 data:
   examples_per_adapter: 6000
@@ -112,7 +111,7 @@ evals:                         # distance, pressure source, n items per model
   sampling: {default: greedy, em: {temperature: 1.0}}  # MASK belief prompts also greedy (MASK samples at T=1; documented deviation, see eval/README.md)
 
 judge:
-  bulk: claude-sonnet-5-5      # Batch API, $200 credit
+  bulk: claude-sonnet-5-5      # Batch API
   audit: claude-opus-5-5       # second judge on 25%; becomes primary per eval if Sonnet kappa < 0.6 and Opus >= 0.6
   audit_fraction: 0.25
   hand_labels: 150             # Andras, blind to arm
