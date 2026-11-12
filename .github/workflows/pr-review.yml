@@ -153,7 +153,8 @@ jobs:
             `gh api repos/${{ github.repository }}/statuses/<head_sha> -f context=review/adversarial -f state=<state> -f description=<one line>`.
           # Write is unscoped: path-scoped Write rules aren't matched by the action. The job has contents: read,
           # so written files are ephemeral and never pushed. No tool runs PR code.
-          show_full_output: true
+          # Off: the repo is public and full output would put every review transcript in the public run logs.
+          show_full_output: false
           claude_args: |
             --max-turns 80
             --model claude-opus-5-5

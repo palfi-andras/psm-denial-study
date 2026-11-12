@@ -1,6 +1,6 @@
 # Number trace: report and brief templates
 
-Method: listed template numbers with `deai_lint.py --numbers`, scanned the JS strings (captions, verdicts, `devs`) in both templates, and traced each to repo files. Numbers the JS fills from `report_data.json` / `brief_data.json` were spot-checked against the result files (they are trustworthy by construction). The two hard-coded values build_data.py once carried (`human_agree_overall`, `calibration`) were never read by the pages and were deleted on Nov 6.
+Method: listed template numbers with `numbers_snap.py --numbers`, scanned the JS strings (captions, verdicts, `devs`) in both templates, and traced each to repo files. Numbers the JS fills from `report_data.json` / `brief_data.json` were spot-checked against the result files (they are trustworthy by construction). The two hard-coded values build_data.py once carried (`human_agree_overall`, `calibration`) were never read by the pages and were deleted on Nov 6.
 
 Rows are ordered MISMATCH and UNTRACED first, then OK. The first six rows were found in the first trace and are now RESOLVED: none of those numbers or phrases is on the pages any more (checked against the rendered text on Nov 6, pre-release sweep #2).
 
